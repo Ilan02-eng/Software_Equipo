@@ -1,2 +1,2 @@
 # Software_Equipo
-Repositorio para trabajo en equipo
+Repositorio para trabajo en equipo uwu
