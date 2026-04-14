@@ -79,7 +79,7 @@ The game starts by showing your new house in your new neighbourhood - inside the
 
 *We hope you enjoy your stay, you'll get used to it!*
 
-After reading the letter, you go outside where you meet the villagers who live next to your house; **Rotoplas**, a small purple rabbit with dark circles around her eyes and seems afraid of everything and **Little Jimmy**, a fluffy dog who always wear a night gown and a sleeping hat, he is always tired yet he never opens his eyes. They also seem to mention another one of your neighbours; Billy-Bob yet you are never able to see him. As a protagonist, the user must explore the village by entering their different houses. The rougelite elements depend a lot on how the procedurally change the layout and the powers of each creature every time. Allowing the player to keep learning fragments of the story, hidden secrets and discover the different cards. 
+After reading the letter, you go outside where you meet the villagers who live next to your house; **Rotoplas**, a small purple rabbit with dark circles around her eyes and seems afraid of everything and **Little Jimmy**, a fluffy dog who always wear a night gown and a sleeping hat, he is always tired yet he never opens his eyes. They also seem to mention another one of your neighbours; **Billy-Bob** yet you are never able to see him. As a protagonist, the user must explore the village by entering their different houses. The rougelite elements depend a lot on how the procedurally change the layout and the powers of each creature every time. Allowing the player to keep learning fragments of the story, hidden secrets and discover the different cards. 
 
 **Objective**
 
