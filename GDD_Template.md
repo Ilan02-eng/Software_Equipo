@@ -88,9 +88,24 @@ The final goal will be to cure the different neighbours that live across your ho
 
 Th
 
-**References and similarities**
+**References and Inspirations**
 
-*Catharsis* has been developed with inspiration form multiple titles from different genres. As a team, it has been decided that the concept od the mechanics and rougelite structure is influenced by games like *Slay the Spire*
+*Catharsis* has been developed with inspiration form multiple titles from different genres. As a team, it has been decided that the concept od the mechanics and rougelite structure is influenced by games like *Slay the Spire (2019)*, who is the image for card combat systems and its way to be replayable thoughout the gaming rounds.
+
+![alt text](image-1.png)
+*Slay the Spire(2019) - Similarities for card concept*
+
+For the general concept, it has been taken a contrasting approach; it mixes both a cute and dark tone - for the same reason we decided to take inspiration from games that mix the concept of disturbing and emotional themes and subtle visual horror and cute and cozy games that depend more on social interactions.
+
+*Cult of the Lamb (2022)* and *Omori (2020)* were the main inspirations for the emotional yet dark storytelling that the game will be based on, since they are games that seem unsettling either from start of slowly fading from a safe environment to a more horrifying one. 
+
+![alt text](image-2.png)
+*Omori (2020) - Similarities for themes and visual tone*
+
+Lastly, it was mentioned that there is also some inspiration from more soft and cozier games; the main inspirations being *Animal Crossing (2001)*, *Stardew Valley (2016)* and *Sprout Valley (2023)*. Games that are known for their peaceful gameplay and daily routines, and their need for social interactions. At the same time, the main visual inspirations come from here - considering their cozy and warm atmosphere that makes you feel safe, contrasting to the dark themes that come later on the game.
+
+![alt text](image-3.png)
+*Sprout Valley (2023) - Similarities between visual and color palettes*
 
 ### **Mindset**
 
