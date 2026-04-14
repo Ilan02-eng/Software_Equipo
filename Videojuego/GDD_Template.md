@@ -14,7 +14,7 @@ This videogames has been developed thoughout the February-June 2026 semester (Ap
 - Esteban Castillo Juarez
 - José Ángel Martínez Navarro
 
-*Development team:*
+*Development team: Supernova*
 
 - Paulina Cortez Balvanera | A01782041
 - María Espínola Forcén | A01787172
