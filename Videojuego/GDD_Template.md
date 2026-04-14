@@ -113,6 +113,16 @@ Lastly, it was mentioned that there is also some inspiration from more soft and 
 ![alt text](image-3.png)
 *Sprout Valley (2023) - Similarities between visual and color palettes*
 
+**Starting Sketches**
+
+Initial concepts for the game:
+![alt text](image-4.png)
+*UI idea and possible placement for elements*
+
+Initial logo concept: 
+![alt text](image-5.png)
+*Logo idea without pixel art*
+
 ### **Mindset**
 
 *Catharsis* is designed to provoke a constant feeling of empathy. The player should never feel fully powerful, instead they should feel like they have just enough tools to make a difference. The whole game is an allegory to the concept that being kind and having hope will bring you good things back.
