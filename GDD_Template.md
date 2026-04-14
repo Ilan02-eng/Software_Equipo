@@ -58,8 +58,9 @@ Every time you get to heal your neighbours you will obtain experience points tha
 
 ### **Gameplay**
 
-"Catharsis" is a story that will follow you; a little black cat that moves to a new village "Finetown", in there he meets his new neighbours, who seem to not behave so fine - they rarely go out and do not seem to talk a lot. 
-The game starts by showing your new neighbourhood, where you meet the villagers who live next to your house; Rotoplas, a small purple rabbit who seems afraid of everything. 
+"Catharsis" is a story that will follow you; a little black cat that moves to a new village "Finetown" - in search for a new home, at first glance, the town will appear warm and welcoming since it is a colorful village with peaceful routines. In there he meets his new neighbours, who seem to not behave so fine - they rarely go out and do not seem to talk a lot, as the night falls, the cat will begin to notice many unsettling changes: the villagers seem to behave erratically, eventually transforming into strange and hostile creatures.
+
+The game starts by showing your new neighbourhood, where you meet the villagers who live next to your house; Rotoplas, a small purple rabbit with dark circles around her eyes and seems afraid of everything and Little Jimmy, a fluffy dog who always wear a night gown and a sleeping hat, he is always tired yet he never opens his eyes. As a protagonist, the user must explore the village by entering their differenet houses. The rougelite elements depend a lot on how the procedurally changed powers and  of each creature change every time. 
 
 
 The final goal will be to cure the different neighbours that live across your home. 
