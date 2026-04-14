@@ -1,21 +1,29 @@
-# **Game Name Here**
+# **Catharsis**
 
 ## _Game Design Document_
 
----
-Paulina Cortez Balvanera | A01782041
-
-María Espínola Forcén | A01787172
-
-Ilan Hanenberg Wasserman | A01787440
+![alt text](image.png)
 
 ##### **Copyright notice / author information / boring legal stuff nobody likes**
+
+This videogames has been developed thoughout the February-June 2026 semester (April 6th, 2026 - ____) for the subject TC2005B: Software Construction and Decision Making (Group 501) for the Tecnológico de Monterrey in Campus Santa Fe
+
+
+*Supervisors:* 
+- Gilberto Echeverría Furió 
+- Esteban Castillo Juarez
+- José Ángel Martínez Navarro
+
+*Development team:*
+
+- Paulina Cortez Balvanera | A01782041
+- María Espínola Forcén | A01787172
+- Ilan Hanenberg Wasserman | A01787440
 
 ##
 ## _Index_
 
 ---
-
 
 1. [Index](#index)
 2. [Game Design](#game-design)
@@ -51,7 +59,7 @@ Ilan Hanenberg Wasserman | A01787440
 ---
 
 ### **Summary**
-"Catharsis" is a rougelite videogame in 2D where you take the role of a little cat that comes to a new village and discovers his neighbours are behaving quite strange, just to learn that at night they are turning into mosnters. He slowly discovers some new cards across the town that will help him protect himself and his new home. 
+*Catharsis* is a rougelite videogame in 2D where you take the role of a little cat that comes to a new village and discovers his neighbours are behaving quite strange, just to learn that at night they are turning into mosnters. He slowly discovers some new cards across the town that will help him protect himself and his new home. 
 You will randomly explore the different houses of your neighbours, use your cards to save them and protect yourself, and find what is happening around the village.
 
 Every time you get to heal your neighbours you will obtain experience points that will help us keep developing the story and obtain better cards that will increase your abilities to fight, defend, heal and control your neighbours. Giving the monster random abilities every night that forces you to think about how to defend yourself without harming them. Learning more about what is the secret behind the way of how your neighbours are behaving.
@@ -60,14 +68,25 @@ Every time you get to heal your neighbours you will obtain experience points tha
 
 "Catharsis" is a story that will follow you; a little black cat that moves to a new village "Finetown" - in search for a new home, at first glance, the town will appear warm and welcoming since it is a colorful village with peaceful routines. In there he meets his new neighbours, who seem to not behave so fine - they rarely go out and do not seem to talk a lot, as the night falls, the cat will begin to notice many unsettling changes: the villagers seem to behave erratically, eventually transforming into strange and hostile creatures.
 
-The game starts by showing your new neighbourhood, where you meet the villagers who live next to your house; Rotoplas, a small purple rabbit with dark circles around her eyes and seems afraid of everything and Little Jimmy, a fluffy dog who always wear a night gown and a sleeping hat, he is always tired yet he never opens his eyes. As a protagonist, the user must explore the village by entering their differenet houses. The rougelite elements depend a lot on how the procedurally changed powers and  of each creature change every time. 
+The game starts by showing your new house in your new neighbourhood - inside the house we can see a small letter that explains the rules of your new home:
+1. Feel free to explore your surroundings, the nature is full of fruits and surprises.
+2. Please return home before nightfall. Nights can be unpredictable
+3. Be nice to everyone! A small act of kindness may be remembered longer than you think!
+4. If you notice unusual behaviour, do not panic. It will return to normal in the morning
+5. If you hear something calling your name in the night... ignore it!
+6. Do not enter locked houses, some doors are closed for a reason.
+*We hope you enjoy your stay, you'll get used to it!*
 
+After reading the letter, you go outside where you meet the villagers who live next to your house; **Rotoplas**, a small purple rabbit with dark circles around her eyes and seems afraid of everything and **Little Jimmy**, a fluffy dog who always wear a night gown and a sleeping hat, he is always tired yet he never opens his eyes. As a protagonist, the user must explore the village by entering their differenet houses. The rougelite elements depend a lot on how the procedurally change the layout and the powers of each creature every time. Allowing the player to keep learning fragments of the story, hidden secrets and discover the different cards. 
 
-The final goal will be to cure the different neighbours that live across your home. 
+The final goal will be to cure the different neighbours that live across your home through a card-based combat interaction system, where the user is capable of collecting different cards that obtain different capacities like attacking, healing, defending and controlling your enemies, yet unlike usual combat systems - the user should not search to eliminate the neighbours but instead to protect or 'purify' them, allowing them to return to their normal state without harm and trying to learn more about the weird curse that seems to posess the village.
+
 
 ### **Mindset**
 
-What kind of mindset do you want to provoke in the player? Do you want them to feel powerful, or weak? Adventurous, or nervous? Hurried, or calm? How do you intend to provoke those emotions?
+Catharsis is designed to provoke a constant feeling of empathy. The player should never feel fully powerful, instead they should feel like they have just enough tools to make a difference.
+
+By day the village feels calm and safe, encouraging curiosity and exploration. By night the tone shifts into something tense and uncertain. The player knows the monsters in front of them are their neighbors which makes every decision feel heavy. You're not here to destroy, you're here to protect.The goal is to make the player feel nervous but hopeful always one bad hand away from failure, but always believing they can pull it off.
 
 ## _Technical_
 
