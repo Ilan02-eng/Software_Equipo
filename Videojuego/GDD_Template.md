@@ -244,7 +244,7 @@ Are there any interesting mechanics? If so, how are you going to accomplish them
         1. Version I: Unsettling, weird, and not entirely safe - backroom similarities
         ![alt text](image-6.png)
 
-        *(Inspiration for the Version I room)*
+         *(Inspiration for the Version I room)*
 
         2. Version II: Dark, scary and mysterious - entirely dark room where barely anything sees the light
         ![alt text](image-8.png)
@@ -400,39 +400,43 @@ _(example)_
 
 ### **Style Attributes**
 
-Again, consistency is key. Define that consistency here. What kind of instruments do you want to use in your music? Any particular tempo, key? Influences, genre? Mood?
+The music of Catharsis will consist of two different tracks that will be played depending on the state or scene of the game. The main track will be played in a loop for most of the instances of the game while the second track will be only played while in combat. Both will be played in a loop. 
 
-Stylistically, what kind of sound effects are you looking for? Do you want to exaggerate actions with lengthy, cartoony sounds (e.g. mario&#39;s jump), or use just enough to let the player know something happened (e.g. mega man&#39;s landing)? Going for realism? You can use the music style as a bit of a reference too.
 
- Remember, auditory feedback should stand out from the music and other sound effects so the player hears it well. Volume, panning, and frequency/pitch are all important aspects to consider in both music _and_ sounds - so plan accordingly!
+This way we maintain a cohesive atmosphere while providing a dynamic shift in the energy according to what is happening in the game. 
 
 ### **Sounds Needed**
 
-1. Effects
-    1. Soft Footsteps (dirt floor)
-    2. Sharper Footsteps (stone floor)
-    3. Soft Landing (low vertical velocity)
-    4. Hard Landing (high vertical velocity)
-    5. Glass Breaking
-    6. Chest Opening
-    7. Door Opening
-2. Feedback
-    1. Relieved &quot;Ahhhh!&quot; (health)
-    2. Shocked &quot;Ooomph!&quot; (attacked)
-    3. Happy chime (extra life)
-    4. Sad chime (died)
+1. ***Effects***
+- The sound effects (SFX) are designed to provide feedback to the auditory player, ensuring each interaction from the player feels responsive, intuitive and impactful. To maintain the aesthetic of the game, the sound effects design will be inspired by a retro bit style, matching the game’s pixel-art identity.
+- **Movement**   
+    - A walking/foot steps effect while the player is exploring and moving around the map.
+- **Interactions**  
+    - Finding a card, like a shimmer effect.
+    - Opening a door, a wooden creak effect (when you enter the house of the enemy).
+- **Cards/Combat**
+    - Healing card effect.
+    - Attack card effect. 
+    - Control card effect (like a freezing effect).
+    - Victory/defeating the enemy.
 
-_(example)_
+2. ***Feedback***
+- Due to current development scope, the feedback from sound effects will be kept  direct and functional. Beyond basic interactions, the sound effects serve to communicate the player’s status and the weight of their choices, the combat feedback is prioritized through different sounds that signal the state of the battle and the actions that are taking place.
+
 
 ### **Music Needed**
 
-1. Slow-paced, nerve-racking &quot;forest&quot; track
-2. Exciting &quot;castle&quot; track
-3. Creepy, slow &quot;dungeon&quot; track
-4. Happy ending credits track
-5. Rick Astley&#39;s hit #1 single &quot;Never Gonna Give You Up&quot;
+The game will feature two tracks that define the gameplay state, designed to distinguish between peaceful exploration and active engagement for combat.
 
-_(example)_
+
+***Details:***
+- **Atmospheric Exploration (Main Track):** 
+    - Style: Ambient, melodic and immersive.
+    - Function: This track plays during the Title Screen, World Map, Inventory and Credits. It’s meant to be non-intrusive, allowing the player to focus on the game while still being immersed in the atmosphere that it provides for the game.
+
+- **Combat (Battle Track):**
+    - Style: High tempo, percussive and driving.
+    - Function: It will trigger immediately upon entering combat. The shift in rhythm creates a new atmosphere that generates a state of action for the player.
 
 
 ## _Schedule_
