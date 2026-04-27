@@ -181,7 +181,7 @@ Purpose: It provides a visual stage for the battle between the player and the op
 
 5. Ending Credits: 
 
-Purpose:Show the developers and collaborators of the game, includes:
+Purpose: Show the developers and collaborators of the game, includes:
 - Names: The team’s members' names. 
 - References: Giving credit to aspects used in the game from other sources.
 - Back: Allows the player to return to the Title Screen. 
