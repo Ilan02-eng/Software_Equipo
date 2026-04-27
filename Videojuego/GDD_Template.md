@@ -352,9 +352,11 @@ _(example)_
 
 ### **Style Attributes**
 
-The game follows a concept where contrast is a very important factor. The pixel-artstyle will be consistent thoughout the whole game, yet, day and night should depend on a high contrast between themes. Day time will consist on lighter colors
+The game follows a concept where contrast is a very important factor. The pixel-artstyle will be consistent thoughout the whole game, yet, day and night should depend on a high contrast between themes. Day time will consist on lighter colors, a softer color palette and the surroundings will be fulfilled with little trees and bushes with fruits.
 
-What kinds of colors will you be using? Do you have a limited palette to work with? A post-processed HSV map/image? Consistency is key for immersion.
+![alt text](image-10.png)
+
+
 
 What kind of graphic style are you going for? Cartoony? Pixel-y? Cute? How, specifically? Solid, thick outlines with flat hues? Non-black outlines with limited tints/shades? Emphasize smooth curvatures over sharp angles? Describe a set of general rules depicting your style here.
 
