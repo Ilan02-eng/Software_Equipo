@@ -137,7 +137,7 @@ By day the village feels calm and safe, encouraging curiosity and the need for e
 
 ### **Screens**
 
-1. Title Screen
+1. **Title Screen**
 
 Purpose: It is the first impression that the player gets of our game, it gives the player access to the main options.
 - Game logo and title: Positioned in the upwards central part of the screen, to establish the game’s identity.
@@ -147,6 +147,7 @@ Purpose: It is the first impression that the player gets of our game, it gives t
 - Background Music: An attractive and thematic track that sets the tone for the adventure.  
 - Studio’s Name and Year: Supernova @2026. 
 
+![alt text](image-11.png)
 *(Title screen initial concept)*
 
 2. Game/Map
@@ -156,7 +157,7 @@ Purpose: The main screen where the player navigates and interacts with the map.
 - Pause Button: Allows the player to stop for a moment the game and shows the Options Menu screen.
 - Background Music: A track that sets the motion of the game.
 
-
+![alt text](image-4.png)
  *(Game screen initial concept)* 
 
 3. Inventory (Card Collection)
