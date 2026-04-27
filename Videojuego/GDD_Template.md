@@ -247,6 +247,9 @@ Are there any interesting mechanics? If so, how are you going to accomplish them
         *(Inspiration for the Version I room)*
 
         2. Version II: Dark, scary and mysterious - entirely dark room where barely anything sees the light
+        ![alt text](image-8.png)
+        
+        *(Inspiration for the Version II room)*
     2. Objects
         1. _Interactive_
             1. Enemy
