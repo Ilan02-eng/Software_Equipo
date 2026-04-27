@@ -59,7 +59,7 @@ This videogames has been developed thoughout the February-June 2026 semester (Ap
 ---
 
 ### **Summary**
-*Catharsis* is a rougelite videogame in 2D where you take the role of a little cat that comes to a new village and discovers his neighbours are behaving quite strange, just to learn that at night they are turning into mosnters. He slowly discovers some new cards across the town that will help him protect himself and his new home. 
+*Catharsis* is a rougelite videogame presented in top-down perspective in 2D with a pixely artstyle, where you take the role of a little cat that comes to a new village and discovers his neighbours are behaving quite strange, just to learn that at night they are turning into monsters. He slowly discovers some new cards across the town that will help him protect himself and his new home. 
 You will randomly explore the different houses of your neighbours, use your cards to save them and protect yourself, and find what is happening around the village.
 
 Every time you get to heal your neighbours you will obtain experience points that will help us keep developing the story and obtain better cards that will increase your abilities to fight, defend, heal and control your neighbours. Giving the monster random abilities every night that forces you to think about how to defend yourself without harming them. Learning more about what is the secret behind the way of how your neighbours are behaving.
@@ -79,7 +79,9 @@ The game starts by showing your new house in your new neighbourhood - inside the
 
 *We hope you enjoy your stay, you'll get used to it!*
 
-After reading the letter, you go outside where you meet the villagers who live next to your house; **Rotoplas**, a small purple rabbit with dark circles around her eyes and seems afraid of everything and **Little Jimmy**, a fluffy dog who always wear a night gown and a sleeping hat, he is always tired yet he never opens his eyes. They also seem to mention another one of your neighbours; **Billy-Bob** yet you are never able to see him. As a protagonist, the user must explore the village by entering their different houses. The rougelite elements depend a lot on how the procedurally change the layout and the powers of each creature every time. Allowing the player to keep learning fragments of the story, hidden secrets and discover the different cards. 
+The letter will also include the basic instructions about how to develop themselves in the game in terms of both tasks and movement *(check in control section)*. 
+ 
+After reading the letter, you go outside where you meet a villager who live next to your house; **Little Jimmy**, a fluffy dog who always wear a night gown and a sleeping hat, he is always tired yet he never opens his eyes. As a protagonist, the user must explore the village by entering their different houses. The rougelite elements depend a lot on how the procedurally change the layout and the powers of each creature every time. Allowing the player to keep learning fragments of the story, hidden secrets and discover the different cards. 
 
 **Objective**
 
@@ -96,7 +98,7 @@ Death means that the player go down to just 3 random cards pushing them to explo
 
 **References and Inspirations**
 
-*Catharsis* has been developed with inspiration form multiple titles from different genres. As a team, it has been decided that the concept od the mechanics and rougelite structure is influenced by games like *Slay the Spire (2019)*, who is the image for card combat systems and its way to be replayable thoughout the gaming rounds.
+*Catharsis* has been developed with inspiration form multiple titles from different genres. As a team, it has been decided that the concept of the mechanics and rougelite structure is influenced by games like *Slay the Spire (2019)*, who is the image for card combat systems and its way to be replayable thoughout the gaming rounds.
 
 ![alt text](image-1.png)
 *Slay the Spire(2019) - Similarities for card concept*
@@ -136,18 +138,73 @@ By day the village feels calm and safe, encouraging curiosity and the need for e
 ### **Screens**
 
 1. Title Screen
-    1. Options
-2. Level Select
-3. Game
-    1. Inventory
-    2. Assessment / Next Level
-4. End Credits
 
-_(example)_
+Purpose: It is the first impression that the player gets of our game, it gives the player access to the main options.
+- Game logo and title: Positioned in the upwards central part of the screen, to establish the game’s identity.
+- Start Button: A flashy button with the word “START” to draw the player to start the game’s experience.
+- Options Menu Button: A button to allow the player to configure some aspects of the game.
+- Credits Button: A section to recognize the game collaborators and developers.
+- Background Music: An attractive and thematic track that sets the tone for the adventure.  
+- Studio’s Name and Year: Supernova @2026. 
+
+*(Title screen initial concept)*
+
+2. Game/Map
+
+Purpose: The main screen where the player navigates and interacts with the map.
+- Inventory/Card Collection: A button that allows the player to see the cards they have acquired.
+- Pause Button: Allows the player to stop for a moment the game and shows the Options Menu screen.
+- Background Music: A track that sets the motion of the game.
+
+
+ *(Game screen initial concept)* 
+
+3. Inventory (Card Collection)
+Purpose: Shows the player the cards they have acquired, it includes:
+
+- Cards: Shows all the cards the player currently has and allows to show the player the information of each card.
+- Back Button: Allows the player to return to the game screen.
+
+
+*(Inventory screen initial concept)*
+
+4. Combat Screen
+
+Purpose: It provides a visual stage for the battle between the player and the opponent/enemy, includes: 
+- Battlefield: The area where the combat takes place and the cards are played.
+- Hand Overlay: Positioned at the bottom part showing the player’s current playable cards.
+- Music: The track that sets the tone of the combat.
+- Health (life) Bar: Indicates the amount of health that the player and the enemy currently have.
+- Energy Bar: Shows the player the amount of available energy to play cards.
+
+*(Combat screen initial concept)*
+
+5. Ending Credits: 
+
+Purpose:Show the developers and collaborators of the game, includes:
+- Names: The team’s members' names. 
+- References: Giving credit to aspects used in the game from other sources.
+- Back: Allows the player to return to the Title Screen. 
+- Background Music: Same as the Title Screen.
+
 
 ### **Controls**
 
-How will the player interact with the game? Will they be able to choose the controls? What kind of in-game events are they going to be able to trigger, and how? (e.g. pressing buttons, opening doors, etc.)
+1. Moving: The controls will require the usage of the W, A, S, and D for determining the movement.
+    - W: up
+    - A: left
+    - S: down
+    - D: right 
+
+2. Combat: 
+- Selection: Hover the mouse to select a card and see the description, effects and cost of each card.
+- Execution: Click to play the selected card during a combat (each card type has its own visual and sound effect).
+
+3. Navigate:
+- You can navigate around the screens by using the mouse.
+- Click on the button that you want to interact with.  
+
+
 
 ### **Mechanics**
 
@@ -190,15 +247,55 @@ _(example)_
 
 ### **Game Flow**
 
-1. Player starts in forest
-2. Pond to the left, must move right
-3. To the right is a hill, player jumps to traverse it (&quot;jump&quot; taught)
-4. Player encounters castle - door&#39;s shut and locked
-5. There&#39;s a window within jump height, and a rock on the ground
-6. Player picks up rock and throws at glass (&quot;throw&quot; taught)
-7. … etc.
+**Game Starts**
+1. A start menu appears displaying the game's title and a button to begin.
+2. The player spawns in a flat village featuring bushes, trees, and two houses.
+3. The HUD is displayed, including the player's health bar.
 
-_(example)_
+**Initial Exploration**
+1. The player begins inside their own house, where a letter is found explaining the game's controls and the village's rules.
+2. The player explores the village, discovering letters scattered near bushes, chairs, and trees.
+3. The player notices that their neighbor is asleep outside their house.
+4. The player observes that Little Jimmy's house is emanating loud and unusual noises.
+
+
+**Night Exploration**
+
+1. The player exits their house to find that Little Jimmy is still inside his home, which continues to produce loud noises.
+2. The player enters the house to investigate and ensure everything is alright.
+3. A combat encounter begins in an attempt to cure Little Jimmy.
+4. If the player is defeated, the game resets and the player retains only 3 randomly selected cards from their deck.
+5. If the player wins, Little Jimmy is partially cured.
+6. The player returns home to rest.
+
+
+**Second Day**
+1. The player resumes their investigation of the village.
+2. The player continues to discover new cards throughout the environment.
+
+
+**Second Night**
+1. The player returns to Little Jimmy's house.
+2. A second combat encounter begins in another attempt to cure Little Jimmy.
+3. If the player is defeated, the game resets and the player retains only 3 randomly selected cards from their deck.
+4. If the player wins, Little Jimmy is further cured.
+5. The player returns home to rest.
+
+
+**Third Day**
+
+1. The player resumes their investigation of the village.
+2. The player continues to discover new cards throughout the environment.
+
+
+**Third Night**
+
+1. The player returns to Little Jimmy's house.
+2. A third and final combat encounter begins in a last attempt to cure Little Jimmy.
+3. If the player is defeated, the game resets and the player retains only 3 randomly selected cards from their deck.
+4. If the player wins, Little Jimmy is fully cured and appears in his normal form.
+5. The player saves the village and the game concludes.
+
 
 ## _Development_
 
