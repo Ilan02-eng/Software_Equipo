@@ -235,14 +235,19 @@ Are there any interesting mechanics? If so, how are you going to accomplish them
     2. Objects
         1. _Ambient_
             1. Furniture
-
-            2. 
         2. _Interactive_
             1. Letter
             2. Bed
             3. Door
-
-_(example)_
+3. Little Jimmy's House
+    1. Mood
+        1. Version I: Unsettling, weird, and not entirely safe - backroom similarities
+        ![alt text](image-6.png)
+        *(Inspiration for the Version I room)*
+        2. Version II: Dark, scary and mysterious - entirely dark room where barely anything sees the light
+    2. Objects
+        1. _Interactive_
+            1. Enemy
 
 ### **Game Flow**
 
@@ -341,6 +346,8 @@ _(example)_
 ---
 
 ### **Style Attributes**
+
+The game follows a concept where contrast is a very important factor. The pixel-artstyle will be consistent thoughout the whole game, yet, day and night should depend on a high contrast between themes. Day time will consist on lighter colors
 
 What kinds of colors will you be using? Do you have a limited palette to work with? A post-processed HSV map/image? Consistency is key for immersion.
 
