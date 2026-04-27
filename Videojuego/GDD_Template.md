@@ -242,7 +242,7 @@ Are there any interesting mechanics? If so, how are you going to accomplish them
 3. Little Jimmy's House
     1. Mood
         1. Version I: Unsettling, weird, and not entirely safe - backroom similarities
-        ![alt text](image-6.png)
+        ![alt text](image-9.png)
 
          *(Inspiration for the Version I room)*
 
