@@ -216,34 +216,31 @@ Are there any interesting mechanics? If so, how are you going to accomplish them
 
 ---
 
-_(Note : These sections can safely be skipped if they&#39;re not relevant, or you&#39;d rather go about it another way. For most games, at least one of them should be useful. But I&#39;ll understand if you don&#39;t want to use them. It&#39;ll only hurt my feelings a little bit.)_
-
 ### **Themes**
 
-1. Forest
+1. Outside world: Surroundings around the neighbourhood.
     1. Mood
-        1. Dark, calm, foreboding
+        1. Light, soft, and calm. 
     2. Objects
         1. _Ambient_
-            1. Fireflies
-            2. Beams of moonlight
-            3. Tall grass
+            1. Flowers
+            2. Grass
         2. _Interactive_
-            1. Wolves
-            2. Goblins
-            3. Rocks
-2. Castle
+            1. Bushes
+            2. Trees
+            3. Houses (Personal and Neighbour's)
+2. Personal House
     1. Mood
-        1. Dangerous, tense, active
+        1. Cozy, warm and homelike
     2. Objects
         1. _Ambient_
-            1. Rodents
-            2. Torches
-            3. Suits of armor
+            1. Furniture
+
+            2. 
         2. _Interactive_
-            1. Guards
-            2. Giant rats
-            3. Chests
+            1. Letter
+            2. Bed
+            3. Door
 
 _(example)_
 
