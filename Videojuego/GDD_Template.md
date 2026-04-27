@@ -187,6 +187,8 @@ Purpose: Show the developers and collaborators of the game, includes:
 - Back: Allows the player to return to the Title Screen. 
 - Background Music: Same as the Title Screen.
 
+*(Ending credits screen initial concept)*
+
 
 ### **Controls**
 
