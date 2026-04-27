@@ -243,7 +243,10 @@ Are there any interesting mechanics? If so, how are you going to accomplish them
     1. Mood
         1. Version I: Unsettling, weird, and not entirely safe - backroom similarities
         ![alt text](image-6.png)
+        ![alt text](image-7.png)
+
         *(Inspiration for the Version I room)*
+
         2. Version II: Dark, scary and mysterious - entirely dark room where barely anything sees the light
     2. Objects
         1. _Interactive_
