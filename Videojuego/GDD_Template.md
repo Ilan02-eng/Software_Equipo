@@ -177,6 +177,7 @@ Purpose: It allows the player to show their progress and interact with some aspe
 - Statistics: Allows the player to see the current stats of the game’s round.
 - Back: During a round it allows the player to return to the game’s screen.
 
+![alt text](statistics.png)
 *(Statistics screen initial concept)*
 
 5. Combat Screen
@@ -188,7 +189,10 @@ Purpose: It provides a visual stage for the battle between the player and the op
 - Health (life) Bar: Indicates the amount of health that the player and the enemy currently have.
 - Energy Bar: Shows the player the amount of available energy to play cards.
 
-*(Combat screen initial concept)*
+![alt text](<Choosing arena.png>)
+*(Choosing arena screen initial concept)*
+![alt text](Battlefield-1.png)
+*(Combat main screen initial concept)*
 
 6. Saving Menu:
 
@@ -206,6 +210,7 @@ Purpose: Show the developers and collaborators of the game, includes:
 - Back: Allows the player to return to the Title Screen. 
 - Background Music: Same as the Title Screen.
 
+![alt text](Credits.png)
 *(Ending credits screen initial concept)*
 
 
