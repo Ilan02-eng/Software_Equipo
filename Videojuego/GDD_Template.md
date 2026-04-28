@@ -81,7 +81,9 @@ The game starts by showing your new house in your new neighbourhood - inside the
 
 The letter will also include the basic instructions about how to develop themselves in the game in terms of both tasks and movement *(check in control section)*. 
  
-After reading the letter, you go outside where you meet a villager who live next to your house; **Little Jimmy**, a fluffy dog who always wear a night gown and a sleeping hat, he is always tired yet he never opens his eyes. As a protagonist, the user must explore the village by entering their different houses. The rougelite elements depend a lot on how the procedurally change the layout and the powers of each creature every time. Allowing the player to keep learning fragments of the story, hidden secrets and discover the different cards. 
+After reading the letter, you go outside where you meet a villager who live next to your house; **Little Jimmy**, a fluffy dog who always wear a night gown and a sleeping hat, he is always tired yet he never opens his eyes. As a protagonist, the user must explore the village by entering their neigbour's different houses. In this case, upon entering Little Jimmy's house, the player will encounter three rooms whose order is randomized every run, ensuring no two playthroughs feel the same. Two of the rooms serve as exploration spaces,they appear empty at first glance, but contain hidden cards scattered throughout that reward careful observation and encourage the player to search thoroughly before moving on. The third room is where Little Jimmy resides in his monster form, triggering the combat encounter. Since the player never knows which room holds the encounter, every door opened carries a sense of tension and uncertainty, reinforcing the unpredictable nature of the roguelite experience. 
+
+The rougelite elements depend a lot on how the procedurally change the layout and the powers of each creature every time. Allowing the player to keep learning fragments of the story, hidden secrets and discover the different cards. 
 
 **Objective**
 
@@ -448,13 +450,20 @@ For the creation of the game Catharsis, we need to consider the next classes and
 
 ### **Style Attributes**
 
-The game follows a concept where contrast is a very important factor. The pixel-artstyle will be consistent throughout the whole game, yet, day and night should depend on a high contrast between themes. Day time will consist of lighter colors, a softer color palette and the surroundings will be fulfilled with little trees and bushes with fruits.
+The game's visual identity is built around contrast as its core design principle. The pixel-art style remains consistent throughout the entire game, but the shift between day and night creates a striking tonal difference that reinforces the game's emotional duality.
+Daytime is characterized by a warm, soft color palette with high brightness and gentle saturation. The exterior world feels inviting and safe, the village is filled with small trees,bushes and colorful flowers that encourage the player to explore freely. The lighting is even and welcoming giving the impression that everything is as it should be.
+
 
 ![alt text](image-10.png)
 
-On the other side, we have a darker theme for the nights, consisting on a darker color palette and a more unsettling atmosphere. The pixel artstyle is still consistent but we depend on a much weird style where everything seems strange. The different rooms inside Little Jimmy's house have different color palettes yet all of them maintain the weird theme and minimalist areas. 
+Nighttime transitions into a darker and more desaturated palette where shadows dominate and familiar shapes become unsettling.m The same village that felt cozy during the day now carries an underlying tension. The pixel art style is preserved but the color choices and lighting shifts make the environment feel strange and unpredictable, as if the world itself has changed. 
+
 ![alt text](image-17.png)
 
+Little Jimmy's house serves as the most extreme expression of this contrast. Its interior is divided into different rooms each sharing a sense of wrongness, minimalist layouts, oppressive darkness and an atmosphere that feels far removed from the warmth of the daytime world. The two room versions (I and II) escalate this feeling progressively, moving from unsettling to outright disturbing, reflecting the deeper the player ventures into the mystery of the village. 
+
+
+This visual contrast is not purely aesthetic, it is a storytelling tool. The player learns to read the environment that warmth means safety, darkness means danger.
 
 
 ### **Graphics Needed**
