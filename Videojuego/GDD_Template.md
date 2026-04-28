@@ -82,7 +82,6 @@ The game starts by showing your new house in your new neighbourhood - inside the
 The letter will also include the basic instructions about how to develop themselves in the game in terms of both tasks and movement *(check in control section)*. 
  
 After reading the letter, you go outside where you meet a villager who live next to your house; **Little Jimmy**, a fluffy dog who always wear a night gown and a sleeping hat, he is always tired yet he never opens his eyes. As a protagonist, the user must explore the village by entering their neigbour's different houses. In this case, upon entering Little Jimmy's house, the player will encounter three rooms whose order is randomized every run, ensuring no two playthroughs feel the same. Two of the rooms serve as exploration spaces,they appear empty at first glance, but contain hidden cards scattered throughout that reward careful observation and encourage the player to search thoroughly before moving on. The third room is where Little Jimmy resides in his monster form, triggering the combat encounter. Since the player never knows which room holds the encounter, every door opened carries a sense of tension and uncertainty, reinforcing the unpredictable nature of the roguelite experience. 
-
 The rougelite elements depend a lot on how the procedurally change the layout and the powers of each creature every time. Allowing the player to keep learning fragments of the story, hidden secrets and discover the different cards. 
 
 **Objective**
@@ -129,7 +128,7 @@ Initial logo concept:
 
 ### **Mindset**
 
-*Catharsis* is designed to provoke a constant feeling of empathy. The player should never feel fully powerful, instead they should feel like they have just enough tools to make a difference. The whole game is an allegory to the concept that being kind and having hope will bring you good things back.
+*Catharsis* is designed to provoke a constant feeling of empathy. The player should never feel fully powerful, instead they should feel like they have just enough tools to make a difference. The whole game is an allegory to the concept that being kind and having hope will bring you good things back through friendship.
 
 By day the village feels calm and safe, encouraging curiosity and the need for exploration. By night the tone shifts into something tense and uncertain - activating the sense of alert and need to be careful with your surroundings. The player knows the monsters in front of them are their neighbours; actual living creatures, which makes every decision feel heavy. You're not here to destroy, you're here to protect.The goal is to make the player feel nervous but hopeful always one bad hand away from failure, but always believing they can pull it off.
 
@@ -199,7 +198,9 @@ Purpose: It provides a visual stage for the battle between the player and the op
 Purpose: Screen that will allow the system to save the game and statistics of the progress and stop the game.
 - Save **and** exit button: Button that allows to save the progress of the game and saves the current development of the player
 - Exit button: Button to leave the game without updating the statistics about the player's progress.
+- Return to game: Button to stop the saving process and return to gameplay mode 
 
+![alt text](Saving.png)
 *(Saving menu screen initial concept)*
 
 7. Ending Credits: 
