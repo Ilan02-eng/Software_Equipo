@@ -157,7 +157,7 @@ Purpose: The main screen where the player navigates and interacts with the map.
 - Pause Button: Allows the player to stop for a moment the game and shows the Options Menu screen.
 - Background Music: A track that sets the motion of the game.
 
-
+![alt text](<Game map.png>)
  *(Game screen initial concept)* 
 
 3. Inventory (Card Collection)
@@ -166,7 +166,7 @@ Purpose: Shows the player the cards they have acquired, it includes:
 - Cards: Shows all the cards the player currently has and allows to show the player the information of each card.
 - Back Button: Allows the player to return to the game screen.
 
-
+![alt text](iventory.png)
 *(Inventory screen initial concept)*
 
 4. Statistics Menu
