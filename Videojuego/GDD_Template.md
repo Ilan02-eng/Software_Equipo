@@ -253,15 +253,19 @@ Our game introduces multiple mechanics that allow the game to feel unique, strat
 The cards are the main element of the game. These are the primary way the player interacts with the enemy and progresses through each run and level.
 - Card Types: Cards are divided into four types:
     - *Attack*: Cards that deal damage to enemies, the damage of each card is based on predefined numerical range.
+
 ![alt text](image-12.png)
 
     - *Defense*: Cards that provide protection or restore health. 
+
 ![alt text](image-13.png)
 
     - *Control*: Cards that affect the flow of the combat, such as limiting the enemy actions.
+
 ![alt text](image-14.png)
 
     - *Wildcard*: Special cards with the unique effect of trading health for energy, introducing high risk decisions.
+    
 ![alt text](image-15.png)
 
 - Deck Building: As the player explores the map, they will find new cards that are added to their collection.
