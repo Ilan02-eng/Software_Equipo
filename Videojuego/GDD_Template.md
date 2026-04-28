@@ -261,6 +261,37 @@ The cards are the main element of the game. These are the primary way the player
 
 ![alt text](image-16.png)
 
+4. Scoring System: 
+
+The objective of the scoring system is to encourage the player to continue playing in order to improve their performance and track their progress, while also showcasing their achievements. 
+- Stats calculation: Throughout each run,the game tracks different metrics of performance. These stats may include:
+    - Damage Taken
+    - Damage Dealt
+    - Cards Collected 
+    - HP Recovered
+    - Time
+- End of Run Display: When the player dies or finishes the run, a summary screen is shown displaying the collected stats. This allows the player to see their performance and improvement areas in future runs. 
+
+5. Map
+
+The map represents the area (both interior of the house and exterior) where the player explores each run. Designed to encourage exploration and decision making.
+- Exterior Area: This area remains the same in every run and it's not generated randomly. The player can explore this area to find and acquire cards for progression.
+- Interior Area: This is in the interior of the house, each run generates a small set of rooms inside the house. In addition to the entrance there are 3-4 rooms randomly generated. The position and connection of these rooms changes every run.
+- Enemy/Boss Room: One of the interior rooms contains the main enemy, its location is randomized every run. This is the key objective of the run, and the payer must face it to complete the level.
+- Exploration: The remaining rooms of the house and the exterior can be both explored to find new cards, allowing the player to prepare and progress before facing the main enemy. 
+- Player Interaction: The player can move around the exterior and interior areas of the map, upon entering a room the player can interact with it to find and collect cards. The player’s exploration is sequential, meaning the player chooses the order in which to visit the rooms. The hidden cards of each room cannot be collected more than once.
+- Random Layout: The position of each interior room is randomized every run, encouraging exploration.
+
+6. Enemy
+- Enemy Stats: The enemy has a set amount of health that varies depending on the level. Its health is generated from a predefined numerical range.
+- Behavior: The enemy may have slight variations in behavior, making each combat less predictable.
+- Progression: To complete the game, the player must defeat the enemy 3 times in a single run. After each defeat the difficulty of the enemy increases progressively.
+- Player Interaction: The player interacts with the enemy through the card system during each combat. By playing cards the player can deal damage, control or defeat the enemy. The player must adapt their strategy based on the enemy’s behavior. During its turn, the enemy can attack and deal damage to the player, reducing their HP.
+- Defeat: If the player’s health reaches 0, the run ends and their performance and stats are recorded.
+- Final Objective: The run is completed once the player defeats the enemy a third time.  
+
+
+
 ## _Level Design_
 
 ---
@@ -361,39 +392,47 @@ The cards are the main element of the game. These are the primary way the player
 
 ### **Abstract Classes / Components**
 
-1. BasePhysics
-    1. BasePlayer
-    2. BaseEnemy
-    3. BaseObject
-2. BaseObstacle
-3. BaseInteractable
+For the creation of the game Catharsis, we need to consider the next classes and components that will be used for the game’s development.
 
-_(example)_
+1. BasePhysics: Game physics, collisions and movement. 
+    - BasePlayer: Control of the player’s movement and progress.
+2. BaseObstacle: Defines the elements that can collide or block the player, like trees, bushes, doors, walls, etc.
+3. BaseEnemy: Controls the enemy actions.
+4. BaseInteractive: Defines the elements that the player can interact with, like doors to open a room or places where a card is hidden. 
+5. BaseSound: Controls the sound effects of the game.
+6. BaseMusic: Controls the music tracks of the game.
+7. BaseMap: Controls the random generation of the levels and map. 
+8. BaseCard: Defines and controls the stats, effects and costs of the  cards. 
+9. BaseUI: Controls the base interface of the player, energy bar, health bar, unlocked cards, etc.
+
 
 ### **Derived Classes / Component Compositions**
 
 1. BasePlayer
-    1. PlayerMain
-    2. PlayerUnlockable
-2. BaseEnemy
-    1. EnemyWolf
-    2. EnemyGoblin
-    3. EnemyGuard (may drop key)
-    4. EnemyGiantRat
-    5. EnemyPrisoner
-3. BaseObject
-    1. ObjectRock (pick-up-able, throwable)
-    2. ObjectChest (pick-up-able, throwable, spits gold coins with key)
-    3. ObjectGoldCoin (cha-ching!)
-    4. ObjectKey (pick-up-able, throwable)
-4. BaseObstacle
-    1. ObstacleWindow (destroyed with rock)
-    2. ObstacleWall
-    3. ObstacleGate (watches to see if certain buttons are pressed)
-5. BaseInteractable
-    1. InteractableButton
+- PlayerMain: Main character controlled by the player.
+2. BaseObstacle
+- ObstacleTree: Tree that blocks the movement of the player.
+- ObstacleBox: Box that blocks the movement of the player.
+- ObstacleBush: Bush that blocks the movement of the player.
+3. BaseEnemy
+- EnemyMain: Boss/Main Enemy controlled by the IA of the game.
+4. BaseInteractive
+- InteractiveTree: A tree that can be interacted by the player.
+- InteractiveBox: A box that can be interacted by the player.
+- InteractiveBush: A bush that can be interacted by the player.
+5. BaseSound
+- SoundHealing: A sound for when a healing card is used.
+- SoundHit: A sound when an attack card is used.
+- SoundShimmer: A sound when a card is found around the map.
+6. BaseMusic:
+- MusicMain: The track that will take place in must moments of the game except while in combat.
+- MusicCombat: The track that will take place in the moments when there’s combat. 
+7. BaseCard:
+- CardAttack: Controls the attack cards.
+- CardDefense: Controls the defensive cards.
+- CardControl: Controls de control cards.
+- CardWildcard: Controls the wildcards.
 
-_(example)_
 
 ## _Graphics_
 
@@ -405,47 +444,57 @@ The game follows a concept where contrast is a very important factor. The pixel-
 
 ![alt text](image-10.png)
 
-
-
-What kind of graphic style are you going for? Cartoony? Pixel-y? Cute? How, specifically? Solid, thick outlines with flat hues? Non-black outlines with limited tints/shades? Emphasize smooth curvatures over sharp angles? Describe a set of general rules depicting your style here.
+On the other side, we have a darker theme 
 
 Well-designed feedback, both good (e.g. leveling up) and bad (e.g. being hit), are great for teaching the player how to play through trial and error, instead of scripting a lengthy tutorial. What kind of visual feedback are you going to use to let the player know they&#39;re interacting with something? That they \*can\* interact with something?
 
 ### **Graphics Needed**
 
 1. Characters
-    1. Human-like
-        1. Goblin (idle, walking, throwing)
-        2. Guard (idle, walking, stabbing)
-        3. Prisoner (walking, running)
-    2. Other
-        1. Wolf (idle, walking, running)
-        2. Giant Rat (idle, scurrying)
-2. Blocks
-    1. Dirt
-    2. Dirt/Grass
-    3. Stone Block
-    4. Stone Bricks
-    5. Tiled Floor
-    6. Weathered Stone Block
-    7. Weathered Stone Bricks
-3. Ambient
-    1. Tall Grass
-    2. Rodent (idle, scurrying)
-    3. Torch
-    4. Armored Suit
-    5. Chains (matching Weathered Stone Bricks)
-    6. Blood stains (matching Weathered Stone Bricks)
-4. Other
-    1. Chest
-    2. Door (matching Stone Bricks)
-    3. Gate
-    4. Button (matching Weathered Stone Bricks)
+    1. Protagonist (player)
+        1. Black cat (idle, walking up/down/left/right)
+    2. NPCs
+        1. Little Jimmy - normal form (idle, sleeping)
+        2. Little Jimmy - monster form (idle, attacking, defeated)
+2. Tiles / Environment
+    1. Exterior
+        1. Grass
+        2. Dirt path
+        3. Flowers
+        4. Bush (regular, interactive)
+        5. Tree
+        6. Fence
+    2. Interior - Player's house
+        1. Wooden floor
+        2. Walls (cozy style)
+        3. Furniture (bed, table, chair)
+    3. Interior - Little Jimmy's house
+        1. Dark floor
+        2. Walls (unsettling style, Version I and II)
+3. Interactable Objects
+    1. Letter (on table)
+    2. Door (house exterior)
+    3. Discoverable cards 
+    4. Fruit (on bushes and trees)
+4. HUD / UI
+    1. Health bar (player and enemy)
+    2. Energy bar
+    3. Card frame (per category: attack, defense, healing, crowd control)
+    4. Card illustrations (one per card)
+    5. Inventory screen background
+    6. Statistics menu overlay
+    7. Saving screen overlay
+5. Screens
+    1. Title screen background
+    2. Game logo / wordmark
+    3. Credits screen background
+6. Effects
+    1. Day/night lighting overlay
+    2. Damage / heal visual feedback
+    3. Victory effect (Little Jimmy cured)
 
-_(example)_
 
-
-## _Sounds/Music_
+## _Sounds & Music_
 
 ---
 
@@ -494,34 +543,64 @@ The game will feature two tracks that define the gameplay state, designed to dis
 
 ---
 
-_(define the main activities and the expected dates when they should be finished. This is only a reference, and can change as the project is developed)_
+**1. Week 1 — Foundations** (May 5–11)
+- Project Setup: Initial configuration of the game project within the engine.
+- Base Classes: Development of the fundamental architectural components:
+    - Base Entity: Core logic for game objects.
+        - Base Player: Handles character-specific logic.
+        - Base Enemy: Handles AI and adversary logic.
+- Base App State: Management of different game phases:
+    - Game World: Implementation of exterior maps and interior house layouts.
+    - Menu World: Development of the title screen and navigation.
+- Controls: Player movement using WASD and implementation of basic collision systems.
 
-1. develop base classes
-    1. base entity
-        1. base player
-        2. base enemy
-        3. base block
-  2. base app state
-        1. game world
-        2. menu world
-2. develop player and basic block classes
-    1. physics / collisions
-3. find some smooth controls/physics
-4. develop other derived classes
-    1. blocks
-        1. moving
-        2. falling
-        3. breaking
-        4. cloud
-    2. enemies
-        1. soldier
-        2. rat
-        3. etc.
-5. design levels
-    1. introduce motion/jumping
-    2. introduce throwing
-    3. mind the pacing, let the player play between lessons
-6. design sounds
-7. design music
 
-_(example)_
+**2. Week 2 — Exploration and World** (May 12–18)
+- Interactions: A robust system for object interaction, including:
+    - Starting Letter: Serves as the controls tutorial for the player.
+    - Doors: Mechanics for entering and exiting houses.
+    - Hidden Cards: Discoverable elements scattered across the map.
+- Environment: Day/night cycle with dynamic palette and lighting shifts.
+- UI/HUD: Basic interface elements for tracking gameplay:
+    - Health Bar: Visual representation of player vitality.
+    - Energy Bar: Visual representation of resource levels.
+
+
+**3. Week 3 — Combat System** (May 19–25)
+- Mechanics: Core card system functionality:
+    - Hand Overplay: Management of the player&apos;s active hand.
+    - Energy Trade-Off: Consumption of energy per turn.
+    - Interaction: Card execution triggered on click events.
+- Classification: Implementation of card types:
+    - Attack: Cards that deal damage.
+    - Defense: Cards that provide protection.
+    - Healing: Cards that restore health.
+    - Control: Cards for crowd management.
+- Encounter: Initial combat sequence against Little Jimmy.
+- Logic: Defeat conditions and reset mechanics (return to 3 random cards).
+
+
+**4. Week 4 — Progression and Content** (May 26 – June 1)
+- Progression: Experience system and card unlocking mechanics.
+- Upgrades: Fusion of duplicate cards to level up stats.
+- Scaling: Three distinct combat encounters against Little Jimmy with escalating difficulty.
+- Variability: Roguelite elements introduced via layout variations per night.
+
+
+**5. Week 5 — Polish and Delivery** (Jun 2–8)
+- Art Assets: Final sprites and illustrations, including:
+    - Protagonist: Idle and movement animations.
+    - Little Jimmy: Sprites for normal and monster forms.
+    - Cards: Unique illustrations for each card category.
+- Audio Design: Soundscape development:
+    - Exploration Music: Looping ambient tracks.
+    - Combat Music: Looping high-energy tracks.
+    - Sound Effects: Specific audio cues for gameplay:
+        - Environment: Player footsteps and door opening sounds.
+        - Interactions: Shimmer sounds for card discovery.
+        - Mechanics: Audio effects tailored to each card type.
+- Interface: Creation of secondary game screens:
+    - Collection: Inventory and card collection screens.
+    - Credits: Ending sequence and contributor list.
+- Quality Assurance: Final testing, bug remediation, and difficulty balancing.
+
