@@ -330,9 +330,17 @@ The map represents the area (both interior of the house and exterior) where the 
         ![alt text](image-8.png)
         
         *(Inspiration for the Version II room)*
+
+        3. Version III: Muted, silent and very lonely - the area is fulfilled with plants yet there is no sign of life.
+        ![alt text](image-18.png)
+
+        *(Inspiration for the Version III room)*
+
     2. Objects
         1. _Interactive_
             1. Enemy
+            2. Doors
+            3. Cards
 
 ### **Game Flow**
 
@@ -440,13 +448,14 @@ For the creation of the game Catharsis, we need to consider the next classes and
 
 ### **Style Attributes**
 
-The game follows a concept where contrast is a very important factor. The pixel-artstyle will be consistent thoughout the whole game, yet, day and night should depend on a high contrast between themes. Day time will consist on lighter colors, a softer color palette and the surroundings will be fulfilled with little trees and bushes with fruits.
+The game follows a concept where contrast is a very important factor. The pixel-artstyle will be consistent throughout the whole game, yet, day and night should depend on a high contrast between themes. Day time will consist of lighter colors, a softer color palette and the surroundings will be fulfilled with little trees and bushes with fruits.
 
 ![alt text](image-10.png)
 
-On the other side, we have a darker theme 
+On the other side, we have a darker theme for the nights, consisting on a darker color palette and a more unsettling atmosphere. The pixel artstyle is still consistent but we depend on a much weird style where everything seems strange. The different rooms inside Little Jimmy's house have different color palettes yet all of them maintain the weird theme and minimalist areas. 
+![alt text](image-17.png)
 
-Well-designed feedback, both good (e.g. leveling up) and bad (e.g. being hit), are great for teaching the player how to play through trial and error, instead of scripting a lengthy tutorial. What kind of visual feedback are you going to use to let the player know they&#39;re interacting with something? That they \*can\* interact with something?
+
 
 ### **Graphics Needed**
 
