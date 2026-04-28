@@ -157,7 +157,7 @@ Purpose: The main screen where the player navigates and interacts with the map.
 - Pause Button: Allows the player to stop for a moment the game and shows the Options Menu screen.
 - Background Music: A track that sets the motion of the game.
 
-![alt text](image-4.png)
+
  *(Game screen initial concept)* 
 
 3. Inventory (Card Collection)
@@ -169,7 +169,15 @@ Purpose: Shows the player the cards they have acquired, it includes:
 
 *(Inventory screen initial concept)*
 
-4. Combat Screen
+4. Statistics Menu
+
+Purpose: It allows the player to show their progress and interact with some aspects of the game, it includes:
+- Statistics: Allows the player to see the current stats of the game’s round.
+- Back: During a round it allows the player to return to the game’s screen.
+
+*(Statistics screen initial concept)*
+
+5. Combat Screen
 
 Purpose: It provides a visual stage for the battle between the player and the opponent/enemy, includes: 
 - Battlefield: The area where the combat takes place and the cards are played.
@@ -180,7 +188,15 @@ Purpose: It provides a visual stage for the battle between the player and the op
 
 *(Combat screen initial concept)*
 
-5. Ending Credits: 
+6. Saving Menu:
+
+Purpose: Screen that will allow the system to save the game and statistics of the progress and stop the game.
+- Save **and** exit button: Button that allows to save the progress of the game and saves the current development of the player
+- Exit button: Button to leave the game without updating the statistics about the player's progress.
+
+*(Saving menu screen initial concept)*
+
+7. Ending Credits: 
 
 Purpose: Show the developers and collaborators of the game, includes:
 - Names: The team’s members' names. 
@@ -211,7 +227,26 @@ Purpose: Show the developers and collaborators of the game, includes:
 
 ### **Mechanics**
 
-Are there any interesting mechanics? If so, how are you going to accomplish them? Physics, algorithms, etc.
+Our game introduces multiple mechanics that allow the game to feel unique, strategic and interactive.
+
+**1. Random Generation:** 
+- Map Generation: Every time the player starts a new run the map inside the house will generate randomly from 2 map designs.
+- Enemy’s stats and gameplay: Every run and combat encounter, the enemy health will change depending on the level or difficulty. The heath is generated from a predefined numerical range. Additionally, the enemy may have slight variations in behavior, making each encounter less predictable.
+- Card Placement: The location of cards that are hidden around the map is different every level and run, encouraging exploration.
+- Hand Overplay or Deck System: In every combat encounter, the cards available in the player’s hand are randomly drawn from the deck of cards the player has acquired up to that point. Cards can appear multiple times in the deck. This introduces variability in each turn and forces the player’s strategy to adapt based on the current hand.
+
+**2. Energy:**
+- Cards Energy Cost: Each card requires a certain amount of energy to be played. The player has a fixed amount of energy available in every combat encounter, meaning the available energy doesn’t change between combats. This forces a strategic decision making, as the player must carefully choose how to spend their energy each turn. More powerful cards consume more energy, while simpler cards require less. 
+- Wildcard Card (Energy Trade-Off): The game includes a special card aside from the hand overplay. The wildcard is a special card that allows the player to regenerate energy at the cost of losing health.
+- Energy Bar: The player has a fixed amount of energy every combat, the maximum amount of energy that the player can have is 150 points. The bar regenerates 100 points at the start of each combat encounter.  
+
+**3. Cards:**
+
+The cards are the main element of the game. These are the primary way the player interacts with the enemy and progresses through each run and level.
+- Card Types: Cards are divided into four types:
+    - Attack: Cards that deal damage to enemies, the damage of each card is based on predefined numerical range.
+
+![alt text](image-12.png)
 
 ## _Level Design_
 
