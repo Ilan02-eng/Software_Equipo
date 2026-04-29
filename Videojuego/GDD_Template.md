@@ -265,7 +265,7 @@ The cards are the main element of the game. These are the primary way the player
 ![alt text](image-14.png)
 
     - *Wildcard*: Special cards with the unique effect of trading health for energy, introducing high risk decisions.
-    
+
 ![alt text](image-15.png)
 
 - Deck Building: As the player explores the map, they will find new cards that are added to their collection.
@@ -632,3 +632,4 @@ The game will feature two tracks that define the gameplay state, designed to dis
     - Credits: Ending sequence and contributor list.
 - Quality Assurance: Final testing, bug remediation, and difficulty balancing.
 
+***End*** 
