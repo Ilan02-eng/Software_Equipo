@@ -27,7 +27,7 @@ const CARD_POOL = [
     name: "Sharp Claw",
     type: CARD_TYPES.ATTACK,
     cost: 0,
-    effect: "Damage: 15",
+    effect: "Damage the enemy for 15 HP",
     action: (p, e) => {
       e.hp -= 15;
     },
@@ -35,19 +35,19 @@ const CARD_POOL = [
   {
     name: "Shadow Pounce",
     type: CARD_TYPES.ATTACK,
-    cost: 20,
-    effect: "Damage: 35",
+    cost: 15,
+    effect: "Damage the enemy for 25 HP",
     action: (p, e) => {
-      e.hp -= 35;
+      e.hp -= 25;
     },
   },
   {
     name: "Purr Attack",
     type: CARD_TYPES.ATTACK,
-    cost: 30,
-    effect: "Damage: 45",
+    cost: 25,
+    effect: "Damage the enemy for 35 HP",
     action: (p, e) => {
-      e.hp -= 45;
+      e.hp -= 35;
     },
   },
 
@@ -55,15 +55,15 @@ const CARD_POOL = [
     name: "Tuna Can",
     type: CARD_TYPES.DEFENSA,
     cost: 0,
-    effect: "Heal: 25",
+    effect: "Heals you for 15 HP",
     action: (p, e) => {
-      p.hp = Math.min(p.maxHP, p.hp + 25);
+      p.hp = Math.min(p.maxHP, p.hp + 15);
     },
   },
   {
     name: "Nine Lives",
     type: CARD_TYPES.DEFENSA,
-    cost: 40,
+    cost: 35,
     effect: "Evade the next enemy attack",
     action: (p, e) => {
       p.evasionChance += 1.0;
@@ -73,7 +73,7 @@ const CARD_POOL = [
   {
     name: "Cat Reflexes",
     type: CARD_TYPES.CONTROL,
-    cost: 35,
+    cost: 30,
     effect: "Enemy Stun 1 Turn",
     action: (p, e) => {
       e.stunnedTurns += 1;
@@ -82,7 +82,7 @@ const CARD_POOL = [
   {
     name: "Laser Pointer",
     type: CARD_TYPES.CONTROL,
-    cost: 45,
+    cost: 40,
     effect: "Enemy Stun 2 Turns",
     action: (p, e) => {
       e.stunnedTurns += 2;
@@ -94,7 +94,7 @@ const WILDCARD = {
   name: "Wildcard",
   color: "purple",
   cost: "30 HP",
-  effect: "+50 Energy",
+  effect: "Trade HP for 40 Energy points",
   hpCost: 30,
   action: (p, e) => {
     p.hp -= WILDCARD.hpCost;
@@ -409,6 +409,11 @@ class Game {
     ctx.font = "bold 11px Arial";
     
     ctx.fillText(card.name, card.x + card.w / 2, card.y + 25);
+
+    ctx.font = "bold 7px Arial";
+    ctx.fillStyle = "white";
+
+    ctx.fillText(card.effect, card.x + card.w / 2, card.y + 60);
     
     if (disabledWildcard) {
       ctx.fillStyle = "white";
@@ -614,16 +619,11 @@ class Game {
 
     selectedCard.action(this.player, this.enemy);
 
-    this.player.energy = Math.min(this.player.energy, this.player.maxEnergy);
-
-    if (isWildcard) {
-      if(this.wildcardUsed) return;
-      if(this.player.hp <= WILDCARD.hpCost) return;
-      this.wildcardUsed = true;
-    } else {
-      let oldX = selectedCard.x;
-      this.cards[index] = this.getRandomCard(oldX);
-    }
+   this.player.energy = Math.min(this.player.energy, this.player.maxEnergy);
+   if(!isWildcard){
+    let oldX = selectedCard.x;
+    this.cards[index] = this.getRandomCard(oldX);
+   }
 
     this.isPlayerTurn = false;
     this.enemyTurn();
