@@ -400,7 +400,7 @@ class Game {
 
     ctx.fillRect(card.x, card.y, card.w, card.h);
 
-    ctx.strokeStyle = "white"
+    ctx.strokeStyle = "black"
     ctx.lineWidth = 2;
     ctx.strokeRect(card.x, card.y, card.w, card.h);
 
