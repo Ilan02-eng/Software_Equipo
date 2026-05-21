@@ -245,8 +245,8 @@ Our game introduces multiple mechanics that allow the game to feel unique, strat
 
 **2. Energy:**
 - Cards Energy Cost: Each card requires a certain amount of energy to be played. The player has a fixed amount of energy available in every combat encounter, meaning the available energy doesn’t change between combats. This forces a strategic decision making, as the player must carefully choose how to spend their energy each turn. More powerful cards consume more energy, while simpler cards require less. 
-- Wildcard Card (Energy Trade-Off): The game includes a special card aside from the hand overplay. The wildcard is a special card that allows the player to regenerate energy at the cost of losing health.
-- Energy Bar: The player has a fixed amount of energy every combat, the maximum amount of energy that the player can have is 150 points. The bar regenerates 100 points at the start of each combat encounter.  
+- Wildcard Card (Energy Trade-Off): The game includes a special card aside from the hand overplay. The wildcard is a special card that allows the player to regenerate energy at the cost of losing health but it can only be used once per encounter.
+- Energy Bar: The player has a fixed amount of energy every combat, the maximum amount of energy that the player can have is 150 points. The bar regenerates 150 points at the start of each combat encounter.  
 
 **3. Cards:**
 
@@ -264,7 +264,7 @@ The cards are the main element of the game. These are the primary way the player
 
 ![alt text](image-14.png)
 
-    - *Wildcard*: Special cards with the unique effect of trading health for energy, introducing high risk decisions.
+    - *Wildcard*: Special cards with the unique effect of trading health for energy, introducing high risk decisions. This special cards can only be used once per combat. 
 
 ![alt text](image-15.png)
 
@@ -280,8 +280,8 @@ The objective of the scoring system is to encourage the player to continue playi
     - Damage Taken
     - Damage Dealt
     - Cards Collected 
-    - HP Recovered
-    - Time
+    - Level Difficulty Reached
+    - Time of the Run
 - End of Run Display: When the player dies or finishes the run, a summary screen is shown displaying the collected stats. This allows the player to see their performance and improvement areas in future runs. 
 
 5. Map
