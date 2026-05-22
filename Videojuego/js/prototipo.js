@@ -13,7 +13,7 @@ const SCENES = {
   CASA_LJ: "casa_lj",
   HABITACION: "habitacion",
   COMBATE: "combate",
-  GAME_OVER: "game_over"
+  GAME_OVER: "game_over",
 };
 
 const CARD_TYPES = {
@@ -105,7 +105,6 @@ const WILDCARD = {
 
 class combatBars {
   constructor(position, width, height, target, type, color) {
-    
     this.position = position;
     this.width = width;
     this.height = height;
@@ -114,53 +113,42 @@ class combatBars {
     this.barColor = color;
   }
 
-  draw(ctx){
+  draw(ctx) {
     let current;
     let max;
 
-    if(this.type === "hp"){
-        current = this.target.hp;
-        max = this.target.maxHP;
-    }
-    else if(this.type === "energy"){
-        current = this.target.energy;
-        max = this.target.maxEnergy;
+    if (this.type === "hp") {
+      current = this.target.hp;
+      max = this.target.maxHP;
+    } else if (this.type === "energy") {
+      current = this.target.energy;
+      max = this.target.maxEnergy;
     }
 
     let percentage = current / max;
 
     ctx.fillStyle = "black";
-    ctx. fillRect(
-        this.position.x,
-        this.position.y,
-        this.width,
-        this.height
-    );
+    ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
 
     ctx.fillStyle = this.barColor;
     ctx.fillRect(
-        this.position.x,
-        this.position.y,
-        this.width * percentage,
-        this.height
+      this.position.x,
+      this.position.y,
+      this.width * percentage,
+      this.height,
     );
 
     ctx.strokeStyle = "white";
-    ctx.strokeRect(
-        this.position.x,
-        this.position.y,
-        this.width,
-        this.height
-    );
+    ctx.strokeRect(this.position.x, this.position.y, this.width, this.height);
 
     ctx.fillStyle = "white";
-    ctx.font= "14px Arial";
+    ctx.font = "14px Arial";
     ctx.textAlign = "center";
 
     ctx.fillText(
-        `${current} / ${max}`,
-        this.position.x + this.width / 2,
-        this.position.y + 17
+      `${current} / ${max}`,
+      this.position.x + this.width / 2,
+      this.position.y + 17,
     );
   }
 }
@@ -184,6 +172,7 @@ class Player extends GameObject {
     }
 
     this.velocity = this.velocity.normalize().times(playerSpeed);
+    this.previousPosition = new Vector(this.position.x, this.position.y);
     this.position = this.position.plus(this.velocity.times(deltaTime));
     this.clampWithinCanvas();
   }
@@ -242,24 +231,101 @@ class Game {
     this.loadScene(SCENES.CASA);
     this.currentRoom = 0;
     this.livebars = [];
+    this.message = "";
+    this.messageTimer = 0;
   }
 
   initObjects() {
-    this.player = new Player(new Vector(canvasWidth / 2, canvasHeight / 2),55,55,"red");
+    this.player = new Player(
+      new Vector(canvasWidth / 2, canvasHeight / 2),
+      55,
+      55,
+      "red",
+    );
 
-    this.casa = new GameObject(new Vector(canvasWidth / 4, canvasHeight / 8),185,150,"grey");
-    this.casa_lj = new GameObject(new Vector(canvasWidth - 70, canvasHeight - 200),150,185,"purple");
+    this.casa = new GameObject(
+      new Vector(canvasWidth / 4, canvasHeight / 8),
+      185,
+      150,
+      "grey",
+    );
+    this.casa_lj = new GameObject(
+      new Vector(canvasWidth - 70, canvasHeight - 200),
+      150,
+      185,
+      "purple",
+    );
 
-    this.salida_casa = new GameObject(new Vector(canvasWidth / 2, 590),120,40,"grey");
-    this.salida_casa_lj = new GameObject(new Vector(20, canvasHeight / 2),40,120,"grey");
-    this.exit_room2 = new GameObject(new Vector(canvasWidth / 2, canvasHeight - canvasHeight),120,40,"grey");
-    this.exit_room1 = new GameObject(new Vector(canvasWidth / 2, canvasHeight),120,40,"grey");
+    this.salida_casa = new GameObject(
+      new Vector(canvasWidth / 2, 590),
+      120,
+      40,
+      "grey",
+    );
+    this.salida_casa_lj = new GameObject(
+      new Vector(20, canvasHeight / 2),
+      40,
+      120,
+      "grey",
+    );
+    this.exit_room2 = new GameObject(
+      new Vector(canvasWidth / 2, canvasHeight - canvasHeight),
+      120,
+      40,
+      "grey",
+    );
+    this.exit_room1 = new GameObject(
+      new Vector(canvasWidth / 2, canvasHeight),
+      120,
+      40,
+      "grey",
+    );
 
-    this.room_1 = new Room(new Vector(canvasWidth / 2, canvasHeight - canvasHeight),120,40,"green");
-    this.room_2 = new Room(new Vector(canvasWidth / 2, canvasHeight),120,40,"blue");
-    this.room_3 = new Room(new Vector(canvasWidth - 5, canvasHeight / 2),40,120,"yellow");
+    this.room_1 = new Room(
+      new Vector(canvasWidth / 2, canvasHeight - canvasHeight),
+      120,
+      40,
+      "green",
+    );
+    this.room_2 = new Room(
+      new Vector(canvasWidth / 2, canvasHeight),
+      120,
+      40,
+      "blue",
+    );
+    this.room_3 = new Room(
+      new Vector(canvasWidth - 5, canvasHeight / 2),
+      40,
+      120,
+      "yellow",
+    );
 
-    this.enemy = new Enemy(new Vector(canvasWidth - 160, canvasHeight * 0.3),70,70,"orange");
+    this.enemy = new Enemy(
+      new Vector(canvasWidth - 160, canvasHeight * 0.3),
+      70,
+      70,
+      "orange",
+    );
+
+    this.bushes = [
+      {
+        bush: new GameObject(new Vector(120, 520), 90, 70, "green"),
+        hasCard: true,
+        collected: false,
+      },
+
+      {
+        bush: new GameObject(new Vector(220, 330), 100, 80, "green"),
+        hasCard: false,
+        collected: false,
+      },
+
+      {
+        bush: new GameObject(new Vector(640, 180), 85, 65, "green"),
+        hasCard: true,
+        collected: false,
+      },
+    ];
   }
 
   randomEnemyLocation() {
@@ -312,12 +378,33 @@ class Game {
       let posX = 40 + i * 140;
       this.cards.push(this.getRandomCard(posX));
     }
-    
+
     this.wildcard = this.getWildcard();
 
-    this.playerHPBar = new combatBars(new Vector(40, 40),250,25,this.player, "hp", "green");
-    this.playerEnergyBar = new combatBars(new Vector(40, 80), 250, 25, this.player, "energy", "blue");
-    this.enemyHPBar = new combatBars(new Vector(510, 80), 250, 25, this.enemy, "hp", "red");
+    this.playerHPBar = new combatBars(
+      new Vector(40, 40),
+      250,
+      25,
+      this.player,
+      "hp",
+      "green",
+    );
+    this.playerEnergyBar = new combatBars(
+      new Vector(40, 80),
+      250,
+      25,
+      this.player,
+      "energy",
+      "blue",
+    );
+    this.enemyHPBar = new combatBars(
+      new Vector(510, 80),
+      250,
+      25,
+      this.enemy,
+      "hp",
+      "red",
+    );
   }
 
   loadScene(scene) {
@@ -331,6 +418,10 @@ class Game {
     switch (scene) {
       case SCENES.VILLA:
         this.actors = [this.player, this.casa, this.casa_lj];
+        for (let bushData of this.bushes) {
+          this.actors.push(bushData.bush);
+        }
+
         this.player.position = new Vector(canvasWidth / 2, canvasHeight / 2);
         break;
 
@@ -351,11 +442,10 @@ class Game {
         break;
 
       case SCENES.HABITACION:
-        if(this.currentRoom === 1){
-            this.actors = [this.player, this.exit_room1];
-        }
-        else if(this.currentRoom === 2){
-            this.actors = [ this.player, this.exit_room2];
+        if (this.currentRoom === 1) {
+          this.actors = [this.player, this.exit_room1];
+        } else if (this.currentRoom === 2) {
+          this.actors = [this.player, this.exit_room2];
         }
         break;
 
@@ -370,6 +460,14 @@ class Game {
   draw(ctx, card) {
     for (let actor of this.actors) {
       actor.draw(ctx);
+    }
+
+    if (this.messageTimer > 0) {
+      ctx.fillStyle = "black";
+      ctx.font = "bold 30px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText(this.message, canvasWidth / 2, 80);
+      this.messageTimer--;
     }
 
     if (this.currentScene === SCENES.COMBATE) {
@@ -400,21 +498,21 @@ class Game {
 
     ctx.fillRect(card.x, card.y, card.w, card.h);
 
-    ctx.strokeStyle = "black"
+    ctx.strokeStyle = "black";
     ctx.lineWidth = 2;
     ctx.strokeRect(card.x, card.y, card.w, card.h);
 
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
     ctx.font = "bold 11px Arial";
-    
+
     ctx.fillText(card.name, card.x + card.w / 2, card.y + 25);
 
     ctx.font = "bold 7px Arial";
     ctx.fillStyle = "white";
 
     ctx.fillText(card.effect, card.x + card.w / 2, card.y + 60);
-    
+
     if (disabledWildcard) {
       ctx.fillStyle = "white";
       ctx.font = "bold 22px Arial";
@@ -450,7 +548,7 @@ class Game {
     if (this.wildcard) {
       this.drawCardItem(ctx, this.wildcard);
     }
-    
+
     ctx.fillStyle = "black";
     ctx.font = "bold 18px Arial";
     ctx.textAlign = "center";
@@ -479,7 +577,7 @@ class Game {
         let damage = 20;
         this.player.hp -= damage;
         this.playerDeath();
-        if(this.currentScene === SCENES.GAME_OVER) return;
+        if (this.currentScene === SCENES.GAME_OVER) return;
       }
 
       this.player.evasionChance = 0;
@@ -494,7 +592,7 @@ class Game {
     this.isPlayerTurn = true;
   }
 
-  restartRun(){
+  restartRun() {
     this.player.hp = this.player.maxHP;
     this.player.energy = this.player.maxEnergy;
     this.player.evasionChance = 0;
@@ -503,14 +601,14 @@ class Game {
     this.cards = [];
     this.wildcard = null;
 
-    this.loadScene(SCENES.VILLA)
+    this.loadScene(SCENES.VILLA);
   }
 
-  playerDeath(){
-    if(this.player.hp <= 0){
-        this.player.hp = 0;
+  playerDeath() {
+    if (this.player.hp <= 0) {
+      this.player.hp = 0;
 
-        this.currentScene = SCENES.GAME_OVER;
+      this.currentScene = SCENES.GAME_OVER;
     }
   }
 
@@ -526,6 +624,18 @@ class Game {
 
     switch (this.currentScene) {
       case SCENES.VILLA:
+        for (let bushData of this.bushes) {
+          if (boxOverlap(this.player, bushData.bush)) {
+            this.player.position = this.player.previousPosition;
+            if (bushData.hasCard && bushData.collected === false) {
+              bushData.collected = true;
+              this.message = "New card!";
+              this.messageTimer = 120;
+            }
+            break;
+          }
+        }
+
         if (boxOverlap(this.player, this.casa)) {
           this.loadScene(SCENES.CASA);
         } else if (boxOverlap(this.player, this.casa_lj)) {
@@ -543,22 +653,27 @@ class Game {
         if (boxOverlap(this.player, this.salida_casa_lj)) {
           this.loadScene(SCENES.VILLA);
         } else if (boxOverlap(this.player, this.room_1)) {
-            this.currentRoom = 1;
-            this.loadScene(SCENES.HABITACION);
+          this.currentRoom = 1;
+          this.loadScene(SCENES.HABITACION);
         } else if (boxOverlap(this.player, this.room_2)) {
-            this.currentRoom = 2;
-            this.loadScene(SCENES.HABITACION);
+          this.currentRoom = 2;
+          this.loadScene(SCENES.HABITACION);
         } else if (boxOverlap(this.player, this.room_3)) {
           this.loadScene(SCENES.COMBATE);
         }
         break;
 
       case SCENES.HABITACION:
-        if(this.currentRoom === 1 && boxOverlap(this.player, this.exit_room1)){
-            this.loadScene(SCENES.CASA_LJ);
-        }
-        else if(this.currentRoom === 2 && boxOverlap(this.player, this.exit_room2)){
-            this.loadScene(SCENES.CASA_LJ);
+        if (
+          this.currentRoom === 1 &&
+          boxOverlap(this.player, this.exit_room1)
+        ) {
+          this.loadScene(SCENES.CASA_LJ);
+        } else if (
+          this.currentRoom === 2 &&
+          boxOverlap(this.player, this.exit_room2)
+        ) {
+          this.loadScene(SCENES.CASA_LJ);
         }
         break;
 
@@ -572,7 +687,12 @@ class Game {
   }
 
   combatClick(mouseX, mouseY) {
-    if (this.currentScene !== SCENES.COMBATE || !this.isPlayerTurn || this.player.hp <= 0) return;
+    if (
+      this.currentScene !== SCENES.COMBATE ||
+      !this.isPlayerTurn ||
+      this.player.hp <= 0
+    )
+      return;
 
     for (let i = 0; i < this.cards.length; i++) {
       let card = this.cards[i];
@@ -590,7 +710,7 @@ class Game {
     let wild = this.wildcard;
     if (
       wild &&
-      !this.wildcardUsed && 
+      !this.wildcardUsed &&
       this.player.hp > WILDCARD.hpCost &&
       mouseX >= wild.x &&
       mouseX <= wild.x + wild.w &&
@@ -607,23 +727,23 @@ class Game {
 
     if (isWildcard) {
       if (this.wildcardUsed) return;
-      if(this.player.hp <= WILDCARD.hpCost) return;
+      if (this.player.hp <= WILDCARD.hpCost) return;
       this.wildcardUsed = true;
-    } else{
-        if(this.player.energy < selectedCard.cost) return;
-        this.player.energy -= selectedCard.cost;
-        if(this.player.energy < 0){
-            this.player.energy = 0;
-        }
+    } else {
+      if (this.player.energy < selectedCard.cost) return;
+      this.player.energy -= selectedCard.cost;
+      if (this.player.energy < 0) {
+        this.player.energy = 0;
+      }
     }
 
     selectedCard.action(this.player, this.enemy);
 
-   this.player.energy = Math.min(this.player.energy, this.player.maxEnergy);
-   if(!isWildcard){
-    let oldX = selectedCard.x;
-    this.cards[index] = this.getRandomCard(oldX);
-   }
+    this.player.energy = Math.min(this.player.energy, this.player.maxEnergy);
+    if (!isWildcard) {
+      let oldX = selectedCard.x;
+      this.cards[index] = this.getRandomCard(oldX);
+    }
 
     this.isPlayerTurn = false;
     this.enemyTurn();
