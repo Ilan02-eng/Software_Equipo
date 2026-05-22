@@ -1,50 +1,14 @@
-# Video game development in JavaScript
+# Catharsis Instructions
 
-## Examples of games in JS
+***Prototype edition***
 
-- https://www.lessmilk.com/
-- https://eloquentjavascript.net/16_game.html
+*Objective of the protype: What does this game include?:*
 
-## JavaScript Canvas function documentation
+The current prototype was developed in order to contain the interior maps for both houses and the exterior map for the surroundings. This work also includes the basic mechanics of the cards and their function throughout the gameplay in terms of energy and health. 
 
-- https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D
+*Prototype Explanation: What is the current progress*
+The player starts in their own home, where the only current visible sprite is the door available that will help them leave their home. When collisioning with the door, the player will be on the outside map. 
 
-## Game techniques
+![alt text](<Game map.png>)
 
-- Sprite animation: https://www.youtube.com/watch?v=1bj7g6sXit8
-
-- Collision detection:
-    - https://www.sevenson.com.au/programming/sat/
-    - https://blog.bearcats.nl/capsule-triangle-sweep/
-
-- Camera control:
-    - https://jsfiddle.net/gfcarv/QKgHs/
-    - https://stackoverflow.com/questions/16919601/html5-canvas-camera-viewport-how-to-actually-do-it
-
-    - https://www.freecodecamp.org/news/javascript-game-tutorial-stick-hero-with-html-canvas/
-
-- Mouse events:
-    https://javascript.info/mouse-events-basics
-
-## Notes on JavaScript:
-
-- Using `for..in` with an Array will return the indices as strings.
-
-## Main topics to be covered
-
-- [ ] Embed canvas in a webpage
-- [ ] Physics
-- [ ] LERP (coordenadas, colores, etc.)
-- [ ] Basic motion
-- [ ] Collision detection
-- [ ] GUI text
-- [ ] GUI buttons
-- [ ] Audio elements
-- [ ] Saving data with `localStorage` / `sessionStorage` (https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage)
-- [ ] Switching scenes
-- [ ] Blinking effect
-- [ ] Tile maps
-- [ ] Aim with mouse
-- [ ] Animation system
-- [ ] Particle effects
-- [ ] Web requests
+On the outside map, there are three main sprites; the house of the character, the house of the neighbour and the different bushes. The player's house will only work for entering the house, then we have the bushes; these bushes contain cards hidden - in the case of this prototype, we are only considering cards that are currently hidden in established bushes, yet, . 
