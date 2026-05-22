@@ -396,7 +396,7 @@ class Game {
     }
 
     if(this.messageTimer > 0){
-      ctx.fillStyle = "white";
+      ctx.fillStyle = "black";
       ctx.font = "bold 30px Arial";
       ctx.textAlign = "center";
       ctx.fillText(this.message, canvasWidth / 2, 80);
