@@ -184,6 +184,7 @@ class Player extends GameObject {
     }
 
     this.velocity = this.velocity.normalize().times(playerSpeed);
+    this.previousPosition = new Vector(this.position.x, this.position.y);
     this.position = this.position.plus(this.velocity.times(deltaTime));
     this.clampWithinCanvas();
   }
@@ -242,6 +243,8 @@ class Game {
     this.loadScene(SCENES.CASA);
     this.currentRoom = 0;
     this.livebars = [];
+    this.message = "";
+    this.messageTimer = 0;
   }
 
   initObjects() {
@@ -260,6 +263,22 @@ class Game {
     this.room_3 = new Room(new Vector(canvasWidth - 5, canvasHeight / 2),40,120,"yellow");
 
     this.enemy = new Enemy(new Vector(canvasWidth - 160, canvasHeight * 0.3),70,70,"orange");
+
+    this.bushes = [
+    {bush: new GameObject(new Vector(120, 520), 90, 70, "green"),
+      hasCard: true,
+      collected: false
+    },
+
+    {bush: new GameObject(new Vector(220, 330), 100, 80, "green"),
+      hasCard: false,
+      collected: false
+    },
+
+    {bush: new GameObject(new Vector(640, 180), 85, 65, "green"),
+      hasCard: true,
+      collected: false
+    }];
   }
 
   randomEnemyLocation() {
@@ -331,6 +350,10 @@ class Game {
     switch (scene) {
       case SCENES.VILLA:
         this.actors = [this.player, this.casa, this.casa_lj];
+        for (let bushData of this.bushes){
+          this.actors.push(bushData.bush);
+        }
+
         this.player.position = new Vector(canvasWidth / 2, canvasHeight / 2);
         break;
 
@@ -370,6 +393,14 @@ class Game {
   draw(ctx, card) {
     for (let actor of this.actors) {
       actor.draw(ctx);
+    }
+
+    if(this.messageTimer > 0){
+      ctx.fillStyle = "white";
+      ctx.font = "bold 30px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText(this.message, canvasWidth / 2, 80);
+      this.messageTimer--;
     }
 
     if (this.currentScene === SCENES.COMBATE) {
@@ -526,6 +557,18 @@ class Game {
 
     switch (this.currentScene) {
       case SCENES.VILLA:
+        for(let bushData of this.bushes){
+          if(boxOverlap(this.player, bushData.bush)){
+            this.player.position = this.player.previousPosition;
+            if(bushData.hasCard && bushData.collected === false){
+              bushData.collected = true;
+              this.message = "New card!";
+              this.messageTimer = 120;
+            }
+            break;
+          }
+        }
+
         if (boxOverlap(this.player, this.casa)) {
           this.loadScene(SCENES.CASA);
         } else if (boxOverlap(this.player, this.casa_lj)) {
