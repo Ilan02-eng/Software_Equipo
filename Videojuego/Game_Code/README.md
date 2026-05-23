@@ -42,4 +42,18 @@ On the outside map, there are three main sprites; the house of the character, th
 
 *Battle*
 
-For the battle section, the user is not required to move but instead to use their cursor to select the respective card they want to use to develop throughout the battle. In case the player loses, the losing screen will appear and will ask for space in order to restart. If the player wins, the screen will restart at the player's house. 
+For the battle section, the user is not required to move but instead to use their cursor to select the respective card they want to use to develop throughout the battle. In case the player loses, the losing screen will appear and will ask for SPACE in order to restart. If the player wins, the screen will restart at the player's house. 
+
+The battle works with a turn system that starts with the player and after each action taken by the player it switches to the enemy for it to attack and so on (the enemy turns can be affected by the control cards as listed below).
+
+During the battle the player has access to 4 cards on hand, each of this cards is selected randomly from the accesible cards and has different stats and mechanics. To use a card the player has an energy bar that decreses depending on the cost of each card.
+
+| Card Type | Color | Mechanic/Effect |
+|---|---|---|
+| Attack | Red | Deals damage to the HP of the enemy |
+| Defense | Green | Recovers HP of the player or adds the effect pf evasion that allows the player to protect itself from one attack of the enemy|
+| Control | Blue | Skips the turns or turns of the enemy not allowing it to attack | 
+
+The player has acces to a 5th card a Wildcard that has the color purple this is the only way the player has to recover energy during the battle but with a twist for the player to be able to use this card the player has to sacriface some of its HP. This card can only be used once per battle. 
+
+If the player's HP bar reaches 0 the player dies and has to restart to continue. 

@@ -414,44 +414,41 @@ The map represents the area (both interior of the house and exterior) where the 
 
 For the creation of the game Catharsis, we need to consider the next classes and components that will be used for the game’s development.
 
-1. BasePhysics: Game physics, collisions and movement. 
-    - BasePlayer: Control of the player’s movement and progress.
-2. BaseObstacle: Defines the elements that can collide or block the player, like trees, bushes, doors, walls, etc.
-3. BaseEnemy: Controls the enemy actions.
-4. BaseInteractive: Defines the elements that the player can interact with, like doors to open a room or places where a card is hidden. 
-5. BaseSound: Controls the sound effects of the game.
-6. BaseMusic: Controls the music tracks of the game.
-7. BaseMap: Controls the random generation of the levels and map. 
-8. BaseCard: Defines and controls the stats, effects and costs of the  cards. 
-9. BaseUI: Controls the base interface of the player, energy bar, health bar, unlocked cards, etc.
+1. GameObject: Base class for all visible elements on screen, storing transform properties, dimensions, colors, and sprite data.
+2. combatBars: Class to create and draw the HP and energy bars during the combat scene.
+3. SCENES (Data): Defines the main states and scenes of the game (VILLA, CASA, CASA_LJ, HABITACION, COMBATE, GAME_OVER).
+4. CARD_POOL (Data): Pool of available cards for the combat, each card has a direct effect that affects either the player or the enemy.
+5. WILDCARD (Data): Defines the wildcard card that trades player HP for energy points during combat.
 
 
 ### **Derived Classes / Component Compositions**
 
-1. BasePlayer
-- PlayerMain: Main character controlled by the player.
-2. BaseObstacle
-- ObstacleTree: Tree that blocks the movement of the player.
-- ObstacleBox: Box that blocks the movement of the player.
-- ObstacleBush: Bush that blocks the movement of the player.
-3. BaseEnemy
-- EnemyMain: Boss/Main Enemy controlled by the IA of the game.
-4. BaseInteractive
-- InteractiveTree: A tree that can be interacted by the player.
-- InteractiveBox: A box that can be interacted by the player.
-- InteractiveBush: A bush that can be interacted by the player.
-5. BaseSound
-- SoundHealing: A sound for when a healing card is used.
-- SoundHit: A sound when an attack card is used.
-- SoundShimmer: A sound when a card is found around the map.
-6. BaseMusic:
-- MusicMain: The track that will take place in must moments of the game except while in combat.
-- MusicCombat: The track that will take place in the moments when there’s combat. 
-7. BaseCard:
-- CardAttack: Controls the attack cards.
-- CardDefense: Controls the defensive cards.
-- CardControl: Controls de control cards.
-- CardWildcard: Controls the wildcards.
+1. GameObject Extensions
+
+- Player: Extension of GameObject. Defines the character that the player plays as, controls the movement, stats, collisions and characteristics of the player.
+- Enemy: Extension of GameObject. Defines the enemy during combat (stats of the enemy).
+- Room: Extension of GameObject. Represents the interior areas of the map.
+
+1. Game (The Game's Controller)
+Controls all the logic and mechanics of the game such as the combat, cards, flow, scenes, events, and collisions.
+
+- `initObjects()`: Creates all the objects of the game includes the player, enemy, rooms, houses, etc.
+- `randomEnemyLocation()`: Random generation of the enemy in the rooms of the house.
+- `getRandomCard(posX)`: Generates a random card from CARD_POOL and adds it to a specific position of the combat UI.
+- `getWildcard()`: Generates the special card "Wildcard" for the combat UI.
+- `combatHand()`: Starts the combat (resets the HP and energy, generates the 4 cards of the deck, HP and energy bars and generates the enemy).
+- `loadScene(scene)`: Changes the states of the game to specific scenes.
+- `draw(ctx, card)`: Draws the actors, messages and UIs of the game.
+- `drawCardItem(ctx, card)`: Render of each card individually.
+- `drawCombatUI(ctx)`: UI of the combat scene.
+- `enemyTurn()`: Controls the turns of the enemy during combat.
+- `endTurn()`: Gives the turn back to the player.
+- `restartRun()`: Restarts the run in case of player's death.
+- `playerDeath()`: Detects the death of the player when the HP bar reaches 0 during combat.
+- `update(deltaTime)`: Controls the collisions of the game and what happens when the player collides with an object in each of the scenes and states.
+- `combatClick(mouseX, mouseY)`: Detects if the player selected a card with the CLICK.
+- `executeCard(index, isWildcard)`: Executes the selected card by the player during combat.
+- `createEventListeners()`: The controls of the game for movement, restarting and selecting cards during combat.
 
 
 ## _Graphics_
