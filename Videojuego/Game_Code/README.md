@@ -4,11 +4,21 @@
 
 **How to download the game?**
 
-First, download the folder ***"Videojuego"*** or clone this repository in order to gain access to the folder "Videojuego". When downloaded, we need to search for a folder called
+First, download the folder **"Videojuego"** or clone this repository in order to gain access to the folder "Videojuego". When downloaded, we need to search for a folder called **Game_Code**, inside this folder there are four visible folders:
+- assets/sprites
+- css
+- html
+- js
+
+The relevant folder we need to localize is **html**, inside this folder we have a file called *prototipo.html*, please select this file and open it through the browser of your choice. When done it should appear a screen similar to this one: 
+
+![alt text](image.png)
+
+Feel free to start exploring the prototype (check control instruction down below)
 
 **Objective of the protype: What does this game include?:**
 
-The current prototype was developed in order to contain the interior maps for both houses and the exterior map for the surroundings. This work also includes the basic mechanics of the cards and their function throughout the gameplay in terms of energy and health. 
+The current prototype was developed in order to contain the interior maps for both houses and the exterior map for the surroundings. This work also includes the basic mechanics of the cards and their function throughout the gameplay in terms of energy and health. And the collisions with different bushes to obtain new cards are also available.
 
 **Prototype Explanation: What is the current progress**
 
