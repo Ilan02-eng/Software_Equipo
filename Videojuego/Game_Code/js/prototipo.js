@@ -159,7 +159,7 @@ class combatBars {
   }
 }
 
-//Defines de character that the player plays as, controls the movement, stats, collisons and characteristics of the player. 
+//Defines de character that the player plays as, controls the movement, stats, collisons and characteristics of the player.
 class Player extends GameObject {
   constructor(position, width, height, color, sheetCols) {
     super(position, width, height, color, "player", sheetCols);
@@ -238,7 +238,7 @@ class Game {
     this.transitionCooldown = 0;
 
     this.enemy = null;
-    this.enemyRoomID = 1;
+    this.enemyRoomID = Math.floor(Math.random() * 3) + 1;
     this.cards = [];
     this.wildcard = null;
     this.isPlayerTurn = true;
@@ -323,6 +323,14 @@ class Game {
     );
     this.exit_room2.setSprite("../assets/sprites/room_1.png");
 
+    this.exit_room3 = new GameObject(
+      new Vector(0, canvasHeight / 2),
+      120,
+      200,
+      "grey",
+    );
+    this.exit_room3.setSprite("../assets/sprites/room_3.png");
+
     this.room_1 = new Room(
       new Vector(canvasWidth / 2, canvasHeight - canvasHeight),
       200,
@@ -397,10 +405,30 @@ class Game {
       "green",
     );
   }
-  
+
   //Random generation fo the enemy in the rooms of the house
   randomEnemyLocation() {
     this.enemyRoomID = Math.floor(Math.random() * 3) + 1;
+  }
+
+  enterRoom(roomID) {
+    this.currentRoom = roomID;
+    this.player.velocity = new Vector(0, 0);
+
+    if (roomID === this.enemyRoomID) {
+      this.loadScene(SCENES.COMBATE);
+      return;
+    }
+
+    if (roomID === 1) {
+      this.player.position = new Vector(canvasWidth / 2, canvasHeight - 120);
+    } else if (roomID === 2) {
+      this.player.position = new Vector(canvasWidth / 2, 100);
+    } else if (roomID === 3) {
+      this.player.position = new Vector(120, canvasHeight / 2);
+    }
+
+    this.loadScene(SCENES.HABITACION);
   }
 
   //Generates a random card form CARD_POOL and adds it to a specific position of the combat UI
@@ -481,7 +509,7 @@ class Game {
     );
   }
 
-  //Changes the states of the game to specific scenes 
+  //Changes the states of the game to specific scenes
   loadScene(scene) {
     this.currentScene = scene;
     this.transitionCooldown = 30;
@@ -526,9 +554,11 @@ class Game {
           this.actors = [this.player, this.exit_room1];
         } else if (this.currentRoom === 2) {
           this.actors = [this.player, this.exit_room2];
+        } else if (this.currentRoom === 3) {
+          this.actors = [this.player, this.exit_room3];
         }
         break;
-
+        
       case SCENES.COMBATE:
         this.actors = [this.player, this.enemy];
         this.player.position = new Vector(150, canvasHeight * 0.3);
@@ -699,7 +729,7 @@ class Game {
     }
   }
 
-  //Controls the collisions of the game and what happens when the player collides with an object in each of the scenes ans states 
+  //Controls the collisions of the game and what happens when the player collides with an object in each of the scenes ans states
   update(deltaTime) {
     this.player.update(deltaTime);
 
@@ -777,28 +807,12 @@ class Game {
 
           this.loadScene(SCENES.VILLA);
         } else if (boxOverlap(this.player, this.room_1)) {
-          this.currentRoom = 1;
-
-          this.player.velocity = new Vector(0, 0);
-
-          this.player.position = new Vector(
-            canvasWidth / 2,
-            canvasHeight - 120,
-          );
-
-          this.loadScene(SCENES.HABITACION);
+          this.enterRoom(1);
         } else if (boxOverlap(this.player, this.room_2)) {
-          this.currentRoom = 2;
-
-          this.player.velocity = new Vector(0, 0);
-
-          this.player.position = new Vector(canvasWidth / 2, 100);
-
-          this.loadScene(SCENES.HABITACION);
+          this.enterRoom(2);
         } else if (boxOverlap(this.player, this.room_3)) {
-          this.loadScene(SCENES.COMBATE);
+          this.enterRoom(3);
         }
-
         break;
 
       case SCENES.HABITACION:
@@ -823,8 +837,19 @@ class Game {
           );
 
           this.loadScene(SCENES.CASA_LJ);
-        }
+        } else if (
+          this.currentRoom === 3 &&
+          boxOverlap(this.player, this.exit_room3)
+        ) {
+          this.player.velocity = new Vector(0, 0);
 
+          this.player.position = new Vector(
+            canvasWidth - 170,
+            canvasHeight / 2,
+          );
+
+          this.loadScene(SCENES.CASA_LJ);
+        }
         break;
 
       case SCENES.COMBATE:
