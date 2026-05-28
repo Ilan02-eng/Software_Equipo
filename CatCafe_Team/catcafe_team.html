@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="catcafe_team.css">
+    <title>Cat Cafe - Elegant Edition</title>
+</head>
+<body>
+    
+    <div class="top-bar">
+        <button type="button" onclick="english()">English</button>
+        <button type="button" onclick="español()">Español</button>
+    </div>
+    
+    <main class="container">
+        <header class="main-header">
+            <h1 id="titulo">☕ WELCOME TO OUR CATCAFE ☕</h1>
+        </header>
+
+        <section class="Content info-section">
+            <p id="paragraph_1">Come spend a cozy afternoon at our catcafe, where delicious drinks, sweet treats, and adorable cats are waiting for you! Whether you want to relax, study, read a book, or simply enjoy the company of friendly cats, our café is the perfect place to unwind.</p>
+            <p id="paragraph_2">Every visit helps support the well-being of our resident cats and gives them a safe, loving environment while they wait for their forever homes. Bring your friends and experience a warm atmosphere!</p>
+        </section>
+
+        <section class="Content MenuSection">
+            <h2 id="menu_title">Menu of the Day</h2>
+            
+            <div class="selector-wrapper">
+                <select id="daySelector" onchange="updateMenu()">
+                    <option value="monday"    id="day_1">Monday</option>
+                    <option value="tuesday"   id="day_2">Tuesday</option>
+                    <option value="wednesday" id="day_3">Wednesday</option>
+                    <option value="thursday"  id="day_4">Thursday</option>
+                    <option value="friday"    id="day_5">Friday</option>
+                    <option value="saturday"  id="day_6">Saturday</option>
+                    <option value="sunday"    id="day_7">Sunday</option>
+                </select>
+            </div>
+            
+            <div class="menu-display-area">
+                <div id="menuContainer"></div>
+                <div class="menu-image-viewer" id="menu-image-viewer">
+                    <img id="menu-image-display" src="" alt="Select an item">
+                </div>
+            </div>
+        </section>
+
+        <section class="Content CatsSection">
+            <h2 id="cats_title">Meet Our Resident Cats</h2>
+            <div class="cat-grid"></div>
+        </section>
+
+        <footer class="Social">
+           <p id="socials">Our Socials:</p>
+            <div class="Links">
+                <a href="https://www.instagram.com/catfecitocatcafe/">
+                    <span>Instagram</span>
+                </a>
+                <a href="https://www.facebook.com/catfecito/?locale=es_LA">
+                    <span>Facebook</span>
+                </a>
+            </div>
+        </footer>
+    </main>
+
+    <script src="catcafe_team.js"></script>
+</body>
+</html>
