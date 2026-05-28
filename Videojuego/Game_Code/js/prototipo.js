@@ -6,7 +6,7 @@ const canvasHeight = 600;
 let ctx;
 let game;
 let oldTime;
-let playerSpeed = 4.5;
+let playerSpeed = 4;
 
 //Main states and scenes of the game
 const SCENES = {
@@ -230,6 +230,130 @@ class Room extends GameObject {
   }
 }
 
+//Defines the random generation of the 9 rooms of the house 
+class MapHouse {
+  constructor() {
+    this.map_transitions = [
+      [9, 3],
+      [3, 0],[3, 4],[3, 6],
+      [0, 1],
+      [1, 2],[1, 4],
+      [2, 5],
+      [4, 5],[4, 7],
+      [5, 8],
+      [6, 7],
+      [7, 8],
+    ];
+
+    this.roomPositions = {
+      9: { x: 0, y: 1 },
+      0: { x: 1, y: 0 },
+      3: { x: 1, y: 1 },
+      6: { x: 1, y: 2 },
+      1: { x: 2, y: 0 },
+      4: { x: 2, y: 1 },
+      7: { x: 2, y: 2 },
+      2: { x: 3, y: 0 },
+      5: { x: 3, y: 1 },
+      8: { x: 3, y: 2 },
+    };
+
+    this.rooms = [0, 3, 4, 6, 9];
+    this.randomRooms = [1, 2, 5, 7, 8];
+    this.enemyRooms = [2, 5, 8];
+
+    this.activeRooms = [];
+    this.enemyRoomID = null;
+  }
+
+  //Generates all the "normal" rooms of the house
+  randomMap() {
+    this.activeRooms = [];
+
+    for (let i = 0; i < this.rooms.length; i++) {
+      this.activeRooms.push(this.rooms[i]);
+    }
+
+    for (let i = 0; i < this.randomRooms.length; i++) {
+      let random = Math.floor(Math.random() * 100);
+
+      if (random < 75) {
+        this.activeRooms.push(this.randomRooms[i]);
+      }
+    }
+
+    this.randomEnemyRoom();
+  }
+
+  //Generates the random room in which the enemy will be spawn (it can only spawn in the rooms 2, 5 and 8)
+  randomEnemyRoom() {
+    let possibleRooms = [];
+
+    for (let i = 0; i < this.enemyRooms.length; i++) {
+      if (this.activeRooms.includes(this.enemyRooms[i])) {
+        possibleRooms.push(this.enemyRooms[i]);
+      }
+    }
+
+    if (possibleRooms.length === 0) {
+      this.activeRooms.push(2);
+      possibleRooms.push(2);
+    }
+
+    let random = Math.floor(Math.random() * possibleRooms.length);
+    this.enemyRoomID = possibleRooms[random];
+  }
+
+  //Lets the player go from one room to the other and the other way around 
+  canPass(fromRoom, toRoom) {
+    if (!this.activeRooms.includes(toRoom)) {
+      return false;
+    }
+
+    for (let i = 0; i < this.map_transitions.length; i++) {
+      let roomA = this.map_transitions[i][0];
+      let roomB = this.map_transitions[i][1];
+
+      if (roomA === fromRoom && roomB === toRoom) return true;
+      if (roomA === toRoom && roomB === fromRoom) return true;
+    }
+
+    return false;
+  }
+
+  //Defines the position of each door in the new room
+  getDoorsFrom(roomID) {
+    let doors = [];
+
+    for (let i = 0; i < this.map_transitions.length; i++) {
+      let roomA = this.map_transitions[i][0];
+      let roomB = this.map_transitions[i][1];
+
+      if (roomA === roomID && this.activeRooms.includes(roomB)) {
+        doors.push(roomB);
+      }
+
+      if (roomB === roomID && this.activeRooms.includes(roomA)) {
+        doors.push(roomA);
+      }
+    }
+
+    return doors;
+  }
+
+  getDirection(fromRoom, toRoom) {
+    let from = this.roomPositions[fromRoom];
+    let to = this.roomPositions[toRoom];
+
+    if (to.x > from.x) return "right";
+    if (to.x < from.x) return "left";
+    if (to.y > from.y) return "bottom";
+    if (to.y < from.y) return "top";
+
+    return "";
+  }
+}
+
 //Controls all the logic and mechanics of the game such as the combat, cards, flow, collisions, etc.
 class Game {
   constructor() {
@@ -238,7 +362,12 @@ class Game {
     this.transitionCooldown = 0;
 
     this.enemy = null;
-    this.enemyRoomID = Math.floor(Math.random() * 3) + 1;
+
+    this.mapHouse = new MapHouse();
+    this.mapHouse.randomMap();
+    this.enemyRoomID = this.mapHouse.enemyRoomID;
+    this.currentRoom = 3;
+
     this.cards = [];
     this.wildcard = null;
     this.isPlayerTurn = true;
@@ -246,7 +375,6 @@ class Game {
     this.createEventListeners();
     this.initObjects();
     this.loadScene(SCENES.CASA);
-    this.currentRoom = 0;
     this.livebars = [];
     this.message = "";
     this.messageTimer = 0;
@@ -254,181 +382,137 @@ class Game {
 
   //Creates all the objects of the game includes the player, enemy, rooms, houses, etc.
   initObjects() {
-    this.player = new Player(
-      new Vector(canvasWidth / 2, canvasHeight / 2),
-      65,
-      65,
-      "red",
-    );
-    this.player.setSprite(
-      "../assets/sprites/character.png",
-      new Rect(0, 0, 100, 135),
-    );
+    this.player = new Player(new Vector(canvasWidth / 2, canvasHeight / 2),65,65,"red");
+    this.player.setSprite("../assets/sprites/character.png",new Rect(0, 0, 100, 135));
 
-    this.casa = new GameObject(
-      new Vector(canvasWidth / 4, canvasHeight / 8),
-      280,
-      150,
-      "grey",
-    );
-    this.casa.setSprite(
-      "../assets/sprites/house.png",
-      new Rect(0, 0, 1250, 1050),
-    );
-    this.casa_lj = new GameObject(
-      new Vector(canvasWidth - 90, canvasHeight - 200),
-      190,
-      185,
-      "purple",
-    );
-    this.casa_lj.setSprite(
-      "../assets/sprites/house_LJ.png",
-      new Rect(0, 0, 1000, 1300),
-    );
+    this.casa = new GameObject(new Vector(canvasWidth / 4, canvasHeight / 8),280,150,"grey");
+    this.casa.setSprite("../assets/sprites/house.png",new Rect(0, 0, 1250, 1050));
+    this.casa_lj = new GameObject(new Vector(canvasWidth - 90, canvasHeight - 200),190,185,"purple");
+    this.casa_lj.setSprite("../assets/sprites/house_LJ.png",new Rect(0, 0, 1000, 1300));
 
-    this.salida_casa = new GameObject(
-      new Vector(canvasWidth / 2, 590),
-      120,
-      100,
-      "grey",
-    );
-    this.salida_casa.setSprite(
-      "../assets/sprites/puerta_salida.png",
-      new Rect(0, 0, 3000, 4000),
-    );
-    this.salida_casa_lj = new GameObject(
-      new Vector(20, canvasHeight / 2),
-      90,
-      120,
-      "grey",
-    );
-    this.salida_casa_lj.setSprite(
-      "../assets/sprites/rooms_pu.png",
-      new Rect(0, 0, 4000, 3000),
-    );
+    this.salida_casa = new GameObject(new Vector(canvasWidth / 2, 590),120,100,"grey");
+    this.salida_casa.setSprite("../assets/sprites/puerta_salida.png",new Rect(0, 0, 3000, 4000));
+    this.salida_casa_lj = new GameObject(new Vector(20, canvasHeight / 2),90,120,"grey");
+    this.salida_casa_lj.setSprite("../assets/sprites/rooms_pu.png",new Rect(0, 0, 4000, 3000));
 
-    this.exit_room1 = new GameObject(
-      new Vector(canvasWidth / 2, canvasHeight),
-      200,
-      120,
-      "grey",
-    );
+    this.exit_room1 = new GameObject(new Vector(canvasWidth / 2, canvasHeight),200,120,"grey");
     this.exit_room1.setSprite("../assets/sprites/room_2.png");
 
-    this.exit_room2 = new GameObject(
-      new Vector(canvasWidth / 2, canvasHeight - canvasHeight),
-      200,
-      120,
-      "grey",
-    );
+    this.exit_room2 = new GameObject(new Vector(canvasWidth / 2, canvasHeight - canvasHeight),200,120,"grey");
     this.exit_room2.setSprite("../assets/sprites/room_1.png");
 
-    this.exit_room3 = new GameObject(
-      new Vector(0, canvasHeight / 2),
-      120,
-      200,
-      "grey",
-    );
+    this.exit_room3 = new GameObject(new Vector(0, canvasHeight / 2),120,200,"grey");
     this.exit_room3.setSprite("../assets/sprites/room_3.png");
 
-    this.room_1 = new Room(
-      new Vector(canvasWidth / 2, canvasHeight - canvasHeight),
-      200,
-      120,
-      "green",
-    );
+    this.room_1 = new Room(new Vector(canvasWidth / 2, canvasHeight - canvasHeight),200,120,"green");
     this.room_1.setSprite("../assets/sprites/room_1.png");
 
-    this.room_2 = new Room(
-      new Vector(canvasWidth / 2, canvasHeight),
-      200,
-      120,
-      "blue",
-    );
+    this.room_2 = new Room(new Vector(canvasWidth / 2, canvasHeight),200,120,"blue");
     this.room_2.setSprite("../assets/sprites/room_2.png");
 
-    this.room_3 = new Room(
-      new Vector(canvasWidth - 5, canvasHeight / 2),
-      120,
-      200,
-      "yellow",
-    );
+    this.room_3 = new Room(new Vector(canvasWidth - 5, canvasHeight / 2),120,200,"yellow");
     this.room_3.setSprite("../assets/sprites/room_3.png");
 
-    this.enemy = new Enemy(
-      new Vector(canvasWidth - 170, 195),
-      200,
-      200,
-      "orange",
-    );
-    this.enemy.setSprite(
-      "../assets/sprites/monster_littlejimmy.png",
-      new Rect(0, 0, 1000, 1000),
-    );
+    this.enemy = new Enemy(new Vector(canvasWidth - 170, 195),200,200,"orange");
+    this.enemy.setSprite("../assets/sprites/monster_littlejimmy.png",new Rect(0, 0, 1000, 1000));
 
     this.bushes = [
-      {
-        bush: new GameObject(new Vector(120, 520), 90, 70, "green"),
-        hasCard: true,
-        collected: false,
-      },
+      {bush: new GameObject(new Vector(120, 520), 90, 70, "green"),hasCard: true,collected: false},
 
-      {
-        bush: new GameObject(new Vector(220, 330), 100, 80, "green"),
-        hasCard: false,
-        collected: false,
-      },
+      {bush: new GameObject(new Vector(220, 330), 100, 80, "green"),hasCard: false,collected: false},
 
-      {
-        bush: new GameObject(new Vector(640, 180), 85, 65, "green"),
-        hasCard: true,
-        collected: false,
-      },
+      {bush: new GameObject(new Vector(640, 180), 85, 65, "green"),hasCard: true,collected: false},
     ];
-    this.bushes[0].bush.setSprite(
-      "../assets/sprites/bush.png",
-      new Rect(0, 0, 1284, 1020),
-    );
-    this.bushes[1].bush.setSprite(
-      "../assets/sprites/bush2.png",
-      new Rect(0, 0, 1280, 640),
-    );
-    this.bushes[2].bush.setSprite(
-      "../assets/sprites/bush3.png",
-      new Rect(0, 0, 1920, 960),
-    );
+    this.bushes[0].bush.setSprite("../assets/sprites/bush.png",new Rect(0, 0, 1284, 1020));
+    this.bushes[1].bush.setSprite("../assets/sprites/bush2.png",new Rect(0, 0, 1280, 640));
+    this.bushes[2].bush.setSprite("../assets/sprites/bush3.png",new Rect(0, 0, 1920, 960));
 
-    this.backgroundVilla = new GameObject(
-      new Vector(0, 0),
-      canvasWidth,
-      canvasHeight,
-      "green",
-    );
+    this.backgroundVilla = new GameObject(new Vector(0, 0),canvasWidth,canvasHeight,"green");
   }
 
   //Random generation fo the enemy in the rooms of the house
   randomEnemyLocation() {
-    this.enemyRoomID = Math.floor(Math.random() * 3) + 1;
+    this.mapHouse.randomEnemyRoom();
+    this.enemyRoomID = this.mapHouse.enemyRoomID;
   }
 
+  //Detects when a player is entering another room and defines which room or place is
   enterRoom(roomID) {
+    if (!this.mapHouse.canPass(this.currentRoom, roomID)) {
+      return;
+    }
+
+    let previousRoom = this.currentRoom;
+
+    if (roomID === 9) {
+      this.currentRoom = 3;
+      this.player.velocity = new Vector(0, 0);
+
+      this.player.position = new Vector(canvasWidth - 220, canvasHeight - 170);
+
+      this.loadScene(SCENES.VILLA);
+      return;
+    }
+
     this.currentRoom = roomID;
     this.player.velocity = new Vector(0, 0);
+
+    this.setPlayerPositionFromDoor(previousRoom, roomID);
 
     if (roomID === this.enemyRoomID) {
       this.loadScene(SCENES.COMBATE);
       return;
     }
 
-    if (roomID === 1) {
-      this.player.position = new Vector(canvasWidth / 2, canvasHeight - 120);
-    } else if (roomID === 2) {
+    this.loadScene(SCENES.HABITACION);
+  }
+
+  //Position of the other of the house 
+  getDoorByDirection(direction) {
+    if (direction === "top") return this.room_1;
+    if (direction === "bottom") return this.room_2;
+    if (direction === "left") return this.salida_casa_lj;
+    if (direction === "right") return this.room_3;
+
+    return null;
+  }
+
+  //Loads the door of each room in the house
+  loadHouseDoors() {
+    let doors = this.mapHouse.getDoorsFrom(this.currentRoom);
+
+    this.room_1.roomID = undefined;
+    this.room_2.roomID = undefined;
+    this.room_3.roomID = undefined;
+    this.salida_casa_lj.roomID = undefined;
+
+    this.actors = [this.player];
+
+    for (let i = 0; i < doors.length; i++) {
+      let roomID = doors[i];
+      let direction = this.mapHouse.getDirection(this.currentRoom, roomID);
+      let door = this.getDoorByDirection(direction);
+
+      if (door !== null) {
+        door.roomID = roomID;
+        this.actors.push(door);
+      }
+    }
+  }
+
+  //Defines the distance and position of the player when going through a door
+  setPlayerPositionFromDoor(fromRoom, toRoom) {
+    let direction = this.mapHouse.getDirection(fromRoom, toRoom);
+
+    if (direction === "top") {
+      this.player.position = new Vector(canvasWidth / 2, canvasHeight - 140);
+    } else if (direction === "bottom") {
       this.player.position = new Vector(canvasWidth / 2, 100);
-    } else if (roomID === 3) {
+    } else if (direction === "left") {
+      this.player.position = new Vector(canvasWidth - 170, canvasHeight / 2);
+    } else if (direction === "right") {
       this.player.position = new Vector(120, canvasHeight / 2);
     }
-
-    this.loadScene(SCENES.HABITACION);
   }
 
   //Generates a random card form CARD_POOL and adds it to a specific position of the combat UI
@@ -540,25 +624,14 @@ class Game {
 
       case SCENES.CASA_LJ:
         this.player.velocity = new Vector(0, 0);
-        this.actors = [
-          this.player,
-          this.salida_casa_lj,
-          this.room_1,
-          this.room_2,
-          this.room_3,
-        ];
+        this.loadHouseDoors();
         break;
 
       case SCENES.HABITACION:
-        if (this.currentRoom === 1) {
-          this.actors = [this.player, this.exit_room1];
-        } else if (this.currentRoom === 2) {
-          this.actors = [this.player, this.exit_room2];
-        } else if (this.currentRoom === 3) {
-          this.actors = [this.player, this.exit_room3];
-        }
+        this.player.velocity = new Vector(0, 0);
+        this.loadHouseDoors();
         break;
-        
+
       case SCENES.COMBATE:
         this.actors = [this.player, this.enemy];
         this.player.position = new Vector(150, canvasHeight * 0.3);
@@ -775,6 +848,7 @@ class Game {
         } else if (boxOverlap(this.player, this.casa_lj)) {
           this.player.velocity = new Vector(0, 0);
 
+          this.currentRoom = 3;
           this.player.position = new Vector(120, canvasHeight / 2);
 
           this.loadScene(SCENES.CASA_LJ);
@@ -797,58 +871,27 @@ class Game {
         break;
 
       case SCENES.CASA_LJ:
-        if (boxOverlap(this.player, this.salida_casa_lj)) {
-          this.player.velocity = new Vector(0, 0);
-
-          this.player.position = new Vector(
-            canvasWidth - 220,
-            canvasHeight - 170,
-          );
-
-          this.loadScene(SCENES.VILLA);
-        } else if (boxOverlap(this.player, this.room_1)) {
-          this.enterRoom(1);
-        } else if (boxOverlap(this.player, this.room_2)) {
-          this.enterRoom(2);
-        } else if (boxOverlap(this.player, this.room_3)) {
-          this.enterRoom(3);
-        }
-        break;
-
       case SCENES.HABITACION:
         if (
-          this.currentRoom === 1 &&
-          boxOverlap(this.player, this.exit_room1)
+          this.salida_casa_lj.roomID !== undefined &&
+          boxOverlap(this.player, this.salida_casa_lj)
         ) {
-          this.player.velocity = new Vector(0, 0);
-
-          this.player.position = new Vector(canvasWidth / 2, 120);
-
-          this.loadScene(SCENES.CASA_LJ);
+          this.enterRoom(this.salida_casa_lj.roomID);
         } else if (
-          this.currentRoom === 2 &&
-          boxOverlap(this.player, this.exit_room2)
+          this.room_1.roomID !== undefined &&
+          boxOverlap(this.player, this.room_1)
         ) {
-          this.player.velocity = new Vector(0, 0);
-
-          this.player.position = new Vector(
-            canvasWidth / 2,
-            canvasHeight - 140,
-          );
-
-          this.loadScene(SCENES.CASA_LJ);
+          this.enterRoom(this.room_1.roomID);
         } else if (
-          this.currentRoom === 3 &&
-          boxOverlap(this.player, this.exit_room3)
+          this.room_2.roomID !== undefined &&
+          boxOverlap(this.player, this.room_2)
         ) {
-          this.player.velocity = new Vector(0, 0);
-
-          this.player.position = new Vector(
-            canvasWidth - 170,
-            canvasHeight / 2,
-          );
-
-          this.loadScene(SCENES.CASA_LJ);
+          this.enterRoom(this.room_2.roomID);
+        } else if (
+          this.room_3.roomID !== undefined &&
+          boxOverlap(this.player, this.room_3)
+        ) {
+          this.enterRoom(this.room_3.roomID);
         }
         break;
 
