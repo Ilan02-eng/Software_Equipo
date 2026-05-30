@@ -1095,25 +1095,25 @@ class Game {
         this.restartRun();
         return;
       }
-      if (event.key == "w") {
+      if (event.key == "w" || event.key == "ArrowUp") {
         this.player.velocity.y = -playerSpeed;
-      } else if (event.key == "a") {
+      } else if (event.key == "a" || event.key == "ArrowLeft") {
         this.player.velocity.x = -playerSpeed;
-      } else if (event.key == "s") {
+      } else if (event.key == "s" || event.key == "ArrowDown") {
         this.player.velocity.y = playerSpeed;
-      } else if (event.key == "d") {
+      } else if (event.key == "d" || event.key == "ArrowRight") {
         this.player.velocity.x = playerSpeed;
       }
     });
 
     window.addEventListener("keyup", (event) => {
-      if (event.key == "w") {
+      if (event.key == "w" || event.key == "ArrowUp") {
         this.player.velocity.y = 0;
-      } else if (event.key == "a") {
+      } else if (event.key == "a" || event.key == "ArrowLeft") {
         this.player.velocity.x = 0;
-      } else if (event.key == "s") {
+      } else if (event.key == "s" || event.key == "ArrowDown") {
         this.player.velocity.y = 0;
-      } else if (event.key == "d") {
+      } else if (event.key == "d" || event.key == "ArrowRight") {
         this.player.velocity.x = 0;
       }
     });
