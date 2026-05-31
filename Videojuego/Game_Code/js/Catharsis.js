@@ -16,6 +16,7 @@ const SCENES = {
   HABITACION: "habitacion",
   COMBATE: "combate",
   GAME_OVER: "game_over",
+  VICTORY: "victory",
 };
 
 //Types of cards and defines the colors that each type has
@@ -210,9 +211,67 @@ class Player extends GameObject {
 class Enemy extends GameObject {
   constructor(position, width, height, color) {
     super(position, width, height, color);
-    this.maxHP = 100;
+
+    this.enemyTypes = [
+      {
+        name: "Little Jimmy",
+        hp_min: 100,
+        hp_max: 140,
+        dmg_min: 9,
+        dmg_max: 15,
+      },
+      {
+        name: "Rotoplas",
+        hp_min: 70,
+        hp_max: 100,
+        dmg_min: 15,
+        dmg_max: 25,
+      },
+    ];
+
+    this.enemyType = this.getRandomEnemy();
+
+    this.enemy_name= this.enemyType.name;
+
+    this.enemy_lvl = 1;
+
+    this.hp_min = 0;
+    this.hp_max = 0;
+    this.dmg_min = 0;
+    this.dmg_max = 0;
+    this.maxHP = 0;
+    this.hp = 0;
+    this.stunnedTurns = 0;
+
+    this.generateStats(1);
+  }
+
+  getRandomEnemy(){
+    let randomIndex = Math.floor(Math.random() * this.enemyTypes.length);
+    return this.enemyTypes[randomIndex];
+  }
+
+  generateStats(level){
+    this.enemy_lvl = level;
+    this.enemy_name = this.enemyType.name;
+
+    this.hp_min = this.enemyType.hp_min + (level - 1) * 30;
+    this.hp_max = this.enemyType.hp_max + (level - 1) * 40;
+
+    this.dmg_min = this.enemyType.dmg_min + (level - 1) * 5;
+    this.dmg_max = this.enemyType.dmg_max + (level - 1) * 7;
+
+    this.maxHP = this.randomNumber(this.hp_min, this.hp_max);
     this.hp = this.maxHP;
     this.stunnedTurns = 0;
+  }
+
+  randomDamage(){
+    return this.randomNumber(this.dmg_min, this.dmg_max);
+  }
+
+  randomNumber(min, max){
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 }
 
@@ -363,6 +422,9 @@ class Game {
 
     this.enemy = null;
 
+    this.day = 1;
+    this.maxDay = 3;
+
     this.mapHouse = new MapHouse();
     this.mapHouse.randomMap();
     this.enemyRoomID = this.mapHouse.enemyRoomID;
@@ -395,7 +457,7 @@ class Game {
     this.salida_casa_lj = new GameObject(new Vector(20, canvasHeight / 2),90,120,"grey");
     this.salida_casa_lj.setSprite("../assets/sprites/rooms_pu.png",new Rect(0, 0, 4000, 3000));
 
-    this.exit_room1 = new GameObject(new Vector(canvasWidth / 2, canvasHeight),200,120,"grey");
+    this.exit_room1 = new GameObject(new Vector(canvasWidth / 2, canvasHeight),200,120,"grey",);
     this.exit_room1.setSprite("../assets/sprites/room_2.png");
 
     this.exit_room2 = new GameObject(new Vector(canvasWidth / 2, canvasHeight - canvasHeight),200,120,"grey");
@@ -414,14 +476,26 @@ class Game {
     this.room_3.setSprite("../assets/sprites/room_3.png");
 
     this.enemy = new Enemy(new Vector(canvasWidth - 170, 195),200,200,"orange");
-    this.enemy.setSprite("../assets/sprites/monster_littlejimmy.png",new Rect(0, 0, 1000, 1000));
+    this.enemy.setSprite("../assets/sprites/monster_littlejimmy.png",new Rect(0, 0, 1000, 1000),);
 
     this.bushes = [
-      {bush: new GameObject(new Vector(120, 520), 90, 70, "green"),hasCard: true,collected: false},
+      {
+        bush: new GameObject(new Vector(120, 520), 90, 70, "green"),
+        hasCard: true,
+        collected: false,
+      },
 
-      {bush: new GameObject(new Vector(220, 330), 100, 80, "green"),hasCard: false,collected: false},
+      {
+        bush: new GameObject(new Vector(220, 330), 100, 80, "green"),
+        hasCard: false,
+        collected: false,
+      },
 
-      {bush: new GameObject(new Vector(640, 180), 85, 65, "green"),hasCard: true,collected: false},
+      {
+        bush: new GameObject(new Vector(640, 180), 85, 65, "green"),
+        hasCard: true,
+        collected: false,
+      },
     ];
     this.bushes[0].bush.setSprite("../assets/sprites/bush.png",new Rect(0, 0, 1284, 1020));
     this.bushes[1].bush.setSprite("../assets/sprites/bush2.png",new Rect(0, 0, 1280, 640));
@@ -467,7 +541,7 @@ class Game {
     this.loadScene(SCENES.HABITACION);
   }
 
-  //Position of the other of the house 
+  //Position of the other of the house
   getDoorByDirection(direction) {
     if (direction === "top") return this.room_1;
     if (direction === "bottom") return this.room_2;
@@ -549,6 +623,23 @@ class Game {
     };
   }
 
+  enemyDefeated() {
+    if (this.day >= this.maxDay) {
+      this.loadScene(SCENES.VICTORY);
+      return;
+    }
+
+    this.day++;
+
+    this.randomEnemyLocation();
+    this.enemy.generateStats(this.day);
+
+    this.message = "Day " + this.day;
+    this.messageTimer = 120;
+
+    this.loadScene(SCENES.CASA);
+  }
+
   //Starts the combat (resets the HP and energy, generates de 4 cards of the deck, HP and energy bars and generates the enemy)
   combatHand() {
     this.cards = [];
@@ -567,30 +658,9 @@ class Game {
 
     this.wildcard = this.getWildcard();
 
-    this.playerHPBar = new combatBars(
-      new Vector(40, 40),
-      250,
-      25,
-      this.player,
-      "hp",
-      "green",
-    );
-    this.playerEnergyBar = new combatBars(
-      new Vector(40, 80),
-      250,
-      25,
-      this.player,
-      "energy",
-      "blue",
-    );
-    this.enemyHPBar = new combatBars(
-      new Vector(510, 80),
-      250,
-      25,
-      this.enemy,
-      "hp",
-      "red",
-    );
+    this.playerHPBar = new combatBars(new Vector(40, 40),250,25,this.player,"hp","green");
+    this.playerEnergyBar = new combatBars(new Vector(40, 80),250,25,this.player,"energy","blue");
+    this.enemyHPBar = new combatBars(new Vector(510, 80),250,25,this.enemy,"hp","red");
   }
 
   //Changes the states of the game to specific scenes
@@ -673,6 +743,22 @@ class Game {
 
       return;
     }
+
+    if (this.currentScene === SCENES.VICTORY) {
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+      ctx.fillStyle = "gold";
+      ctx.font = "bold 55px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText("YOU WIN", canvasWidth / 2, 240);
+
+      ctx.fillStyle = "white";
+      ctx.font = "28px Arial";
+      ctx.fillText("You survived 3 days", canvasWidth / 2, 320);
+
+      return;
+    }
   }
 
   //Render of each card individually
@@ -739,40 +825,52 @@ class Game {
     ctx.font = "bold 18px Arial";
     ctx.textAlign = "center";
     if (this.isPlayerTurn) {
-      ctx.fillText("Your turn, select a card...", canvasWidth / 2, 420);
+      ctx.fillText("Select a Card", canvasWidth / 2, 420);
     } else {
       ctx.fillText("Enemy turn...", canvasWidth / 2, 420);
     }
+
+    ctx.fillStyle = "black";
+    ctx.font = "bold 18px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText(this.enemy.enemy_name, 635, 55);
   }
 
   //Controls the turns of the enemy during combat
   enemyTurn() {
-    if (this.enemy.stunnedTurns > 0) {
-      this.enemy.stunnedTurns--;
-      setTimeout(() => {
-        this.endTurn();
-      }, 1200);
+    if (this.currentScene !== SCENES.COMBATE) {
       return;
     }
 
     setTimeout(() => {
-      if (this.currentScene !== SCENES.COMBATE) return;
+      if (this.currentScene !== SCENES.COMBATE) {
+        return;
+      }
+
+      if (this.enemy.stunnedTurns > 0) {
+        this.enemy.stunnedTurns--;
+        this.player.evasionChance = 0;
+        this.endTurn();
+        return;
+      }
 
       let randomRoll = Math.random();
+
       if (randomRoll < this.player.evasionChance) {
       } else {
-        let damage = 20;
+        let damage = this.enemy.randomDamage();
         this.player.hp -= damage;
+
         this.playerDeath();
-        if (this.currentScene === SCENES.GAME_OVER) return;
+
+        if (this.currentScene === SCENES.GAME_OVER) {
+          return;
+        }
       }
 
       this.player.evasionChance = 0;
-
-      setTimeout(() => {
-        this.endTurn();
-      }, 1200);
-    }, 800);
+      this.endTurn();
+    }, 2000);
   }
 
   //Gives the turn back to the player
@@ -782,13 +880,26 @@ class Game {
 
   //Restarts the run in case of player's death
   restartRun() {
+    this.day = 1;
+
+    this.mapHouse.randomMap();
+    this.enemyRoomID = this.mapHouse.enemyRoomID;
+    this.currentRoom = 3;
+
+    this.enemy.enemyType = this.enemy.getRandomEnemy();
+    this.enemy.generateStats(this.day);
+    this.enemy.enemyType = this.enemy.getRandomEnemy();
+
     this.player.hp = this.player.maxHP;
     this.player.energy = this.player.maxEnergy;
     this.player.evasionChance = 0;
-    this.enemy.hp = this.enemy.maxHP;
-    this.enemy.stunnedTurns = 0;
+
     this.cards = [];
     this.wildcard = null;
+    this.isPlayerTurn = true;
+
+    this.message = "";
+    this.messageTimer = 0;
 
     this.loadScene(SCENES.CASA);
   }
@@ -897,10 +1008,8 @@ class Game {
 
       case SCENES.COMBATE:
         if (this.enemy.hp <= 0) {
-          this.randomEnemyLocation();
-          this.loadScene(SCENES.CASA);
+          this.enemyDefeated();
         }
-
         break;
     }
   }
@@ -941,7 +1050,7 @@ class Game {
     }
   }
 
-  //Executes the selected card by the player during combat
+  //Executes the selected card by the player during combat and turn
   executeCard(index, isWildcard) {
     let selectedCard = isWildcard ? this.wildcard : this.cards[index];
     if (!selectedCard) return;
@@ -949,10 +1058,13 @@ class Game {
     if (isWildcard) {
       if (this.wildcardUsed) return;
       if (this.player.hp <= WILDCARD.hpCost) return;
+
       this.wildcardUsed = true;
     } else {
       if (this.player.energy < selectedCard.cost) return;
+
       this.player.energy -= selectedCard.cost;
+
       if (this.player.energy < 0) {
         this.player.energy = 0;
       }
@@ -961,9 +1073,14 @@ class Game {
     selectedCard.action(this.player, this.enemy);
 
     this.player.energy = Math.min(this.player.energy, this.player.maxEnergy);
+
     if (!isWildcard) {
       let oldX = selectedCard.x;
       this.cards[index] = this.getRandomCard(oldX);
+    }
+
+    if (this.enemy.hp <= 0) {
+      return;
     }
 
     this.isPlayerTurn = false;
@@ -978,25 +1095,25 @@ class Game {
         this.restartRun();
         return;
       }
-      if (event.key == "w") {
+      if (event.key == "w" || event.key == "ArrowUp") {
         this.player.velocity.y = -playerSpeed;
-      } else if (event.key == "a") {
+      } else if (event.key == "a" || event.key == "ArrowLeft") {
         this.player.velocity.x = -playerSpeed;
-      } else if (event.key == "s") {
+      } else if (event.key == "s" || event.key == "ArrowDown") {
         this.player.velocity.y = playerSpeed;
-      } else if (event.key == "d") {
+      } else if (event.key == "d" || event.key == "ArrowRight") {
         this.player.velocity.x = playerSpeed;
       }
     });
 
     window.addEventListener("keyup", (event) => {
-      if (event.key == "w") {
+      if (event.key == "w" || event.key == "ArrowUp") {
         this.player.velocity.y = 0;
-      } else if (event.key == "a") {
+      } else if (event.key == "a" || event.key == "ArrowLeft") {
         this.player.velocity.x = 0;
-      } else if (event.key == "s") {
+      } else if (event.key == "s" || event.key == "ArrowDown") {
         this.player.velocity.y = 0;
-      } else if (event.key == "d") {
+      } else if (event.key == "d" || event.key == "ArrowRight") {
         this.player.velocity.x = 0;
       }
     });
