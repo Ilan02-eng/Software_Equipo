@@ -26,7 +26,7 @@ function updateStaticText(trad) {
   const ids = ["paragraph_1","paragraph_2","socials","titulo","menu_title","cats_title"];
   ids.forEach((id, i) => (document.getElementById(id).innerHTML = trad[i]));
   for (let i = 1; i <= 7; i++) {
-    document.getElementById("day_" + i).innerText = trad[7 + i]; // índices 8-14
+    document.getElementById("day_" + i).innerText = trad[7 + i]; 
   }
 }
 
