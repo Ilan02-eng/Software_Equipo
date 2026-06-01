@@ -1,0 +1,79 @@
+body{
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(24, 27, 32);
+    font-family: "Noto Serif Thai", sans-serif;
+}
+
+.login-divider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 100%;
+    height: auto;
+}
+
+.login-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+h1{
+    color: #e0b36d;
+    margin-bottom: 20px;
+}
+
+input{
+    width: 300px;
+    height: 45px;
+
+    padding-left: 10px;
+
+    border: 2px solid rgb(103, 43, 43);
+    border-radius: 8px;
+
+    font-size: 16px;
+}
+
+button{
+    width: 200px;
+    height: 60px;
+
+    font-size: 20px;
+    font-weight: bold;
+
+    color: white;
+    background-color: rgb(24, 27, 32);
+
+    border: 3px solid rgb(103, 43, 43);
+    border-radius: 10px;
+
+    cursor: pointer;
+}
+
+button:hover{
+    background-color: #730c0cd6;
+}
+
+#message{
+    color: #ffa4a4;
+    font-weight: bold;
+}
+
+.back-link{
+    color: #e0b36d;
+    text-decoration: none;
+}
+
+.back-link:hover{
+    text-decoration: underline;
+}

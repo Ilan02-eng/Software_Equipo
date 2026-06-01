@@ -1,0 +1,89 @@
+
+body{
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 50px;
+    align-items: center;
+    background-color: rgb(24, 27, 32);
+    font-family: "Poppins", sans-serif;
+    margin-bottom: 50px;
+    margin-top: 20px;
+}
+
+.top-bar{
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    display: flex;
+    gap: 20px;
+}
+
+.top-link{
+    color: #ffa4a4;
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.top-link:hover{
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.logo{
+    width: 1250px;
+    height: auto;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.title{
+    color: #e0b36d;
+    font-size: 45px;
+    margin-bottom: 40px;
+}
+
+.buttons{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.middle-buttons{
+    display: flex;
+    gap: 20px;
+}
+
+button{
+    width: 350px;
+    height: 75px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffffffe9;
+    background-color: rgb(24, 27, 32);
+    border: 5px solid rgb(103, 43, 43);
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: "WDXL Lubrifont JP N", serif;
+}
+
+button:hover{
+    background-color: #730c0cd6;
+}
+
+.divider{
+    width: auto;
+    height: 150px;
+    margin-top: 20px;
+}
+
+.extra{
+    width: auto;
+    height: auto;
+}
+
