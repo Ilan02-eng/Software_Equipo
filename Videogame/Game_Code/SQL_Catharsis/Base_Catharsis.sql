@@ -1,5 +1,4 @@
-DROP SCHEMA IF EXISTS catharsis;
-CREATE SCHEMA catharsis;
+CREATE DATABASE catharsis;
 USE catharsis;
 
 #Username
@@ -212,72 +211,17 @@ BEGIN
 END$$
 DELIMITER ;
 
-
-####### DUMMY DATA ####
-
-#Username
-INSERT INTO Username (name, lastname, password, age, gender) VALUES
-('Carlos',  'Mendoza',   'lkonsthajowq', 22, 'Male'),
-('Sofia',   'Ramirez',   'hjokngtyhbfd', 19, 'Female'),
-('Diego',   'Torres',    'hgbdntsnbgds', 25, 'Male'),
-('Valeria', 'Lopez',     'njmkañplokjss', 21, 'Female'),
-('Andres',  'Gutierrez', 'pokmnjinmaasñ', 28, 'Male');
-
-#Player
-INSERT INTO Player (user_ID, hp, energy) VALUES
-(1, 100, 50),
-(2,  80, 40),
-(3, 120, 60),
-(4,  90, 45),
-(5, 110, 55);
-
-#Run
-INSERT INTO Run (player_ID, run_result, time) VALUES
-(1, 'Win',  '2024-01-10 14:30:00'),
-(1, 'Loss', '2024-01-11 09:15:00'),
-(2, 'Win',  '2024-01-12 18:45:00'),
-(3, 'Loss', '2024-01-13 11:00:00'),
-(4, 'Win',  '2024-01-14 16:20:00');
-
-#Enemy
-INSERT INTO Enemy (hp_min, hp_max, dmg_min, dmg_max, enemy_lvl, enemy_name) VALUES
-( 30,  60,  5, 10, 1, 'Slime'),
-( 50, 100, 10, 20, 2, 'Goblin'),
-( 80, 150, 15, 30, 3, 'Orc'),
-( 20,  40,  3,  8, 1, 'Bat'),
-(200, 255, 25, 50, 5, 'Dragon');
-
-#Cards
-INSERT INTO Cards (type, name, effect, target, what_effect, cost_source, cost, sprite_reference) VALUES
-('Attack',   'Strike',      'Deal damage',        'Enemy', 'dmg+5',    'Energy', 1, 'sprites/strike.png'),
-('Defense',  'Shield',      'Block incoming dmg', 'Self',  'block+10', 'Energy', 1, 'sprites/shield.png'),
-('Attack',   'Fireball',    'AoE fire damage',    'Enemy', 'dmg+15',   'Energy', 3, 'sprites/fireball.png'),
-('Wildcard', 'Potion',      'Recover HP',         'Self',  'hp+20',    'HP',     2, 'sprites/potion.png'),
-('Control',  'Poison Dart', 'Apply poison DoT',   'Enemy', 'dot+5',    'Energy', 2, 'sprites/dart.png');
-
-#Combat
-INSERT INTO Combat (run_ID, enemy_ID, lvl) VALUES
-(1, 1, 1),
-(1, 2, 2),
-(2, 3, 3),
-(3, 1, 1),
-(4, 4, 1);
-
-#Run Cards
-INSERT INTO Run_Cards (card_ID, run_ID, combat_ID, quant_limit) VALUES
-(1, 1, 1, 3),
-(2, 1, 1, 2),
-(3, 1, 2, 1),
-(4, 2, 3, 2),
-(5, 3, 4, 3);
-
-#Combat Stats
-INSERT INTO Combat_Stats (combat_ID, dmg_done, dmg_receive, hp_recovered, cards_used) VALUES
-(1,  45, 10,  0, 4),
-(2,  80, 35, 20, 6),
-(3,  20, 60,  0, 3),
-(4,  55, 15, 10, 5),
-(5,  30, 20,  5, 4),
-(3,  20, 60,  0, 3),
-(4,  55, 15, 10, 5),
-(5,  30, 20,  5, 4);
+#Set Data
+INSERT INTO Enemy (enemy_name, hp_min, hp_max, dmg_min, dmg_max, enemy_lvl) VALUES
+    ('Little Jimmy', 100, 140,  9, 15, 1),
+    ('Rotoplas',      70, 100, 15, 25, 1);
+ 
+INSERT INTO Cards (type, name, effect, target, what_effect, cost_source, cost) VALUES
+    ('Attack',   'Sharp Claw',    'Damage the enemy for 15 HP', 'Enemy', 'enemy.hp -= 15','Energy',  0),
+    ('Attack',   'Shadow Pounce', 'Damage the enemy for 25 HP', 'Enemy', 'enemy.hp -= 25','Energy', 15),
+    ('Attack',   'Purr Attack',   'Damage the enemy for 35 HP', 'Enemy', 'enemy.hp -= 35','Energy', 25),
+    ('Defense',  'Tuna Can',      'Heals you for 15 HP',        'Self',  'player.hp += 15',  'Energy',  0),
+    ('Defense',  'Nine Lives',    'Evade the next enemy attack', 'Self', 'player.evasionChance += 1', 'Energy', 35),
+    ('Control',  'Cat Reflexes',  'Enemy Stun 1 Turn',          'Enemy', 'enemy.stunnedTurns += 1',  'Energy', 30),
+    ('Control',  'Laser Pointer', 'Enemy Stun 2 Turns',         'Enemy', 'enemy.stunnedTurns += 2',  'Energy', 40),
+    ('Wildcard', 'Wildcard',      'Trade HP for 40 Energy',     'Self',  'player.hp -= 30; player.energy += 40', 'HP', 30);
