@@ -6,7 +6,7 @@ const canvasHeight = 600;
 let ctx;
 let game;
 let oldTime;
-let playerSpeed = 0.5;
+let playerSpeed = 0.2;
 
 //Main states and scenes of the game
 const SCENES = {
@@ -122,10 +122,10 @@ const keyDirections = {
 
 // Data structure with the directions a character can move, the direction sign and the related animation.
 const playerMotion = {
-    up:    { status:false, axis:"y", sign:-1, repeat:true, duration:100, moveFrames:[4,7],  idleFrames:[4,4]  },
     down:  { status:false, axis:"y", sign: 1, repeat:true, duration:100, moveFrames:[0,3],  idleFrames:[0,0]  },
-    right: { status:false, axis:"x", sign: 1, repeat:true, duration:100, moveFrames:[8,11],  idleFrames:[8,8]  },
-    left:  { status:false, axis:"x", sign:-1, repeat:true, duration:100, moveFrames:[12,15], idleFrames:[12,12]},
+    up:    { status:false, axis:"y", sign:-1, repeat:true, duration:100, moveFrames:[4,7],  idleFrames:[4,4]  },
+    right: { status:false, axis:"x", sign: 1, repeat:true, duration:100, moveFrames:[8,11], idleFrames:[8,8]  },
+    left:  { status:false, axis:"x", sign:-1, repeat:true, duration:100, moveFrames:[12,15],idleFrames:[12,12]},
 };
 
 
@@ -466,13 +466,13 @@ class Game {
   initObjects() {
             this.player = new AnimatedPlayer(
             new Vector(canvasWidth / 2, canvasHeight / 2),
-            60,
-            60,
+            80,
+            80,
             "red",
             4,
             playerMotion
         );
-        this.player.setSprite('../assets/sprites/character.png', new Rect(0, 0, 113, 137));
+        this.player.setSprite('../assets/sprites/character.png', new Rect(0, 0, 831, 831));
         this.player.setSpeed(playerSpeed);
         this.player.maxHP = 100;
         this.player.hp = 100;
@@ -703,6 +703,7 @@ class Game {
 
     if (this.player) {
       this.player.velocity = new Vector(0, 0);
+      this.player.keys = [];
     }
 
     switch (scene) {
@@ -1136,6 +1137,7 @@ class Game {
 
   //The controls of the game for movement, restarting and selecting cards during combat
   createEventListeners() {
+    if (this.currentScene === SCENES.COMBATE) return;
     window.addEventListener("keydown", (event) => {
       if (this.currentScene === SCENES.COMBATE) return;
       if (this.currentScene === SCENES.GAME_OVER && event.key === " ") {
