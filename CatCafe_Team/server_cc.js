@@ -13,7 +13,11 @@ const pool = mysql.createPool({
     host: 'localhost',
     port: '3306',
     user: 'root',
+<<<<<<< HEAD
     password: '',
+=======
+    password: 'Bosco7878..',
+>>>>>>> main
     database: "cat_cafe"
 }).promise()
 
@@ -75,4 +79,8 @@ app.get('/api/cats', async (req, res) => {
 })
 
 const PORT = 3000
+<<<<<<< HEAD
 app.listen(PORT, () => console.log(`Servidor corriendo en http://localhost:${PORT}`))
+=======
+app.listen(PORT, () => console.log(`Servidor corriendo en http://localhost:${PORT}`))
+>>>>>>> main
