@@ -495,7 +495,7 @@ class Game {
 
     this.exit_room3 = new GameObject(new Vector(0, canvasHeight / 2),120,200,"grey");
 
-    this.room_1 = new Room(new Vector(canvasWidth / 2 + 60, canvasHeight - canvasHeight + 100),200,120,"green");
+    this.room_1 = new Room(new Vector(canvasWidth / 2 + 60, canvasHeight - canvasHeight + 60),200,120,"green");
 
     this.room_2 = new Room(new Vector(canvasWidth / 2, canvasHeight),200,120,"blue");
 
