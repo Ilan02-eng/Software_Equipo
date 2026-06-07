@@ -1,0 +1,97 @@
+body{
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(58, 48, 42);
+    font-family: "Shippori Mincho", serif;
+}
+
+.about-container{
+    width: 95%;
+    max-width: 1500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.content{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    
+}
+
+.text-section{
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    padding: 30px;
+    padding-right: 60px;
+}
+
+.image-section{
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.about-image{
+    width: 400px;
+    height: auto;
+}
+
+.about-logo{
+    width: 500px;
+    height: auto;
+    display: block;
+    margin-bottom: 10px;
+}
+
+p{
+    color: white;
+    font-size: 18px;
+    line-height: 1.8;
+    margin-bottom: 30px;
+}
+
+button{
+    width: 200px;
+    height: 60px;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    background-color: rgb(58, 48, 42);
+    border: 3px solid rgb(103, 43, 43);
+    border-radius: 12px;
+    cursor: pointer;
+    margin-bottom: 40px;
+}
+
+button:hover{
+    background-color: rgb(45, 34, 29);
+}
+
+.top-bar{
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-family: "Poppins", serif;
+    display: flex;
+    gap: 20px;
+}
+
+.top-link{
+    color: #ffa4a4;
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.top-link:hover{
+    text-decoration: underline;
+    cursor: pointer;
+}

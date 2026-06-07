@@ -1,35 +1,32 @@
 body{
     margin: 0;
-    padding: 0;
     min-height: 100vh;
+
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
+
     background-color: rgb(24, 27, 32);
-    font-family: "Noto Serif Thai", sans-serif;
+
+    font-family: "Poppins", sans-serif;
 }
 
-.login-divider {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    margin: auto;
-    width: 100%;
-    height: auto;
-}
-
-.login-container{
+.register-container{
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
+
+    gap: 15px;
+}
+
+.register-logo{
+    width: 300px;
+    height: auto;
+    margin-bottom: 20px;
 }
 
 h1{
-    color: #e0b36d;
-    margin-bottom: 20px;
+    color: white;
 }
 
 input{
@@ -40,12 +37,10 @@ input{
 
     border: 2px solid rgb(103, 43, 43);
     border-radius: 8px;
-
-    font-size: 16px;
 }
 
 button{
-    width: 200px;
+    width: 220px;
     height: 60px;
 
     font-size: 20px;
@@ -55,25 +50,24 @@ button{
     background-color: rgb(24, 27, 32);
 
     border: 3px solid rgb(103, 43, 43);
-    border-radius: 10px;
+    border-radius: 12px;
 
     cursor: pointer;
 }
 
 button:hover{
-    background-color: #730c0cd6;
-}
-
-#message{
-    color: #e0b36d;
-    font-weight: bold;
+    background-color: rgb(45, 34, 29);
 }
 
 .back-link{
-    color: #e0b36d;
+    color: #ffa4a4;
     text-decoration: none;
 }
 
 .back-link:hover{
     text-decoration: underline;
+}
+
+#message{
+    color: white;
 }
