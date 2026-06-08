@@ -19,6 +19,8 @@ const SCENES = {
   VICTORY: "victory",
 };
 
+
+
 //Types of cards and defines the colors that each type has
 const CARD_TYPES = {
   ATTACK: { color: "red", label: "Attack" },
@@ -108,6 +110,7 @@ const WILDCARD = {
     if (p.hp < 1) p.hp = 1;
   },
 };
+
 
 const keyDirections = {
     w: 'up',
@@ -215,14 +218,14 @@ class Player extends GameObject {
   clampWithinCanvas() {
     if (this.position.y < 0) {
       this.position.y = 0;
-    } else if (this.position.y + this.height > canvasHeight) {
-      this.position.y = canvasHeight - this.height;
+    } else if (this.position.y + this.height > game.worldHeight) {
+      this.position.y = game.worldHeight - this.height;
     }
 
     if (this.position.x < 0) {
       this.position.x = 0;
-    } else if (this.position.x + this.width > canvasWidth) {
-      this.position.x = canvasWidth - this.width;
+    } else if (this.position.x + this.width > game.worldWidth) {
+      this.position.x = game.worldWidth - this.width;
     }
   }
 }
@@ -454,12 +457,17 @@ class Game {
     this.wildcard = null;
     this.isPlayerTurn = true;
 
+    this.camera = { x: 0, y: 0 };
+    this.worldWidth = canvasWidth * 3;
+    this.worldHeight = canvasHeight * 3;
+
     this.createEventListeners();
     this.initObjects();
     this.loadScene(SCENES.CASA);
     this.livebars = [];
     this.message = "";
     this.messageTimer = 0;
+
   }
 
   //Creates all the objects of the game includes the player, enemy, rooms, houses, etc.
@@ -504,28 +512,27 @@ class Game {
     this.enemy = new Enemy(new Vector(canvasWidth - 170, 195),200,200,"orange");
     this.enemy.setSprite("../assets/sprites/monster_littlejimmy.png",new Rect(0, 0, 1000, 1000),);
 
-    this.bushes = [
-      {
-        bush: new GameObject(new Vector(120, 520), 90, 70, "green"),
-        hasCard: true,
-        collected: false,
-      },
-
-      {
-        bush: new GameObject(new Vector(220, 330), 100, 80, "green"),
-        hasCard: false,
-        collected: false,
-      },
-
-      {
-        bush: new GameObject(new Vector(640, 180), 85, 65, "green"),
-        hasCard: true,
-        collected: false,
-      },
+    this.bushes = [];
+    const bushSprites = [
+      { src: "../assets/sprites/bush.png", rect: new Rect(0, 0, 1284, 1020) },
+      { src: "../assets/sprites/bush2.png", rect: new Rect(0, 0, 1280, 640) },
+      { src: "../assets/sprites/bush3.png", rect: new Rect(0, 0, 1920, 960) },
     ];
-    this.bushes[0].bush.setSprite("../assets/sprites/bush.png",new Rect(0, 0, 1284, 1020));
-    this.bushes[1].bush.setSprite("../assets/sprites/bush2.png",new Rect(0, 0, 1280, 640));
-    this.bushes[2].bush.setSprite("../assets/sprites/bush3.png",new Rect(0, 0, 1920, 960));
+
+    for (let i = 0; i < 10; i++) {
+      let randomX = Math.random() * (this.worldWidth - 100) + 50;
+      let randomY = Math.random() * (this.worldHeight - 100) + 50;
+      let randomSprite = bushSprites[Math.floor(Math.random() * bushSprites.length)];
+      
+      let bush = new GameObject(new Vector(randomX, randomY), 90, 70, "green");
+      bush.setSprite(randomSprite.src, randomSprite.rect);
+      
+      this.bushes.push({
+        bush: bush,
+        hasCard: i < 5, 
+        collected: false,
+      });
+    }
 
     this.backgroundVilla = new GameObject(new Vector(0, 0),canvasWidth,canvasHeight,"green");
 
@@ -535,6 +542,24 @@ class Game {
     this.backgroundCasa_enemy = new Image();
     this.backgroundCasa_enemy.src = "../assets/sprites/villain_room.jpg";
 
+    this.backgroundHabitacion = new Image();
+    this.backgroundHabitacion.src = "../assets/sprites/verde.png";
+
+    this.backgroundMeca = new Image();
+    this.backgroundMeca.src = "../assets/sprites/meca.png";
+
+    this.tileVilla = new Image();
+    this.tileVilla.src = "../assets/sprites/villa.png";
+
+  }
+
+  updateCamera() {
+  this.camera.x = this.player.position.x - canvasWidth / 2;
+  this.camera.y = this.player.position.y - canvasHeight / 2;
+
+  // Clamping para no salir del mundo
+  this.camera.x = Math.max(0, Math.min(this.camera.x, this.worldWidth - canvasWidth));
+  this.camera.y = Math.max(0, Math.min(this.camera.y, this.worldHeight - canvasHeight));
   }
 
   //Random generation fo the enemy in the rooms of the house
@@ -709,13 +734,11 @@ class Game {
     switch (scene) {
       case SCENES.VILLA:
         this.player.velocity = new Vector(0, 0);
-
         this.actors = [this.player, this.casa, this.casa_lj];
 
         for (let bushData of this.bushes) {
           this.actors.push(bushData.bush);
         }
-
         break;
 
       case SCENES.CASA:
@@ -747,66 +770,108 @@ class Game {
   }
 
   //Draws the actors, messages and UIs of the game
-  draw(ctx, card) {
+ draw(ctx) {
+  if (this.currentScene == SCENES.VILLA) {
+    ctx.save();
+    ctx.translate(-this.camera.x, -this.camera.y);
 
-    if (this.currentScene == SCENES.CASA){
-      ctx.drawImage(this.backgroundCasa, 0, 0, canvasWidth, canvasHeight);
-    }
-
-    if (this.currentScene == SCENES.CASA_LJ){
-      ctx.drawImage(this.backgroundCasa_enemy, 0, 0, canvasWidth, canvasHeight);
-    }
-
+    if (this.tileVilla.complete) {
+      let pattern = ctx.createPattern(this.tileVilla, "repeat");
+      ctx.fillStyle = pattern;
+      ctx.fillRect(0, 0, this.worldWidth, this.worldHeight);
+    } 
 
     for (let actor of this.actors) {
       actor.draw(ctx);
     }
 
-    if (this.messageTimer > 0) {
-      ctx.fillStyle = "black";
-      ctx.font = "bold 30px Arial";
-      ctx.textAlign = "center";
-      ctx.fillText(this.message, canvasWidth / 2, 80);
-      this.messageTimer--;
-    }
-
-    if (this.currentScene === SCENES.COMBATE) {
-      this.drawCombatUI(ctx);
-    }
-    
-
-    if (this.currentScene === SCENES.GAME_OVER) {
-      ctx.fillStyle = "black";
-      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-
-      ctx.fillStyle = "red";
-      ctx.font = "bold 55px Arial";
-      ctx.textAlign = "center";
-      ctx.fillText("GAME OVER", canvasWidth / 2, 220);
-
-      ctx.fillStyle = "white";
-      ctx.font = "28px Arial";
-      ctx.fillText("Press SPACE to start again", canvasWidth / 2, 320);
-
-      return;
-    }
-
-    if (this.currentScene === SCENES.VICTORY) {
-      ctx.fillStyle = "black";
-      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-
-      ctx.fillStyle = "gold";
-      ctx.font = "bold 55px Arial";
-      ctx.textAlign = "center";
-      ctx.fillText("YOU WIN", canvasWidth / 2, 240);
-
-      ctx.fillStyle = "white";
-      ctx.font = "28px Arial";
-      ctx.fillText("You survived 3 days", canvasWidth / 2, 320);
-
-      return;
-    }
+    ctx.restore();
+    return;
   }
+  if (this.currentScene == SCENES.CASA) {
+    ctx.drawImage(this.backgroundCasa, 0, 0, canvasWidth, canvasHeight);
+  }
+
+  if (this.currentScene == SCENES.CASA_LJ) {
+    ctx.drawImage(this.backgroundCasa_enemy, 0, 0, canvasWidth, canvasHeight);
+  }
+
+  if (this.currentScene == SCENES.HABITACION) {
+    let doors = this.mapHouse.getDoorsFrom(this.currentRoom);
+    let directions = doors.map(d => this.mapHouse.getDirection(this.currentRoom, d));
+    let angle = 0;
+
+    if (doors.length >= 3) {
+      angle = 0;
+    } else {
+      if (directions.includes("bottom") && directions.includes("left")) {
+        angle = 0;
+      } else if (directions.includes("top") && directions.includes("right")) {
+        angle = Math.PI;
+      } else if (directions.includes("bottom") && directions.includes("right")) {
+        angle = -Math.PI / 2;
+      } else if (directions.includes("top") && directions.includes("left")) {
+        angle = Math.PI / 2;
+      }
+    }
+
+    let bg = doors.length >= 3 ? this.backgroundHabitacion : this.backgroundMeca;
+
+    ctx.save();
+    ctx.translate(canvasWidth / 2, canvasHeight / 2);
+    ctx.rotate(angle);
+
+    if (angle === Math.PI / 2 || angle === -Math.PI / 2) {
+      ctx.drawImage(bg, -canvasHeight / 2, -canvasWidth / 2, canvasHeight, canvasWidth);
+    } else {
+      ctx.drawImage(bg, -canvasWidth / 2, -canvasHeight / 2, canvasWidth, canvasHeight);
+    }
+
+    ctx.restore();
+  }
+
+  for (let actor of this.actors) {
+    actor.draw(ctx);
+  }
+
+  if (this.messageTimer > 0) {
+    ctx.fillStyle = "black";
+    ctx.font = "bold 30px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText(this.message, canvasWidth / 2, 80);
+    this.messageTimer--;
+  }
+
+  if (this.currentScene === SCENES.COMBATE) {
+    this.drawCombatUI(ctx);
+  }
+
+  if (this.currentScene === SCENES.GAME_OVER) {
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    ctx.fillStyle = "red";
+    ctx.font = "bold 55px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("GAME OVER", canvasWidth / 2, 220);
+    ctx.fillStyle = "white";
+    ctx.font = "28px Arial";
+    ctx.fillText("Press SPACE to start again", canvasWidth / 2, 320);
+    return;
+  }
+
+  if (this.currentScene === SCENES.VICTORY) {
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    ctx.fillStyle = "gold";
+    ctx.font = "bold 55px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("YOU WIN", canvasWidth / 2, 240);
+    ctx.fillStyle = "white";
+    ctx.font = "28px Arial";
+    ctx.fillText("You survived 3 days", canvasWidth / 2, 320);
+    return;
+  }
+}
 
   //Render of each card individually
   drawCardItem(ctx, card) {
@@ -976,6 +1041,7 @@ class Game {
 
     switch (this.currentScene) {
       case SCENES.VILLA:
+        this.updateCamera();
         for (let bushData of this.bushes) {
           if (boxOverlap(this.player, bushData.bush)) {
             this.player.position = new Vector(
@@ -990,7 +1056,6 @@ class Game {
               this.message = "New card!";
               this.messageTimer = 120;
             }
-
             break;
           }
         }

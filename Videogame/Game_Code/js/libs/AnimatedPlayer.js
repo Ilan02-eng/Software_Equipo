@@ -65,21 +65,20 @@ class AnimatedPlayer extends AnimatedObject {
     }
 
     clampWithinCanvas(canvas) {
-        // Top border
+        let maxWidth = (game && game.currentScene === SCENES.VILLA) ? game.worldWidth : canvas.width;
+        let maxHeight = (game && game.currentScene === SCENES.VILLA) ? game.worldHeight : canvas.height;
+
         if (this.position.y - this.halfSize.y < 0) {
             this.position.y = this.halfSize.y;
-        // Left border
         }
         if (this.position.x - this.halfSize.x < 0) {
             this.position.x = this.halfSize.x;
-        // Bottom border
         }
-        if (this.position.y + this.halfSize.y > canvas.height) {
-            this.position.y = canvas.height - this.halfSize.y;
-        // Right border
+        if (this.position.y + this.halfSize.y > maxHeight) {
+            this.position.y = maxHeight - this.halfSize.y;
         }
-        if (this.position.x + this.halfSize.x > canvas.width) {
-            this.position.x = canvas.width - this.halfSize.x;
+        if (this.position.x + this.halfSize.x > maxWidth) {
+            this.position.x = maxWidth - this.halfSize.x;
         }
     }
 
