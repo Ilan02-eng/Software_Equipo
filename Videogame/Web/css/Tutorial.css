@@ -1,0 +1,77 @@
+body{
+    margin: 0;
+    background-color: rgb(24, 27, 32);
+    font-family: "Poppins", sans-serif;
+    color: white;
+}
+
+.tutorial-container{
+    width: 85%;
+    max-width: 1200px;
+    margin: auto;
+    padding: 40px;
+}
+
+.tutorial-logo{
+    width: 350px;
+    display: block;
+    margin: auto;
+    margin-bottom: 20px;
+}
+
+h1{
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+h2{
+    color: #ffa4a4;
+    margin-top: 50px;
+}
+
+p{
+    line-height: 1.8;
+}
+
+ul{
+    line-height: 2;
+}
+
+.letter{
+    border: 2px solid rgb(103, 43, 43);
+    border-radius: 10px;
+    padding: 20px;
+    background-color: rgba(103, 43, 43, 0.15);
+}
+
+.card-box{
+    border: 2px solid rgb(103, 43, 43);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+button{
+    display: block;
+
+    width: 200px;
+    height: 60px;
+
+    margin: 50px auto;
+
+    font-size: 20px;
+    font-weight: bold;
+
+    color: white;
+    background-color: rgb(24, 27, 32);
+
+    border: 3px solid rgb(103, 43, 43);
+    border-radius: 12px;
+
+    cursor: pointer;
+}
+
+button:hover{
+    background-color: rgb(60, 25, 25);
+}

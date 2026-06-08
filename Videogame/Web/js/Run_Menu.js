@@ -1,30 +1,23 @@
-//Menu for Catharsis
-const aboutBtn = document.getElementById("aboutBtn");
-const loginBtn = document.getElementById("loginBtn");
+// Menu for Catharsis
+
 const startGameBtn = document.getElementById("startGameBtn");
 const tutorialBtn = document.getElementById("tutorialBtn");
-const statisticsBtn = document.getElementById("statisticsBtn");
+const statsBtn = document.getElementById("statisticsBtn");
+const userDisplay = document.getElementById("userDisplay");
+const username = localStorage.getItem("username");
 
-aboutBtn.addEventListener("click", () => {
-    window.location.href = "About.html";
-});
-
-loginBtn.addEventListener("click", () => {
-    window.location.href = "Login.html";
-});
+if(username){
+    userDisplay.textContent = "Welcome " + username;
+}
 
 startGameBtn.addEventListener("click", () => {
     window.location.href = "../scenes/map/map.html";
 });
 
 tutorialBtn.addEventListener("click", () => {
-    window.location.href = "tutorial.html";
+    window.location.href = "Tutorial.html";
 });
 
-statisticsBtn.addEventListener("click", () => {
-    window.location.href = "statistics.html";
-});
-
-logoutBtn.addEventListener("click", () => {
-    window.location.href = "login.html";
+statsBtn.addEventListener("click", () => {
+    window.location.href = "Statistics.html";
 });

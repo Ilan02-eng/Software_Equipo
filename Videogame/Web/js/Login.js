@@ -5,14 +5,22 @@ loginBtn.addEventListener("click", () => {
 
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
+    const savedUsername = localStorage.getItem("username");
+    const savedPassword = localStorage.getItem("password");
     const message = document.getElementById("message");
 
     if(username === "" || password === ""){
-        message.textContent = "Please fill all fields";
+        message.textContent = "Please fill complete everything";
         return;
     }
 
-    message.textContent = "Login successful";
+    if(username === savedUsername && password === savedPassword) {
+
+        window.location.href = "Run_Menu.html";
+    }
+    else {
+    message.textContent = "Incorrect username or password";
+    }
 
     localStorage.setItem("username", username);
 

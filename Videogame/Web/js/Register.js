@@ -1,4 +1,5 @@
-//Register for Catharsis
+// Register for Catharsis
+
 const registerBtn = document.getElementById("registerBtn");
 
 registerBtn.addEventListener("click", () => {
@@ -7,9 +8,8 @@ registerBtn.addEventListener("click", () => {
     const name = document.getElementById("name").value;
     const lastname = document.getElementById("lastname").value;
     const gender = document.getElementById("gender").value;
-    const age = document.getElementById("age").value;
+    const age = parseInt(document.getElementById("age").value);
     const password = document.getElementById("password").value;
-
     const message = document.getElementById("message");
 
     if(
@@ -17,12 +17,19 @@ registerBtn.addEventListener("click", () => {
         name === "" ||
         lastname === "" ||
         gender === "" ||
-        age === "" ||
-        password === ""
+        password === "" ||
+        isNaN(age)
     ){
-        message.textContent = "Please complete all fields.";
+        message.textContent = "Please complete everything";
         return;
     }
 
-    message.textContent = "Account created successfully.";
+    if(age <= 13){
+        message.textContent = "You must be older than 13 to create an account.";
+        return;
+    }
+
+    localStorage.setItem("username", username);
+    localStorage.setItem("password", password);
+    message.textContent = "Account was created!";
 });
