@@ -15,10 +15,31 @@ const SCENES = {
   CASA_LJ: "casa_lj",
   HABITACION: "habitacion",
   COMBATE: "combate",
+  UPGRADE: "upgrade",
   GAME_OVER: "game_over",
   VICTORY: "victory",
 };
 
+const UPGRADES = [
+  {
+    name: "+15 HP",
+    description: "Increase max life",
+    color: "green",
+    action: (player) => {
+      player.maxHP += 15;
+      player.hp = player.maxHP;
+    },
+  },
+  {
+    name: "+10 Energy",
+    description: "Increase max energy",
+    color: "blue",
+    action: (player) => {
+      player.maxEnergy += 10;
+      player.energy = player.maxEnergy;
+    },
+  },
+];
 
 
 //Types of cards and defines the colors that each type has
@@ -197,12 +218,11 @@ class Player extends GameObject {
   }
 
   update(deltaTime) {
-    if (game && game.currentScene === SCENES.COMBATE) {
+    if (
+      game &&
+      (game.currentScene === SCENES.COMBATE || game.currentScene === SCENES.UPGRADE)
+    ) {
       this.velocity = new Vector(0, 0);
-      return;
-    }
-
-    if (this.velocity.x === 0 && this.velocity.y === 0) {
       return;
     }
 
@@ -467,6 +487,7 @@ class Game {
     this.livebars = [];
     this.message = "";
     this.messageTimer = 0;
+    this.upgrade = [];
 
   }
 
@@ -766,9 +787,86 @@ class Game {
         this.player.position = new Vector(150, canvasHeight * 0.3);
         this.combatHand();
         break;
+      case SCENES.UPGRADE:
+        this.player.velocity = new Vector(0, 0);
+
+        this.actors = [this.player, this.casa, this.casa_lj];
+
+        for (let bushData of this.bushes) {
+          this.actors.push(bushData.bush);
+        }
+
+        this.upgradeButtons = [
+          {
+            x: 160,
+            y: 260,
+            w: 230,
+            h: 140,
+            upgrade: UPGRADES[0],
+          },
+          {
+            x: 410,
+            y: 260,
+            w: 230,
+            h: 140,
+            upgrade: UPGRADES[1],
+          },
+        ];
+        break;
     }
   }
 
+
+drawUpgradeScreen(ctx) {
+    ctx.fillStyle = "rgba(80, 80, 80, 0.75";
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+    ctx.fillStyle = "white";
+    ctx.font = "bold 38px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("Choose an Upgrade", canvasWidth / 2, 150);
+
+    for (let button of this.upgradeButtons) {
+      let upgrade = button.upgrade;
+
+      ctx.fillStyle = upgrade.color;
+      ctx.fillRect(button.x, button.y, button.w, button.h);
+
+      ctx.strokeStyle = "white";
+      ctx.lineWidth = 3;
+      ctx.strokeRect(button.x, button.y, button.w, button.h);
+
+      ctx.fillStyle = "white";
+      ctx.font = "bold 28px Arial";
+      ctx.fillText(upgrade.name, button.x + button.w / 2, button.y + 58);
+
+      ctx.font = "16px Arial";
+      ctx.fillText(upgrade.description, button.x + button.w / 2, button.y + 95);
+    }
+  }
+
+  upgradeClick(mouseX, mouseY) {
+  if (this.currentScene !== SCENES.UPGRADE) {
+    return;
+  }
+
+  for (let button of this.upgradeButtons) {
+    if (
+      mouseX >= button.x &&
+      mouseX <= button.x + button.w &&
+      mouseY >= button.y &&
+      mouseY <= button.y + button.h
+    ) {
+      button.upgrade.action(this.player);
+
+      this.message = button.upgrade.name + " Upgrade!";
+      this.messageTimer = 120;
+
+      this.loadScene(SCENES.VILLA);
+      return;
+    }
+  }
+  }
   //Draws the actors, messages and UIs of the game
  draw(ctx) {
   if (this.currentScene == SCENES.VILLA) {
@@ -1039,6 +1137,19 @@ class Game {
       return;
     }
 
+    if (!bushData.collected) {
+      bushData.collected = true;
+
+    if (bushData.hasUpgrade) {
+        this.loadScene(SCENES.UPGRADE);
+        return;
+      }
+
+    if (bushData.hasCard) {
+        this.message = "New card!";
+        this.messageTimer = 120;
+      }
+    }
     switch (this.currentScene) {
       case SCENES.VILLA:
         this.updateCamera();
@@ -1231,6 +1342,7 @@ class Game {
       const mouseX = (event.clientX - rect.left) * scaleX;
       const mouseY = (event.clientY - rect.top) * scaleY;
       this.combatClick(mouseX, mouseY);
+      this.upgradeClick(mouseX, mouseY);
     });
   }
     addKey(direction) {
