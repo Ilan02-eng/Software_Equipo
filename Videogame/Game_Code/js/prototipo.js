@@ -6,7 +6,7 @@ const canvasHeight = 600;
 let ctx;
 let game;
 let oldTime;
-let playerSpeed = 0.2;
+let playerSpeed = 0.3;
 
 //Main states and scenes of the game
 const SCENES = {
@@ -477,6 +477,8 @@ class Game {
     this.wildcard = null;
     this.isPlayerTurn = true;
 
+    this.upgradeButtons = [];
+
     this.camera = { x: 0, y: 0 };
     this.worldWidth = canvasWidth * 3;
     this.worldHeight = canvasHeight * 3;
@@ -487,51 +489,116 @@ class Game {
     this.livebars = [];
     this.message = "";
     this.messageTimer = 0;
-    this.upgrade = [];
-
   }
 
   //Creates all the objects of the game includes the player, enemy, rooms, houses, etc.
   initObjects() {
-            this.player = new AnimatedPlayer(
-            new Vector(canvasWidth / 2, canvasHeight / 2),
-            80,
-            80,
-            "red",
-            4,
-            playerMotion
-        );
-        this.player.setSprite('../assets/sprites/character.png', new Rect(0, 0, 831, 831));
-        this.player.setSpeed(playerSpeed);
-        this.player.maxHP = 100;
-        this.player.hp = 100;
-        this.player.evasionChance = 0;
-        this.player.maxEnergy = 150;
-        this.player.energy = 150;
+    this.player = new AnimatedPlayer(
+      new Vector(canvasWidth / 2, canvasHeight / 2),
+      80,
+      80,
+      "red",
+      4,
+      playerMotion,
+    );
+    this.player.setSprite(
+      "../assets/sprites/character.png",
+      new Rect(0, 0, 831, 831),
+    );
+    this.player.setSpeed(playerSpeed);
+    this.player.maxHP = 100;
+    this.player.hp = 100;
+    this.player.evasionChance = 0;
+    this.player.maxEnergy = 150;
+    this.player.energy = 150;
 
-    this.casa = new GameObject(new Vector(canvasWidth / 4, canvasHeight / 8),280,150,"grey");
-    this.casa.setSprite("../assets/sprites/house.png",new Rect(0, 0, 1250, 1050));
-    this.casa_lj = new GameObject(new Vector(canvasWidth - 90, canvasHeight - 200),190,185,"purple");
-    this.casa_lj.setSprite("../assets/sprites/house_LJ.png",new Rect(0, 0, 1000, 1300));
+    this.casa = new GameObject(
+      new Vector(canvasWidth / 4, canvasHeight / 8),
+      280,
+      150,
+      "grey",
+    );
+    this.casa.setSprite(
+      "../assets/sprites/house.png",
+      new Rect(0, 0, 1250, 1050),
+    );
+    this.casa_lj = new GameObject(
+      new Vector(canvasWidth - 90, canvasHeight - 200),
+      190,
+      185,
+      "purple",
+    );
+    this.casa_lj.setSprite(
+      "../assets/sprites/house_LJ.png",
+      new Rect(0, 0, 1000, 1300),
+    );
 
-    this.salida_casa = new GameObject(new Vector(canvasWidth / 2, 590),120,100,"grey");
-    
-    this.salida_casa_lj = new GameObject(new Vector(20, canvasHeight / 2),90,120,"grey");
+    this.salida_casa = new GameObject(
+      new Vector(canvasWidth / 2, 590),
+      120,
+      100,
+      "grey",
+    );
 
-    this.exit_room1 = new GameObject(new Vector(canvasWidth / 2, canvasHeight),200,120,"grey",);
+    this.salida_casa_lj = new GameObject(
+      new Vector(20, canvasHeight / 2),
+      90,
+      120,
+      "grey",
+    );
 
-    this.exit_room2 = new GameObject(new Vector(canvasWidth / 2, canvasHeight - canvasHeight),200,120,"grey");
+    this.exit_room1 = new GameObject(
+      new Vector(canvasWidth / 2, canvasHeight),
+      200,
+      120,
+      "grey",
+    );
 
-    this.exit_room3 = new GameObject(new Vector(0, canvasHeight / 2),120,200,"grey");
+    this.exit_room2 = new GameObject(
+      new Vector(canvasWidth / 2, canvasHeight - canvasHeight),
+      200,
+      120,
+      "grey",
+    );
 
-    this.room_1 = new Room(new Vector(canvasWidth / 2 + 60, canvasHeight - canvasHeight + 60),200,120,"green");
+    this.exit_room3 = new GameObject(
+      new Vector(0, canvasHeight / 2),
+      120,
+      200,
+      "grey",
+    );
 
-    this.room_2 = new Room(new Vector(canvasWidth / 2, canvasHeight),200,120,"blue");
+    this.room_1 = new Room(
+      new Vector(canvasWidth / 2 + 60, canvasHeight - canvasHeight + 60),
+      200,
+      120,
+      "green",
+    );
 
-    this.room_3 = new Room(new Vector(canvasWidth - 5, canvasHeight / 2),120,200,"yellow");
+    this.room_2 = new Room(
+      new Vector(canvasWidth / 2, canvasHeight),
+      200,
+      120,
+      "blue",
+    );
 
-    this.enemy = new Enemy(new Vector(canvasWidth - 170, 195),200,200,"orange");
-    this.enemy.setSprite("../assets/sprites/monster_littlejimmy.png",new Rect(0, 0, 1000, 1000),);
+    this.room_3 = new Room(
+      new Vector(canvasWidth - 5, canvasHeight / 2),
+      120,
+      200,
+      "yellow",
+    );
+
+    this.enemy = new Enemy(
+      new Vector(canvasWidth - 170, 195),
+      200,
+      200,
+      "orange",
+    );
+    this.enemy.setSprite(
+      "../assets/sprites/monster_littlejimmy.png",
+      new Rect(0, 0, 1000, 1000),
+    );
 
     this.bushes = [];
     const bushSprites = [
@@ -543,19 +610,26 @@ class Game {
     for (let i = 0; i < 10; i++) {
       let randomX = Math.random() * (this.worldWidth - 100) + 50;
       let randomY = Math.random() * (this.worldHeight - 100) + 50;
-      let randomSprite = bushSprites[Math.floor(Math.random() * bushSprites.length)];
-      
+      let randomSprite =
+        bushSprites[Math.floor(Math.random() * bushSprites.length)];
+
       let bush = new GameObject(new Vector(randomX, randomY), 90, 70, "green");
       bush.setSprite(randomSprite.src, randomSprite.rect);
-      
+
       this.bushes.push({
         bush: bush,
-        hasCard: i < 5, 
+        hasCard: i < 5,
+        hasUpgrade: i >= 5 && i < 8,
         collected: false,
       });
     }
 
-    this.backgroundVilla = new GameObject(new Vector(0, 0),canvasWidth,canvasHeight,"green");
+    this.backgroundVilla = new GameObject(
+      new Vector(0, 0),
+      canvasWidth,
+      canvasHeight,
+      "green",
+    );
 
     this.backgroundCasa = new Image();
     this.backgroundCasa.src = "../assets/sprites/Your_Room.png";
@@ -571,16 +645,21 @@ class Game {
 
     this.tileVilla = new Image();
     this.tileVilla.src = "../assets/sprites/villa.png";
-
   }
 
   updateCamera() {
-  this.camera.x = this.player.position.x - canvasWidth / 2;
-  this.camera.y = this.player.position.y - canvasHeight / 2;
+    this.camera.x = this.player.position.x - canvasWidth / 2;
+    this.camera.y = this.player.position.y - canvasHeight / 2;
 
-  // Clamping para no salir del mundo
-  this.camera.x = Math.max(0, Math.min(this.camera.x, this.worldWidth - canvasWidth));
-  this.camera.y = Math.max(0, Math.min(this.camera.y, this.worldHeight - canvasHeight));
+    // Clamping para no salir del mundo
+    this.camera.x = Math.max(
+      0,
+      Math.min(this.camera.x, this.worldWidth - canvasWidth),
+    );
+    this.camera.y = Math.max(
+      0,
+      Math.min(this.camera.y, this.worldHeight - canvasHeight),
+    );
   }
 
   //Random generation fo the enemy in the rooms of the house
@@ -737,9 +816,30 @@ class Game {
 
     this.wildcard = this.getWildcard();
 
-    this.playerHPBar = new combatBars(new Vector(40, 40),250,25,this.player,"hp","green");
-    this.playerEnergyBar = new combatBars(new Vector(40, 80),250,25,this.player,"energy","blue");
-    this.enemyHPBar = new combatBars(new Vector(510, 80),250,25,this.enemy,"hp","red");
+    this.playerHPBar = new combatBars(
+      new Vector(40, 40),
+      250,
+      25,
+      this.player,
+      "hp",
+      "green",
+    );
+    this.playerEnergyBar = new combatBars(
+      new Vector(40, 80),
+      250,
+      25,
+      this.player,
+      "energy",
+      "blue",
+    );
+    this.enemyHPBar = new combatBars(
+      new Vector(510, 80),
+      250,
+      25,
+      this.enemy,
+      "hp",
+      "red",
+    );
   }
 
   //Changes the states of the game to specific scenes
@@ -773,7 +873,7 @@ class Game {
       case SCENES.CASA_LJ:
         this.player.velocity = new Vector(0, 0);
         this.loadHouseDoors();
-        this.hiddenDoors = this.actors.filter(a => a !== this.player);
+        this.hiddenDoors = this.actors.filter((a) => a !== this.player);
         this.actors = [this.player];
         break;
 
@@ -787,6 +887,7 @@ class Game {
         this.player.position = new Vector(150, canvasHeight * 0.3);
         this.combatHand();
         break;
+
       case SCENES.UPGRADE:
         this.player.velocity = new Vector(0, 0);
 
@@ -816,9 +917,8 @@ class Game {
     }
   }
 
-
-drawUpgradeScreen(ctx) {
-    ctx.fillStyle = "rgba(80, 80, 80, 0.75";
+  drawUpgradeScreen(ctx) {
+    ctx.fillStyle = "rgba(80, 80, 80, 0.65";
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
     ctx.fillStyle = "white";
@@ -845,131 +945,152 @@ drawUpgradeScreen(ctx) {
     }
   }
 
-  upgradeClick(mouseX, mouseY) {
-  if (this.currentScene !== SCENES.UPGRADE) {
-    return;
-  }
+  //Draws the actors, messages and UIs of the game
+  draw(ctx) {
+    if (this.currentScene == SCENES.UPGRADE) {
+      ctx.save();
+      ctx.translate(-this.camera.x, -this.camera.y);
 
-  for (let button of this.upgradeButtons) {
-    if (
-      mouseX >= button.x &&
-      mouseX <= button.x + button.w &&
-      mouseY >= button.y &&
-      mouseY <= button.y + button.h
-    ) {
-      button.upgrade.action(this.player);
+      if (this.tileVilla.complete) {
+        let pattern = ctx.createPattern(this.tileVilla, "repeat");
+        ctx.fillStyle = pattern;
+        ctx.fillRect(0, 0, this.worldWidth, this.worldHeight);
+      }
 
-      this.message = button.upgrade.name + " Upgrade!";
-      this.messageTimer = 120;
+      for (let actor of this.actors) {
+        actor.draw(ctx);
+      }
 
-      this.loadScene(SCENES.VILLA);
+      ctx.restore();
+
+      this.drawUpgradeScreen(ctx);
       return;
     }
-  }
-  }
-  //Draws the actors, messages and UIs of the game
- draw(ctx) {
-  if (this.currentScene == SCENES.VILLA) {
-    ctx.save();
-    ctx.translate(-this.camera.x, -this.camera.y);
 
-    if (this.tileVilla.complete) {
-      let pattern = ctx.createPattern(this.tileVilla, "repeat");
-      ctx.fillStyle = pattern;
-      ctx.fillRect(0, 0, this.worldWidth, this.worldHeight);
-    } 
+    if (this.currentScene == SCENES.VILLA) {
+      ctx.save();
+      ctx.translate(-this.camera.x, -this.camera.y);
+
+      if (this.tileVilla.complete) {
+        let pattern = ctx.createPattern(this.tileVilla, "repeat");
+        ctx.fillStyle = pattern;
+        ctx.fillRect(0, 0, this.worldWidth, this.worldHeight);
+      }
+
+      for (let actor of this.actors) {
+        actor.draw(ctx);
+      }
+
+      ctx.restore();
+      return;
+    }
+
+    if (this.currentScene == SCENES.CASA) {
+      ctx.drawImage(this.backgroundCasa, 0, 0, canvasWidth, canvasHeight);
+    }
+
+    if (this.currentScene == SCENES.CASA_LJ) {
+      ctx.drawImage(this.backgroundCasa_enemy, 0, 0, canvasWidth, canvasHeight);
+    }
+
+    if (this.currentScene == SCENES.HABITACION) {
+      let doors = this.mapHouse.getDoorsFrom(this.currentRoom);
+      let directions = doors.map((d) =>
+        this.mapHouse.getDirection(this.currentRoom, d),
+      );
+      let angle = 0;
+
+      if (doors.length >= 3) {
+        angle = 0;
+      } else {
+        if (directions.includes("bottom") && directions.includes("left")) {
+          angle = 0;
+        } else if (directions.includes("top") && directions.includes("right")) {
+          angle = Math.PI;
+        } else if (
+          directions.includes("bottom") &&
+          directions.includes("right")
+        ) {
+          angle = -Math.PI / 2;
+        } else if (directions.includes("top") && directions.includes("left")) {
+          angle = Math.PI / 2;
+        }
+      }
+
+      let bg =
+        doors.length >= 3 ? this.backgroundHabitacion : this.backgroundMeca;
+
+      ctx.save();
+      ctx.translate(canvasWidth / 2, canvasHeight / 2);
+      ctx.rotate(angle);
+
+      if (angle === Math.PI / 2 || angle === -Math.PI / 2) {
+        ctx.drawImage(
+          bg,
+          -canvasHeight / 2,
+          -canvasWidth / 2,
+          canvasHeight,
+          canvasWidth,
+        );
+      } else {
+        ctx.drawImage(
+          bg,
+          -canvasWidth / 2,
+          -canvasHeight / 2,
+          canvasWidth,
+          canvasHeight,
+        );
+      }
+
+      ctx.restore();
+    }
 
     for (let actor of this.actors) {
       actor.draw(ctx);
     }
 
-    ctx.restore();
-    return;
-  }
-  if (this.currentScene == SCENES.CASA) {
-    ctx.drawImage(this.backgroundCasa, 0, 0, canvasWidth, canvasHeight);
-  }
-
-  if (this.currentScene == SCENES.CASA_LJ) {
-    ctx.drawImage(this.backgroundCasa_enemy, 0, 0, canvasWidth, canvasHeight);
-  }
-
-  if (this.currentScene == SCENES.HABITACION) {
-    let doors = this.mapHouse.getDoorsFrom(this.currentRoom);
-    let directions = doors.map(d => this.mapHouse.getDirection(this.currentRoom, d));
-    let angle = 0;
-
-    if (doors.length >= 3) {
-      angle = 0;
-    } else {
-      if (directions.includes("bottom") && directions.includes("left")) {
-        angle = 0;
-      } else if (directions.includes("top") && directions.includes("right")) {
-        angle = Math.PI;
-      } else if (directions.includes("bottom") && directions.includes("right")) {
-        angle = -Math.PI / 2;
-      } else if (directions.includes("top") && directions.includes("left")) {
-        angle = Math.PI / 2;
-      }
+    if (this.messageTimer > 0) {
+      ctx.fillStyle = "black";
+      ctx.font = "bold 30px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText(this.message, canvasWidth / 2, 80);
+      this.messageTimer--;
     }
 
-    let bg = doors.length >= 3 ? this.backgroundHabitacion : this.backgroundMeca;
-
-    ctx.save();
-    ctx.translate(canvasWidth / 2, canvasHeight / 2);
-    ctx.rotate(angle);
-
-    if (angle === Math.PI / 2 || angle === -Math.PI / 2) {
-      ctx.drawImage(bg, -canvasHeight / 2, -canvasWidth / 2, canvasHeight, canvasWidth);
-    } else {
-      ctx.drawImage(bg, -canvasWidth / 2, -canvasHeight / 2, canvasWidth, canvasHeight);
+    if (this.currentScene === SCENES.COMBATE) {
+      this.drawCombatUI(ctx);
     }
 
-    ctx.restore();
-  }
+    if (this.currentScene === SCENES.GAME_OVER) {
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-  for (let actor of this.actors) {
-    actor.draw(ctx);
-  }
+      ctx.fillStyle = "red";
+      ctx.font = "bold 55px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText("GAME OVER", canvasWidth / 2, 220);
 
-  if (this.messageTimer > 0) {
-    ctx.fillStyle = "black";
-    ctx.font = "bold 30px Arial";
-    ctx.textAlign = "center";
-    ctx.fillText(this.message, canvasWidth / 2, 80);
-    this.messageTimer--;
-  }
+      ctx.fillStyle = "white";
+      ctx.font = "28px Arial";
+      ctx.fillText("Press SPACE to start again", canvasWidth / 2, 320);
+      return;
+    }
 
-  if (this.currentScene === SCENES.COMBATE) {
-    this.drawCombatUI(ctx);
-  }
+    if (this.currentScene === SCENES.VICTORY) {
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-  if (this.currentScene === SCENES.GAME_OVER) {
-    ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-    ctx.fillStyle = "red";
-    ctx.font = "bold 55px Arial";
-    ctx.textAlign = "center";
-    ctx.fillText("GAME OVER", canvasWidth / 2, 220);
-    ctx.fillStyle = "white";
-    ctx.font = "28px Arial";
-    ctx.fillText("Press SPACE to start again", canvasWidth / 2, 320);
-    return;
-  }
+      ctx.fillStyle = "gold";
+      ctx.font = "bold 55px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText("YOU WIN", canvasWidth / 2, 240);
 
-  if (this.currentScene === SCENES.VICTORY) {
-    ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-    ctx.fillStyle = "gold";
-    ctx.font = "bold 55px Arial";
-    ctx.textAlign = "center";
-    ctx.fillText("YOU WIN", canvasWidth / 2, 240);
-    ctx.fillStyle = "white";
-    ctx.font = "28px Arial";
-    ctx.fillText("You survived 3 days", canvasWidth / 2, 320);
-    return;
+      ctx.fillStyle = "white";
+      ctx.font = "28px Arial";
+      ctx.fillText("You survived 3 days", canvasWidth / 2, 320);
+      return;
+    }
   }
-}
 
   //Render of each card individually
   drawCardItem(ctx, card) {
@@ -1125,9 +1246,8 @@ drawUpgradeScreen(ctx) {
 
   //Controls the collisions of the game and what happens when the player collides with an object in each of the scenes ans states
   update(deltaTime) {
-
     this.player.update(deltaTime, ctx.canvas);
-    
+
     if (this.player.updateCollider) {
       this.player.updateCollider();
     }
@@ -1136,37 +1256,34 @@ drawUpgradeScreen(ctx) {
       this.transitionCooldown--;
       return;
     }
-
-    if (!bushData.collected) {
-      bushData.collected = true;
-
-    if (bushData.hasUpgrade) {
-        this.loadScene(SCENES.UPGRADE);
-        return;
-      }
-
-    if (bushData.hasCard) {
-        this.message = "New card!";
-        this.messageTimer = 120;
-      }
-    }
     switch (this.currentScene) {
       case SCENES.VILLA:
         this.updateCamera();
         for (let bushData of this.bushes) {
           if (boxOverlap(this.player, bushData.bush)) {
-            this.player.position = new Vector(
-              this.player.position.x - this.player.velocity.x * deltaTime,
-              this.player.position.y - this.player.velocity.y * deltaTime,
-            );
-
-            this.player.velocity = new Vector(0, 0);
-
-            if (bushData.hasCard && !bushData.collected) {
+            if (!bushData.collected) {
               bushData.collected = true;
-              this.message = "New card!";
-              this.messageTimer = 120;
+
+              this.player.velocity = new Vector(0, 0);
+
+              if (bushData.hasUpgrade) {
+                this.loadScene(SCENES.UPGRADE);
+                return;
+              }
+
+              if (bushData.hasCard) {
+                this.message = "New card!";
+                this.messageTimer = 120;
+              }
+            } else {
+              this.player.position = new Vector(
+                this.player.position.x - this.player.velocity.x * deltaTime,
+                this.player.position.y - this.player.velocity.y * deltaTime,
+              );
+
+              this.player.velocity = new Vector(0, 0);
             }
+
             break;
           }
         }
@@ -1311,6 +1428,33 @@ drawUpgradeScreen(ctx) {
     this.enemyTurn();
   }
 
+  upgradeClick(mouseX, mouseY) {
+    if (this.currentScene !== SCENES.UPGRADE) {
+      return;
+    }
+
+    for (let button of this.upgradeButtons) {
+      if (
+        mouseX >= button.x &&
+        mouseX <= button.x + button.w &&
+        mouseY >= button.y &&
+        mouseY <= button.y + button.h
+      ) {
+        button.upgrade.action(this.player);
+
+        this.message = button.upgrade.name + " Upgrade!";
+        this.messageTimer = 120;
+
+        this.currentScene = SCENES.VILLA;
+        this.player.velocity = new Vector(0, 0);
+        this.player.updateCollider();
+        this.updateCamera();
+
+        return;
+      }
+    }
+  }
+
   //The controls of the game for movement, restarting and selecting cards during combat
   createEventListeners() {
     if (this.currentScene === SCENES.COMBATE) return;
@@ -1321,16 +1465,16 @@ drawUpgradeScreen(ctx) {
         return;
       }
       if (event.key in keyDirections) {
-          this.addKey(keyDirections[event.key]);
-          this.player.startMovement(keyDirections[event.key]);
+        this.addKey(keyDirections[event.key]);
+        this.player.startMovement(keyDirections[event.key]);
       }
     });
 
-    window.addEventListener('keyup', (event) => {
-        if (event.key in keyDirections) {
-            this.delKey(keyDirections[event.key]);
-            this.player.stopMovement(keyDirections[event.key]);
-        }
+    window.addEventListener("keyup", (event) => {
+      if (event.key in keyDirections) {
+        this.delKey(keyDirections[event.key]);
+        this.player.stopMovement(keyDirections[event.key]);
+      }
     });
 
     window.addEventListener("mousedown", (event) => {
@@ -1345,18 +1489,18 @@ drawUpgradeScreen(ctx) {
       this.upgradeClick(mouseX, mouseY);
     });
   }
-    addKey(direction) {
-        if (!this.player.keys.includes(direction)) {
-            this.player.keys.push(direction);
-        }
-    }
-
-    delKey(direction) {
-        if (this.player.keys.includes(direction)) {
-            this.player.keys.splice(this.player.keys.indexOf(direction), 1);
-        }
+  addKey(direction) {
+    if (!this.player.keys.includes(direction)) {
+      this.player.keys.push(direction);
     }
   }
+
+  delKey(direction) {
+    if (this.player.keys.includes(direction)) {
+      this.player.keys.splice(this.player.keys.indexOf(direction), 1);
+    }
+  }
+}
 
 
 function main() {
