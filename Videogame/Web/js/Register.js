@@ -28,7 +28,7 @@ registerBtn.addEventListener("click", () => {
         message.textContent = "You must be older than 13 to create an account.";
         return;
     }
-
+ 
     localStorage.setItem("username", username);
     localStorage.setItem("password", password);
     message.textContent = "Account was created!";
