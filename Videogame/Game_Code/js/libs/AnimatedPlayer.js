@@ -36,20 +36,35 @@ class AnimatedPlayer extends AnimatedObject {
         // Restart the velocity
         this.velocity.x = 0;
         this.velocity.y = 0;
+
+        // The first key in the array has priority for the animation
+        let primaryDirection = null;
+
         // Modify the velocity according to the directions pressed
         for (const direction of this.keys) {
             const axis = this.motion[direction].axis;
             const sign = this.motion[direction].sign;
             this.velocity[axis] += sign;
 
-            // Adapt the animation according to the direction
-            const dirData = this.motion[direction];
-            // Make changes only if the direction is different
+            // Only the first direction drives the animation
+            if (!primaryDirection) {
+                primaryDirection = direction;
+            }
+        }
+
+        // Apply animation only for the primary direction
+        if (primaryDirection) {
+            const dirData = this.motion[primaryDirection];
             if (!dirData.status) {
+                // Reset status on all directions before setting the new one
+                for (const dir in this.motion) {
+                    this.motion[dir].status = false;
+                }
                 dirData.status = true;
                 this.setAnimation(...dirData.moveFrames, dirData.repeat, dirData.duration);
             }
         }
+
         // Normalize the velocity to avoid greater speed on diagonals
         this.velocity = this.velocity.normalize().times(this.speed);
         this.position = this.position.plus(this.velocity.times(deltaTime));
@@ -65,28 +80,26 @@ class AnimatedPlayer extends AnimatedObject {
     }
 
     clampWithinCanvas(canvas) {
-        // Top border
+        let maxWidth = (game && game.currentScene === SCENES.VILLA) ? game.worldWidth : canvas.width;
+        let maxHeight = (game && game.currentScene === SCENES.VILLA) ? game.worldHeight : canvas.height;
+
         if (this.position.y - this.halfSize.y < 0) {
             this.position.y = this.halfSize.y;
-        // Left border
         }
         if (this.position.x - this.halfSize.x < 0) {
             this.position.x = this.halfSize.x;
-        // Bottom border
         }
-        if (this.position.y + this.halfSize.y > canvas.height) {
-            this.position.y = canvas.height - this.halfSize.y;
-        // Right border
+        if (this.position.y + this.halfSize.y > maxHeight) {
+            this.position.y = maxHeight - this.halfSize.y;
         }
-        if (this.position.x + this.halfSize.x > canvas.width) {
-            this.position.x = canvas.width - this.halfSize.x;
+        if (this.position.x + this.halfSize.x > maxWidth) {
+            this.position.x = maxWidth - this.halfSize.x;
         }
     }
 
     setSpeed(newSpeed) {
         this.speed = newSpeed;
     }
-
 
     startMovement(direction) {
         // Check whether we are already moving in a direction
@@ -101,7 +114,21 @@ class AnimatedPlayer extends AnimatedObject {
     stopMovement(direction) {
         const dirData = this.motion[direction];
         dirData.status = false;
-        this.setAnimation(...dirData.idleFrames, dirData.repeat, dirData.duration);
+
+        // If other keys are still held, animate the next active direction
+        if (this.keys.length > 0) {
+            const nextDir = this.keys[0];
+            const nextData = this.motion[nextDir];
+            // Reset all statuses so the next direction triggers correctly
+            for (const dir in this.motion) {
+                this.motion[dir].status = false;
+            }
+            nextData.status = true;
+            this.setAnimation(...nextData.moveFrames, nextData.repeat, nextData.duration);
+        } else {
+            // No keys held: go back to idle
+            this.setAnimation(...dirData.idleFrames, dirData.repeat, dirData.duration);
+        }
     }
 
 }
