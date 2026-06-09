@@ -84,6 +84,11 @@ button:hover{
     gap: 20px;
 }
 
+.top-link:hover{
+    text-decoration: underline;
+    cursor: pointer;
+}
+
 .top-link{
     color: #ffa4a4;
     text-decoration: none;
@@ -91,7 +96,13 @@ button:hover{
     font-weight: bold;
 }
 
-.top-link:hover{
-    text-decoration: underline;
-    cursor: pointer;
+.user-display{
+    position: absolute;
+    top: 20px;
+    left: 30px;
+
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    font-family: "Poppins", sans-serif;
 }
