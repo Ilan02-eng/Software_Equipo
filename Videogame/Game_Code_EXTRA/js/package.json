@@ -1,0 +1,16 @@
+{
+  "name": "catharsis-api",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "API_catharsis.js",
+  "scripts": {
+    "start": "node API_catharsis.js",
+    "dev":   "node --watch API_catharsis.js"
+  },
+  "dependencies": {
+    "cors":        "^2.8.5",
+    "dotenv":      "^16.4.5",
+    "express":     "^4.19.2",
+    "mysql2":      "^3.10.0"
+  }
+}

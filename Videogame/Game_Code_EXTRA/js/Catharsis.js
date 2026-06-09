@@ -952,7 +952,9 @@ class Game {
       ctx.translate(-this.camera.x, -this.camera.y);
 
       if (this.tileVilla.complete) {
-        ctx.drawImage(this.tileVilla, 0, 0, this.worldWidth, this.worldHeight);
+        let pattern = ctx.createPattern(this.tileVilla, "repeat");
+        ctx.fillStyle = pattern;
+        ctx.fillRect(0, 0, this.worldWidth, this.worldHeight);
       }
 
       for (let actor of this.actors) {
@@ -970,7 +972,9 @@ class Game {
       ctx.translate(-this.camera.x, -this.camera.y);
 
       if (this.tileVilla.complete) {
-        ctx.drawImage(this.tileVilla, 0, 0, this.worldWidth, this.worldHeight);
+        let pattern = ctx.createPattern(this.tileVilla, "repeat");
+        ctx.fillStyle = pattern;
+        ctx.fillRect(0, 0, this.worldWidth, this.worldHeight);
       }
 
       for (let actor of this.actors) {
