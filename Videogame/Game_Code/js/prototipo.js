@@ -537,56 +537,56 @@ class Game {
       new Vector(canvasWidth / 2, 590),
       120,
       100,
-      "grey",
+      "rgba(0,0,0,0)",
     );
 
     this.salida_casa_lj = new GameObject(
       new Vector(20, canvasHeight / 2),
       90,
       120,
-      "grey",
+      "rgba(0,0,0,0)",
     );
 
     this.exit_room1 = new GameObject(
       new Vector(canvasWidth / 2, canvasHeight),
       200,
       120,
-      "grey",
+      "rgba(0,0,0,0)",
     );
 
     this.exit_room2 = new GameObject(
       new Vector(canvasWidth / 2, canvasHeight - canvasHeight),
       200,
       120,
-      "grey",
+      "rgba(0,0,0,0)",
     );
 
     this.exit_room3 = new GameObject(
       new Vector(0, canvasHeight / 2),
       120,
       200,
-      "grey",
+      "rgba(0,0,0,0)",
     );
 
     this.room_1 = new Room(
       new Vector(canvasWidth / 2 + 60, canvasHeight - canvasHeight + 60),
       200,
       120,
-      "green",
+      "rgba(0,0,0,0)",
     );
 
     this.room_2 = new Room(
       new Vector(canvasWidth / 2, canvasHeight),
       200,
       120,
-      "blue",
+      "rgba(0,0,0,0)",
     );
 
     this.room_3 = new Room(
       new Vector(canvasWidth - 5, canvasHeight / 2),
       120,
       200,
-      "yellow",
+      "rgba(0,0,0,0)",
     );
 
     this.enemy = new Enemy(

@@ -9,20 +9,13 @@
 
 "use strict";
 
-//import { Vector } from "./Vector.js";
-//import { Rect } from "./Rect.js";
-
-// Global variables to select whether to display bounding boxes and colliders
 let showBBox = false;
 let showColl = false;
 
-// Register event listeners to toggle bounding boxes
 window.addEventListener('keydown', event => {
     if (event.key == 'y') showBBox = !showBBox;
     if (event.key == 'u') showColl = !showColl;
 });
-
-
 
 class GameObject {
     constructor(position, width, height, color, type) {
@@ -31,14 +24,12 @@ class GameObject {
         this.halfSize = new Vector(width / 2, height / 2);
         this.color = color;
         this.type = type;
-        // Default scale for all new objects
         this.scale = 1.0;
+        this.visible = true;
 
-        // Sprite properties
         this.spriteImage = undefined;
         this.spriteRect = undefined;
 
-        // Intialize a collider with the default object size
         this.setCollider(width, height);
     }
 
@@ -55,9 +46,6 @@ class GameObject {
     }
 
     setCollider(width, height) {
-        // The top left corner of the collider is offset by half of its size
-        // TODO: Provide the correct values for the collider rectangle
-        // Use the scale as well
         this.xOffset = width / 2;
         this.yOffset = height / 2;
         this.colliderWidth = width;
@@ -66,9 +54,6 @@ class GameObject {
     }
 
     updateCollider() {
-        // Adjust the Rect of the object with its position
-        // TODO: Center the collider around the object position
-        // Use the scale as well
         this.collider = new Rect(this.position.x - this.xOffset,
                                  this.position.y - this.yOffset,
                                  this.colliderWidth,
@@ -76,22 +61,21 @@ class GameObject {
     }
 
     draw(ctx) {
+        if (this.visible === false) return; 
+
         if (this.spriteImage) {
             if (this.spriteRect) {
                 ctx.drawImage(this.spriteImage,
-                              // The coordiantes within the image file to show
                               this.spriteRect.x,
                               this.spriteRect.y,
                               this.spriteRect.width,
                               this.spriteRect.height,
-                              // The position to draw the image
                               (this.position.x - this.halfSize.x * this.scale),
                               (this.position.y - this.halfSize.y * this.scale),
                               this.size.x * this.scale,
                               this.size.y * this.scale);
             } else {
                 ctx.drawImage(this.spriteImage,
-                              // The position to draw the image
                               (this.position.x - this.halfSize.x * this.scale),
                               (this.position.y - this.halfSize.y * this.scale),
                               this.size.x * this.scale,
@@ -110,18 +94,14 @@ class GameObject {
     }
 
     drawBoundingBox(ctx) {
-        // Attempt to compose the overlay so it makes the image lighter
         ctx.globalCompositeOperation = "screen";
-        // A transparent layer on top
         ctx.fillStyle = "rgb(0.5, 0.5, 0.5, 0.3)";
         ctx.fillRect((this.position.x - this.halfSize.x * this.scale),
                      (this.position.y - this.halfSize.y * this.scale),
                      this.size.x * this.scale,
                      this.size.y * this.scale);
-        // Return to default composition type
         ctx.globalCompositeOperation = "source-over";
 
-        // Draw the bounding box of the sprite
         ctx.strokeStyle = "red";
         ctx.beginPath();
         ctx.rect((this.position.x - this.halfSize.x * this.scale),
@@ -130,7 +110,6 @@ class GameObject {
                  this.size.y * this.scale);
         ctx.stroke();
 
-        // A dot in the center of the sprite
         ctx.fillStyle = "red";
         ctx.fillRect(this.position.x - 2, this.position.y - 2, 4, 4);
     }
@@ -145,7 +124,6 @@ class GameObject {
         ctx.stroke();
     }
 
-    // Empty template for all GameObjects to be able to update
     update() {
 
     }
