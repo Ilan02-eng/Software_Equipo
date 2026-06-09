@@ -648,6 +648,9 @@ class Game {
     this.backgroundMeca = new Image();
     this.backgroundMeca.src = "../assets/sprites/meca.png";
 
+    this.backgroundBackro = new Image();
+    this.backgroundBackro.src = "../assets/sprites/backro.png";
+
     this.tileVilla = new Image();
     this.tileVilla.src = "../assets/sprites/villa.png";
 
@@ -655,10 +658,10 @@ class Game {
     this.pauseScreen.src = "../assets/screens/pantalladepausa.png";
 
     this.gameOverScreen = new Image();
-    this.gameOverScreen.src = "../assets/screens/GameOver.png";
+    this.gameOverScreen.src = "../assets/screens/Game Over.png";
 
     this.nextDayScreen = new Image();
-    this.nextDayScreen.src = "../assets/screens/Nextday.png";
+    this.nextDayScreen.src = "../assets/screens/Next day.png";
 
     this.creditsScreen = new Image();
     this.creditsScreen.src = "../assets/screens/Credits.png";
@@ -807,11 +810,10 @@ class Game {
     this.day++;
 
     this.randomEnemyLocation();
+    this.enemy.enemyType = this.enemy.getRandomEnemy();
     this.enemy.generateStats(this.day);
 
     this.loadScene(SCENES.NEXT_DAY);
-
-    this.loadScene(SCENES.CASA);
   }
 
   //Starts the combat (resets the HP and energy, generates de 4 cards of the deck, HP and energy bars and generates the enemy)
@@ -824,6 +826,7 @@ class Game {
     this.player.evasionChance = 0;
     this.enemy.hp = this.enemy.maxHP;
     this.enemy.stunnedTurns = 0;
+    this.combatFinished = false;
 
     for (let i = 0; i < 4; i++) {
       let posX = 40 + i * 140;
@@ -987,6 +990,66 @@ class Game {
 
   //Draws the actors, messages and UIs of the game
   draw(ctx) {
+
+    if (this.currentScene === SCENES.NEXT_DAY) {
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+      if (this.nextDayScreen && this.nextDayScreen.complete && this.nextDayScreen.naturalWidth > 0) {
+        ctx.drawImage(this.nextDayScreen, 0, 0, canvasWidth, canvasHeight);
+      } else {
+        ctx.fillStyle = "white";
+        ctx.font = "bold 50px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("NEXT DAY", canvasWidth / 2, canvasHeight / 2);
+      }
+      return;
+    }
+
+    if (this.currentScene === SCENES.GAME_OVER) {
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+      if (this.gameOverScreen && this.gameOverScreen.complete && this.gameOverScreen.naturalWidth > 0) {
+        ctx.drawImage(this.gameOverScreen, 0, 0, canvasWidth, canvasHeight);
+      } else {
+        ctx.fillStyle = "red";
+        ctx.font = "bold 50px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("GAME OVER", canvasWidth / 2, canvasHeight / 2);
+      }
+      return;
+    }
+
+    if (this.currentScene === SCENES.PAUSE) {
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+      if (this.pauseScreen && this.pauseScreen.complete && this.pauseScreen.naturalWidth > 0) {
+        ctx.drawImage(this.pauseScreen, 0, 0, canvasWidth, canvasHeight);
+      } else {
+        ctx.fillStyle = "white";
+        ctx.font = "bold 50px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("PAUSED", canvasWidth / 2, canvasHeight / 2);
+      }
+      return;
+    }
+
+    if (this.currentScene === SCENES.CREDITS) {
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+      if (this.creditsScreen && this.creditsScreen.complete && this.creditsScreen.naturalWidth > 0) {
+        ctx.drawImage(this.creditsScreen, 0, 0, canvasWidth, canvasHeight);
+      } else {
+        ctx.fillStyle = "white";
+        ctx.font = "bold 50px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("CREDITS", canvasWidth / 2, canvasHeight / 2);
+      }
+      return;
+    }
     if (this.currentScene == SCENES.UPGRADE) {
       ctx.save();
       ctx.translate(-this.camera.x, -this.camera.y);
@@ -1036,27 +1099,45 @@ class Game {
       let directions = doors.map((d) =>
         this.mapHouse.getDirection(this.currentRoom, d),
       );
+
+      let bg = this.backgroundMeca;
       let angle = 0;
 
-      if (doors.length >= 3) {
+      // Room con 4 puertas: usa backro
+      if (directions.length >= 4) {
+        bg = this.backgroundBackro;
         angle = 0;
-      } else {
+      }
+
+      // Room con 3 puertas: usa verde y rota según la puerta que falte
+      else if (directions.length === 3) {
+        bg = this.backgroundHabitacion;
+
+        if (!directions.includes("bottom")) {
+          angle = 0;
+        } else if (!directions.includes("top")) {
+          angle = Math.PI;
+        } else if (!directions.includes("left")) {
+          angle = -Math.PI / 2;
+        } else if (!directions.includes("right")) {
+          angle = Math.PI / 2;
+        }
+      }
+
+      // Room con 2 puertas: usa meca y rota según combinación
+      else {
+        bg = this.backgroundMeca;
+
         if (directions.includes("bottom") && directions.includes("left")) {
           angle = 0;
         } else if (directions.includes("top") && directions.includes("right")) {
           angle = Math.PI;
-        } else if (
-          directions.includes("bottom") &&
-          directions.includes("right")
-        ) {
+        } else if (directions.includes("bottom") && directions.includes("right")) {
           angle = -Math.PI / 2;
         } else if (directions.includes("top") && directions.includes("left")) {
           angle = Math.PI / 2;
         }
       }
-
-      let bg =
-        doors.length >= 3 ? this.backgroundHabitacion : this.backgroundMeca;
 
       ctx.save();
       ctx.translate(canvasWidth / 2, canvasHeight / 2);
@@ -1429,10 +1510,11 @@ class Game {
         }
         break;
 
-      case SCENES.COMBATE:
-        if (this.enemy.hp <= 0) {
-          this.enemyDefeated();
-        }
+        case SCENES.COMBATE:
+          if (this.enemy.hp <= 0 && !this.combatFinished) {
+            this.combatFinished = true;
+            this.enemyDefeated();
+          }
         break;
     }
   }
@@ -1546,6 +1628,12 @@ class Game {
   }
 
   screenClick(mouseX, mouseY) {
+      // NEXT DAY: cualquier clic continúa
+  if (this.currentScene === SCENES.NEXT_DAY) {
+    this.loadScene(SCENES.CASA);
+    return;
+  }
+
   // Botón de pausa arriba derecha
   if (
     this.currentScene !== SCENES.PAUSE &&
@@ -1561,13 +1649,6 @@ class Game {
     this.loadScene(SCENES.PAUSE);
     return;
   }
-
-  // NEXT DAY: cualquier clic continúa
-  if (this.currentScene === SCENES.NEXT_DAY) {
-    this.loadScene(SCENES.CASA);
-    return;
-  }
-
   // CREDITS: RETURN
   if (this.currentScene === SCENES.CREDITS) {
     if (mouseX >= 15 && mouseX <= 200 && mouseY >= 520 && mouseY <= 600) {

@@ -18,6 +18,11 @@ const SCENES = {
   UPGRADE: "upgrade",
   GAME_OVER: "game_over",
   VICTORY: "victory",
+
+  PAUSE: "pause",
+  NEXT_DAY: "next_day",
+  CREDITS: "credits",
+  STATS: "stats"
 };
 
 const UPGRADES = [
@@ -643,8 +648,23 @@ class Game {
     this.backgroundMeca = new Image();
     this.backgroundMeca.src = "../assets/sprites/meca.png";
 
+    this.backgroundBackro = new Image();
+    this.backgroundBackro.src = "../assets/sprites/backro.png";
+
     this.tileVilla = new Image();
     this.tileVilla.src = "../assets/sprites/villa.png";
+
+    this.pauseScreen = new Image();
+    this.pauseScreen.src = "../assets/screens/pantalladepausa.png";
+
+    this.gameOverScreen = new Image();
+    this.gameOverScreen.src = "../assets/screens/Game Over.png";
+
+    this.nextDayScreen = new Image();
+    this.nextDayScreen.src = "../assets/screens/Next day.png";
+
+    this.creditsScreen = new Image();
+    this.creditsScreen.src = "../assets/screens/Credits.png";
   }
 
   updateCamera() {
@@ -790,12 +810,10 @@ class Game {
     this.day++;
 
     this.randomEnemyLocation();
+    this.enemy.enemyType = this.enemy.getRandomEnemy();
     this.enemy.generateStats(this.day);
 
-    this.message = "Day " + this.day;
-    this.messageTimer = 120;
-
-    this.loadScene(SCENES.CASA);
+    this.loadScene(SCENES.NEXT_DAY);
   }
 
   //Starts the combat (resets the HP and energy, generates de 4 cards of the deck, HP and energy bars and generates the enemy)
@@ -808,6 +826,7 @@ class Game {
     this.player.evasionChance = 0;
     this.enemy.hp = this.enemy.maxHP;
     this.enemy.stunnedTurns = 0;
+    this.combatFinished = false;
 
     for (let i = 0; i < 4; i++) {
       let posX = 40 + i * 140;
@@ -945,8 +964,92 @@ class Game {
     }
   }
 
+  drawPauseButton(ctx) {
+  if (
+    this.currentScene === SCENES.PAUSE ||
+    this.currentScene === SCENES.GAME_OVER ||
+    this.currentScene === SCENES.CREDITS ||
+    this.currentScene === SCENES.NEXT_DAY ||
+    this.currentScene === SCENES.VICTORY
+  ) {
+    return;
+  }
+
+  ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
+  ctx.fillRect(735, 15, 50, 40);
+
+  ctx.strokeStyle = "white";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(735, 15, 50, 40);
+
+  ctx.fillStyle = "white";
+  ctx.font = "bold 26px Arial";
+  ctx.textAlign = "center";
+  ctx.fillText("II", 760, 43);
+}
+
   //Draws the actors, messages and UIs of the game
   draw(ctx) {
+
+    if (this.currentScene === SCENES.NEXT_DAY) {
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+      if (this.nextDayScreen && this.nextDayScreen.complete && this.nextDayScreen.naturalWidth > 0) {
+        ctx.drawImage(this.nextDayScreen, 0, 0, canvasWidth, canvasHeight);
+      } else {
+        ctx.fillStyle = "white";
+        ctx.font = "bold 50px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("NEXT DAY", canvasWidth / 2, canvasHeight / 2);
+      }
+      return;
+    }
+
+    if (this.currentScene === SCENES.GAME_OVER) {
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+      if (this.gameOverScreen && this.gameOverScreen.complete && this.gameOverScreen.naturalWidth > 0) {
+        ctx.drawImage(this.gameOverScreen, 0, 0, canvasWidth, canvasHeight);
+      } else {
+        ctx.fillStyle = "red";
+        ctx.font = "bold 50px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("GAME OVER", canvasWidth / 2, canvasHeight / 2);
+      }
+      return;
+    }
+
+    if (this.currentScene === SCENES.PAUSE) {
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+      if (this.pauseScreen && this.pauseScreen.complete && this.pauseScreen.naturalWidth > 0) {
+        ctx.drawImage(this.pauseScreen, 0, 0, canvasWidth, canvasHeight);
+      } else {
+        ctx.fillStyle = "white";
+        ctx.font = "bold 50px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("PAUSED", canvasWidth / 2, canvasHeight / 2);
+      }
+      return;
+    }
+
+    if (this.currentScene === SCENES.CREDITS) {
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+      if (this.creditsScreen && this.creditsScreen.complete && this.creditsScreen.naturalWidth > 0) {
+        ctx.drawImage(this.creditsScreen, 0, 0, canvasWidth, canvasHeight);
+      } else {
+        ctx.fillStyle = "white";
+        ctx.font = "bold 50px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("CREDITS", canvasWidth / 2, canvasHeight / 2);
+      }
+      return;
+    }
     if (this.currentScene == SCENES.UPGRADE) {
       ctx.save();
       ctx.translate(-this.camera.x, -this.camera.y);
@@ -978,6 +1081,8 @@ class Game {
       }
 
       ctx.restore();
+
+      this.drawPauseButton(ctx);
       return;
     }
 
@@ -994,27 +1099,45 @@ class Game {
       let directions = doors.map((d) =>
         this.mapHouse.getDirection(this.currentRoom, d),
       );
+
+      let bg = this.backgroundMeca;
       let angle = 0;
 
-      if (doors.length >= 3) {
+      // Room con 4 puertas: usa backro
+      if (directions.length >= 4) {
+        bg = this.backgroundBackro;
         angle = 0;
-      } else {
+      }
+
+      // Room con 3 puertas: usa verde y rota según la puerta que falte
+      else if (directions.length === 3) {
+        bg = this.backgroundHabitacion;
+
+        if (!directions.includes("bottom")) {
+          angle = 0;
+        } else if (!directions.includes("top")) {
+          angle = Math.PI;
+        } else if (!directions.includes("left")) {
+          angle = -Math.PI / 2;
+        } else if (!directions.includes("right")) {
+          angle = Math.PI / 2;
+        }
+      }
+
+      // Room con 2 puertas: usa meca y rota según combinación
+      else {
+        bg = this.backgroundMeca;
+
         if (directions.includes("bottom") && directions.includes("left")) {
           angle = 0;
         } else if (directions.includes("top") && directions.includes("right")) {
           angle = Math.PI;
-        } else if (
-          directions.includes("bottom") &&
-          directions.includes("right")
-        ) {
+        } else if (directions.includes("bottom") && directions.includes("right")) {
           angle = -Math.PI / 2;
         } else if (directions.includes("top") && directions.includes("left")) {
           angle = Math.PI / 2;
         }
       }
-
-      let bg =
-        doors.length >= 3 ? this.backgroundHabitacion : this.backgroundMeca;
 
       ctx.save();
       ctx.translate(canvasWidth / 2, canvasHeight / 2);
@@ -1057,20 +1180,51 @@ class Game {
       this.drawCombatUI(ctx);
     }
 
-    if (this.currentScene === SCENES.GAME_OVER) {
-      ctx.fillStyle = "black";
-      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    if (this.currentScene === SCENES.PAUSE) {
+  ctx.drawImage(
+    this.pauseScreen,
+    0,
+    0,
+    canvasWidth,
+    canvasHeight
+  );
+  return;
+}
 
-      ctx.fillStyle = "red";
-      ctx.font = "bold 55px Arial";
-      ctx.textAlign = "center";
-      ctx.fillText("GAME OVER", canvasWidth / 2, 220);
-
-      ctx.fillStyle = "white";
-      ctx.font = "28px Arial";
-      ctx.fillText("Press SPACE to start again", canvasWidth / 2, 320);
+    if (this.currentScene === SCENES.NEXT_DAY) {
+      ctx.drawImage(
+        this.nextDayScreen,
+        0,
+        0,
+        canvasWidth,
+        canvasHeight
+      );
       return;
     }
+
+    if (this.currentScene === SCENES.CREDITS) {
+      ctx.drawImage(
+        this.creditsScreen,
+        0,
+        0,
+        canvasWidth,
+        canvasHeight
+      );
+      return;
+    }
+
+    if (this.currentScene === SCENES.GAME_OVER) {
+      ctx.drawImage(
+        this.gameOverScreen,
+        0,
+        0,
+        canvasWidth,
+        canvasHeight
+      );
+      return;
+    }
+
+    this.drawPauseButton(ctx);
 
     if (this.currentScene === SCENES.VICTORY) {
       ctx.fillStyle = "black";
@@ -1235,13 +1389,21 @@ class Game {
   playerDeath() {
     if (this.player.hp <= 0) {
       this.player.hp = 0;
-
-      this.currentScene = SCENES.GAME_OVER;
+      this.loadScene(SCENES.GAME_OVER);
     }
   }
 
   //Controls the collisions of the game and what happens when the player collides with an object in each of the scenes ans states
   update(deltaTime) {
+    if (
+    this.currentScene === SCENES.GAME_OVER ||
+    this.currentScene === SCENES.PAUSE ||
+    this.currentScene === SCENES.CREDITS ||
+    this.currentScene === SCENES.NEXT_DAY ||
+    this.currentScene === SCENES.VICTORY
+  ) {
+    return;
+  }
     this.player.update(deltaTime, ctx.canvas);
 
     if (this.player.updateCollider) {
@@ -1348,10 +1510,11 @@ class Game {
         }
         break;
 
-      case SCENES.COMBATE:
-        if (this.enemy.hp <= 0) {
-          this.enemyDefeated();
-        }
+        case SCENES.COMBATE:
+          if (this.enemy.hp <= 0 && !this.combatFinished) {
+            this.combatFinished = true;
+            this.enemyDefeated();
+          }
         break;
     }
   }
@@ -1464,15 +1627,110 @@ class Game {
     }
   }
 
+  screenClick(mouseX, mouseY) {
+      // NEXT DAY: cualquier clic continúa
+  if (this.currentScene === SCENES.NEXT_DAY) {
+    this.loadScene(SCENES.CASA);
+    return;
+  }
+
+  // Botón de pausa arriba derecha
+  if (
+    this.currentScene !== SCENES.PAUSE &&
+    this.currentScene !== SCENES.GAME_OVER &&
+    this.currentScene !== SCENES.CREDITS &&
+    this.currentScene !== SCENES.NEXT_DAY &&
+    mouseX >= 735 &&
+    mouseX <= 785 &&
+    mouseY >= 15 &&
+    mouseY <= 55
+  ) {
+    this.previousScene = this.currentScene;
+    this.loadScene(SCENES.PAUSE);
+    return;
+  }
+  // CREDITS: RETURN
+  if (this.currentScene === SCENES.CREDITS) {
+    if (mouseX >= 15 && mouseX <= 200 && mouseY >= 520 && mouseY <= 600) {
+      this.loadScene(SCENES.GAME_OVER);
+    }
+    return;
+  }
+
+  // GAME OVER
+  if (this.currentScene === SCENES.GAME_OVER) {
+    // RETRY
+    if (mouseX >= 45 && mouseX <= 400 && mouseY >= 120 && mouseY <= 210) {
+      this.restartRun();
+      return;
+    }
+
+    // CREDITS
+    if (mouseX >= 45 && mouseX <= 400 && mouseY >= 230 && mouseY <= 320) {
+      this.loadScene(SCENES.CREDITS);
+      return;
+    }
+
+    // STATS
+    if (mouseX >= 45 && mouseX <= 400 && mouseY >= 340 && mouseY <= 430) {
+      window.location.href = "../../Web/html/estadisticas.html";
+      return;
+    }
+  }
+
+  // PAUSA
+  if (this.currentScene === SCENES.PAUSE) {
+    // TURN OFF MUSIC
+    if (mouseX >= 210 && mouseX <= 610 && mouseY >= 135 && mouseY <= 215) {
+      console.log("Toggle music");
+      return;
+    }
+
+    // TURN OFF SOUND
+    if (mouseX >= 210 && mouseX <= 610 && mouseY >= 255 && mouseY <= 335) {
+      console.log("Toggle sound");
+      return;
+    }
+
+    // RETURN
+    if (mouseX >= 210 && mouseX <= 610 && mouseY >= 375 && mouseY <= 455) {
+      this.loadScene(this.previousScene || SCENES.CASA);
+      return;
+    }
+
+    // SAVE AND EXIT
+    if (mouseX >= 210 && mouseX <= 610 && mouseY >= 495 && mouseY <= 575) {
+      window.location.href = "../../Web/html/Run_Menu.html";
+      return;
+    }
+  }
+}
+
   //The controls of the game for movement, restarting and selecting cards during combat
   createEventListeners() {
-    if (this.currentScene === SCENES.COMBATE) return;
     window.addEventListener("keydown", (event) => {
-      if (this.currentScene === SCENES.COMBATE) return;
+      if (event.key === "Escape" || event.key.toLowerCase() === "p") {
+        if (this.currentScene === SCENES.PAUSE) {
+          this.loadScene(this.previousScene || SCENES.CASA);
+        } else if (
+          this.currentScene !== SCENES.GAME_OVER &&
+          this.currentScene !== SCENES.CREDITS &&
+          this.currentScene !== SCENES.NEXT_DAY &&
+          this.currentScene !== SCENES.VICTORY
+        ) {
+          this.previousScene = this.currentScene;
+          this.loadScene(SCENES.PAUSE);
+        }
+        return;
+      }
+
       if (this.currentScene === SCENES.GAME_OVER && event.key === " ") {
         this.restartRun();
         return;
       }
+
+      if (this.currentScene === SCENES.COMBATE) return;
+
       if (event.key in keyDirections) {
         this.addKey(keyDirections[event.key]);
         this.player.startMovement(keyDirections[event.key]);
@@ -1494,8 +1752,10 @@ class Game {
       const scaleY = canvas.height / rect.height;
       const mouseX = (event.clientX - rect.left) * scaleX;
       const mouseY = (event.clientY - rect.top) * scaleY;
+      this.screenClick(mouseX, mouseY);
       this.combatClick(mouseX, mouseY);
       this.upgradeClick(mouseX, mouseY);
+      
     });
   }
   addKey(direction) {
