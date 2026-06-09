@@ -952,9 +952,7 @@ class Game {
       ctx.translate(-this.camera.x, -this.camera.y);
 
       if (this.tileVilla.complete) {
-        let pattern = ctx.createPattern(this.tileVilla, "repeat");
-        ctx.fillStyle = pattern;
-        ctx.fillRect(0, 0, this.worldWidth, this.worldHeight);
+        ctx.drawImage(this.tileVilla, 0, 0, this.worldWidth, this.worldHeight);
       }
 
       for (let actor of this.actors) {
@@ -972,9 +970,7 @@ class Game {
       ctx.translate(-this.camera.x, -this.camera.y);
 
       if (this.tileVilla.complete) {
-        let pattern = ctx.createPattern(this.tileVilla, "repeat");
-        ctx.fillStyle = pattern;
-        ctx.fillRect(0, 0, this.worldWidth, this.worldHeight);
+        ctx.drawImage(this.tileVilla, 0, 0, this.worldWidth, this.worldHeight);
       }
 
       for (let actor of this.actors) {
@@ -1267,6 +1263,11 @@ class Game {
               this.player.velocity = new Vector(0, 0);
 
               if (bushData.hasUpgrade) {
+                this.savedPosition = new Vector(
+                  this.player.position.x,
+                  this.player.position.y,
+                );
+
                 this.loadScene(SCENES.UPGRADE);
                 return;
               }
@@ -1445,7 +1446,15 @@ class Game {
         this.message = button.upgrade.name + " Upgrade!";
         this.messageTimer = 120;
 
-        this.currentScene = SCENES.VILLA;
+        this.loadScene(SCENES.VILLA);
+
+        if (this.savedPosition) {
+          this.player.position = new Vector(
+            this.savedPosition.x,
+            this.savedPosition.y,
+          );
+        }
+
         this.player.velocity = new Vector(0, 0);
         this.player.updateCollider();
         this.updateCamera();
