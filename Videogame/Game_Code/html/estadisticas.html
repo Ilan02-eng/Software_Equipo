@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Estadísticas de jugadores</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #f5f5f3; color: #1a1a18; min-height: 100vh; padding: 1.5rem; }
+    h1 { font-size: 20px; font-weight: 500; margin-bottom: 1.25rem; }
+    .tabs { display: flex; gap: 8px; border-bottom: 1px solid #ddd; margin-bottom: 1.5rem; }
+    .tab { padding: 8px 16px; font-size: 14px; cursor: pointer; border: 1px solid transparent; border-bottom: none; border-radius: 8px 8px 0 0; color: #666; background: transparent; }
+    .tab.active { color: #1a1a18; border-color: #ddd; background: #fff; margin-bottom: -1px; }
+    .tab:hover:not(.active) { background: #eee; color: #1a1a18; }
+    .section { display: none; }
+    .section.active { display: block; }
+    .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+    .metric { background: #ebebea; border-radius: 8px; padding: 12px 14px; }
+    .metric .label { font-size: 12px; color: #666; margin-bottom: 4px; }
+    .metric .value { font-size: 22px; font-weight: 500; }
+    .metric .sub { font-size: 11px; color: #888; margin-top: 2px; }
+    .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+    .chart-card { background: #fff; border: 1px solid #e0e0df; border-radius: 12px; padding: 1rem; }
+    .chart-card.full { grid-column: 1 / -1; }
+    .chart-title { font-size: 13px; font-weight: 500; color: #555; margin-bottom: 10px; }
+    .legend { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 8px; font-size: 12px; color: #666; }
+    .legend span { display: flex; align-items: center; gap: 4px; }
+    .legend-sq { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+    select { font-size: 13px; padding: 6px 10px; border-radius: 8px; border: 1px solid #ddd; background: #fff; cursor: pointer; margin-bottom: 1rem; }
+    .highlights-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1.5rem; }
+    .highlight-card { background: #ebebea; border-radius: 12px; border: 1px solid #e0e0df; padding: 1rem 1.25rem; display: flex; align-items: center; gap: 12px; }
+    .avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; flex-shrink: 0; }
+    .highlight-info .hlabel { font-size: 11px; color: #888; margin-bottom: 2px; }
+    .highlight-info .hname { font-size: 15px; font-weight: 500; }
+    .highlight-info .hstat { font-size: 13px; color: #666; margin-top: 2px; }
+    #loading { text-align: center; padding: 3rem; font-size: 14px; color: #888; }
+    #error-msg { display: none; background: #fcebeb; color: #a32d2d; border: 1px solid #f09595; border-radius: 8px; padding: 12px 16px; margin-bottom: 1rem; font-size: 14px; }
+    @media (max-width: 520px) { .charts-grid { grid-template-columns: 1fr; } .highlights-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<h1>Estadísticas de partidas</h1>
+<div id="error-msg"></div>
+<div id="loading">Cargando datos...</div>
+
+<div id="app" style="display:none">
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('jugador')">Jugador</button>
+    <button class="tab" onclick="switchTab('admin')">Administrador</button>
+  </div>
+
+  <div id="sec-jugador" class="section active">
+    <select id="player-select" onchange="updatePlayer()"></select>
+    <div class="metrics" id="player-metrics"></div>
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-title">Daño infligido vs recibido por run</div>
+        <div class="legend">
+          <span><span class="legend-sq" style="background:#378ADD"></span>Infligido</span>
+          <span><span class="legend-sq" style="background:#E24B4A; border: 2px dashed #A32D2D"></span>Recibido</span>
+        </div>
+        <div style="position:relative;height:220px"><canvas id="dmgChart" role="img" aria-label="Daño infligido y recibido por run">Daño por run.</canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Cartas usadas y curación por run</div>
+        <div class="legend">
+          <span><span class="legend-sq" style="background:#639922"></span>Cartas</span>
+          <span><span class="legend-sq" style="background:#BA7517; border: 2px dashed #854F0B"></span>Curación</span>
+        </div>
+        <div style="position:relative;height:220px"><canvas id="cardsChart" role="img" aria-label="Cartas y curación por run">Cartas y curación por run.</canvas></div>
+      </div>
+      <div class="chart-card full">
+        <div class="chart-title">Tiempo de run (segundos)</div>
+        <div style="position:relative;height:160px"><canvas id="timeChart" role="img" aria-label="Tiempo por run">Tiempo de run.</canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="sec-admin" class="section">
+    <div class="highlights-grid" id="admin-highlights"></div>
+    <div class="chart-card" style="margin-bottom:1rem;">
+      <div class="chart-title">Runs completadas por jugador</div>
+      <div style="position:relative;" id="runsChartWrap"><canvas id="runsChart" role="img" aria-label="Runs por jugador">Runs completadas.</canvas></div>
+    </div>
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-title">Daño promedio por jugador</div>
+        <div class="legend">
+          <span><span class="legend-sq" style="background:#378ADD"></span>Infligido</span>
+          <span><span class="legend-sq" style="background:#E24B4A; border:2px dashed #A32D2D"></span>Recibido</span>
+        </div>
+        <div style="position:relative;height:220px"><canvas id="avgDmgChart" role="img" aria-label="Daño promedio por jugador">Daño promedio.</canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Cartas promedio usadas por jugador</div>
+        <div style="position:relative;height:220px"><canvas id="avgCardsChart" role="img" aria-label="Cartas promedio por jugador">Cartas promedio.</canvas></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+
+// ============================================================
+//  CONFIGURACIÓN — cambia esta URL a la de tu API
+// ============================================================
+const API_URL = 'http://localhost:3001/api/stats';
+// ============================================================
+
+let players = [];
+let charts = {};
+const PALETTE = ['#378ADD','#7F77DD','#1D9E75','#D85A30'];
+function avg(arr, fn) { return Math.round(arr.reduce((s,r)=>s+fn(r),0)/arr.length); }
+function sum(arr, fn) { return arr.reduce((s,r)=>s+fn(r),0); }
+
+// ---- Carga de datos desde la API ----
+async function loadData() {
+  try {
+    const res = await fetch(API_URL);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    players = await res.json();
+    // players debe ser un array con esta forma:
+    // [
+    //   {
+    //     name: "Kira",
+    //     runs: [
+    //       { dmgDone:420, dmgRecv:180, time:312, cards:24, heal:90, complete:true },
+    //       ...
+    //     ]
+    //   },
+    //   ...
+    // ]
+    init();
+  } catch (err) {
+    showError('No se pudo conectar con la API: ' + err.message +
+      '. Revisa que el servidor esté corriendo y que API_URL sea correcta.');
+  }
+}
+
+function showError(msg) {
+  document.getElementById('loading').style.display = 'none';
+  const el = document.getElementById('error-msg');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function init() {
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  const sel = document.getElementById('player-select');
+  players.forEach((p, i) => {
+    const o = document.createElement('option');
+    o.value = i; o.text = p.name; sel.appendChild(o);
+  });
+  buildPlayer(players[0]);
+}
+
+// ---- Vista jugador ----
+function buildPlayer(p) {
+  const labels = p.runs.map((_, i) => 'Run ' + (i + 1));
+  const completed = p.runs.filter(r => r.complete).length;
+  document.getElementById('player-metrics').innerHTML = `
+    <div class="metric"><div class="label">Runs completadas</div><div class="value">${completed}</div><div class="sub">de ${p.runs.length} totales</div></div>
+    <div class="metric"><div class="label">Daño infligido</div><div class="value">${avg(p.runs,r=>r.dmgDone)}</div><div class="sub">promedio</div></div>
+    <div class="metric"><div class="label">Daño recibido</div><div class="value">${avg(p.runs,r=>r.dmgRecv)}</div><div class="sub">promedio</div></div>
+    <div class="metric"><div class="label">Cartas usadas</div><div class="value">${avg(p.runs,r=>r.cards)}</div><div class="sub">promedio</div></div>
+    <div class="metric"><div class="label">Curación</div><div class="value">${avg(p.runs,r=>r.heal)}</div><div class="sub">promedio</div></div>
+    <div class="metric"><div class="label">Tiempo</div><div class="value">${avg(p.runs,r=>r.time)}s</div><div class="sub">promedio</div></div>
+  `;
+  destroyChart('dmgChart');
+  charts.dmgChart = new Chart(document.getElementById('dmgChart'), {
+    type:'bar', data:{labels,datasets:[
+      {label:'Infligido',data:p.runs.map(r=>r.dmgDone),backgroundColor:'#378ADDcc',borderRadius:4},
+      {label:'Recibido',data:p.runs.map(r=>r.dmgRecv),backgroundColor:'transparent',borderColor:'#E24B4A',borderWidth:2,borderDash:[5,3],type:'line',tension:0.3,pointBackgroundColor:'#E24B4A'},
+    ]},
+    options:baseOptions()
+  });
+  destroyChart('cardsChart');
+  charts.cardsChart = new Chart(document.getElementById('cardsChart'), {
+    type:'bar', data:{labels,datasets:[
+      {label:'Cartas',data:p.runs.map(r=>r.cards),backgroundColor:'#639922cc',borderRadius:4},
+      {label:'Curación',data:p.runs.map(r=>r.heal),backgroundColor:'transparent',borderColor:'#BA7517',borderWidth:2,borderDash:[5,3],type:'line',tension:0.3,pointBackgroundColor:'#BA7517'},
+    ]},
+    options:baseOptions()
+  });
+  destroyChart('timeChart');
+  charts.timeChart = new Chart(document.getElementById('timeChart'), {
+    type:'line', data:{labels,datasets:[
+      {label:'Segundos',data:p.runs.map(r=>r.time),borderColor:'#7F77DD',backgroundColor:'#7F77DD22',fill:true,tension:0.4,pointBackgroundColor:'#7F77DD',pointRadius:4,borderWidth:2},
+    ]},
+    options:baseOptions()
+  });
+}
+
+function updatePlayer() {
+  buildPlayer(players[+document.getElementById('player-select').value]);
+}
+
+// ---- Vista admin ----
+function buildAdmin() {
+  const names = players.map(p => p.name);
+  const completedArr = players.map(p => p.runs.filter(r => r.complete).length);
+  const maxRuns = Math.max(...completedArr);
+  const topPlayer = players[completedArr.indexOf(maxRuns)];
+  const avgCardsAll = players.map(p => avg(p.runs, r => r.cards));
+  const minCards = Math.min(...avgCardsAll);
+  const fewestCardsPlayer = players[avgCardsAll.indexOf(minCards)];
+  const totalRuns = completedArr.reduce((a,b)=>a+b,0);
+  const avatarColors = [
+    {bg:'#E6F1FB',fg:'#185FA5'},{bg:'#EEEDFE',fg:'#534AB7'},
+    {bg:'#E1F5EE',fg:'#0F6E56'},{bg:'#FAECE7',fg:'#993C1D'}
+  ];
+  const topIdx = completedArr.indexOf(maxRuns);
+  const minIdx = avgCardsAll.indexOf(minCards);
+  document.getElementById('admin-highlights').innerHTML = `
+    <div class="highlight-card">
+      <div class="avatar" style="background:${avatarColors[topIdx%4].bg};color:${avatarColors[topIdx%4].fg}">${topPlayer.name.slice(0,2).toUpperCase()}</div>
+      <div class="highlight-info"><div class="hlabel">Más runs completadas</div><div class="hname">${topPlayer.name}</div><div class="hstat">${maxRuns} runs</div></div>
+    </div>
+    <div class="highlight-card">
+      <div class="avatar" style="background:${avatarColors[minIdx%4].bg};color:${avatarColors[minIdx%4].fg}">${fewestCardsPlayer.name.slice(0,2).toUpperCase()}</div>
+      <div class="highlight-info"><div class="hlabel">Menos cartas (promedio)</div><div class="hname">${fewestCardsPlayer.name}</div><div class="hstat">${minCards} cartas/run</div></div>
+    </div>
+    <div class="highlight-card">
+      <div class="avatar" style="background:#EAF3DE;color:#3B6D11"><i class="ti ti-trophy" style="font-size:18px" aria-hidden="true"></i></div>
+      <div class="highlight-info"><div class="hlabel">Total completadas</div><div class="hname">${totalRuns} runs</div><div class="hstat">entre ${players.length} jugadores</div></div>
+    </div>
+  `;
+  const runsWrap = document.getElementById('runsChartWrap');
+  runsWrap.style.height = (players.length * 48 + 80) + 'px';
+  destroyChart('runsChart');
+  charts.runsChart = new Chart(document.getElementById('runsChart'), {
+    type:'bar',
+    data:{labels:names,datasets:[{label:'Runs',data:completedArr,backgroundColor:PALETTE.map(c=>c+'cc'),borderRadius:6}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{color:'#888',font:{size:11}},grid:{color:'rgba(0,0,0,0.06)'}},y:{ticks:{color:'#555',font:{size:12}},grid:{display:false}}}}
+  });
+  destroyChart('avgDmgChart');
+  charts.avgDmgChart = new Chart(document.getElementById('avgDmgChart'), {
+    type:'bar',
+    data:{labels:names,datasets:[
+      {label:'Infligido',data:players.map(p=>avg(p.runs,r=>r.dmgDone)),backgroundColor:'#378ADDcc',borderRadius:4},
+      {label:'Recibido',data:players.map(p=>avg(p.runs,r=>r.dmgRecv)),backgroundColor:'#E24B4A88',borderRadius:4,borderColor:'#E24B4A',borderWidth:1},
+    ]},
+    options:baseOptions()
+  });
+  destroyChart('avgCardsChart');
+  charts.avgCardsChart = new Chart(document.getElementById('avgCardsChart'), {
+    type:'bar',
+    data:{labels:names,datasets:[{label:'Cartas',data:avgCardsAll,backgroundColor:PALETTE.map(c=>c+'cc'),borderRadius:4}]},
+    options:baseOptions()
+  });
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['jugador','admin'][i]===tab));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sec-'+tab).classList.add('active');
+  if(tab==='admin') buildAdmin();
+}
+
+function destroyChart(id) { if(charts[id]){ charts[id].destroy(); delete charts[id]; } }
+function baseOptions() {
+  return {responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+    scales:{y:{beginAtZero:true,ticks:{color:'#888',font:{size:11}},grid:{color:'rgba(0,0,0,0.06)'}},x:{ticks:{color:'#888',font:{size:11}},grid:{display:false}}}};
+}
+
+loadData();
+</script>
+</body>
+</html>
