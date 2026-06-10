@@ -921,6 +921,12 @@ getSaveKey() {
 
     this.creditsScreen = new Image();
     this.creditsScreen.src = "../assets/screens/Credits.png";
+
+    this.hpUpgradeImg = new Image();
+    this.hpUpgradeImg.src = "../../VisualsVideogame/Cards/17.png";
+
+    this.energyUpgradeImg = new Image();
+    this.energyUpgradeImg.src = "../../VisualsVideogame/Cards/16.png";
   }
 
   playMusic(name) {
@@ -1297,14 +1303,14 @@ if (roomID === 9) {
             x: 160,
             y: 260,
             w: 230,
-            h: 140,
+            h: 260,
             upgrade: UPGRADES[0],
           },
           {
             x: 410,
             y: 260,
             w: 230,
-            h: 140,
+            h: 260,
             upgrade: UPGRADES[1],
           },
         ];
@@ -1324,19 +1330,38 @@ if (roomID === 9) {
     for (let button of this.upgradeButtons) {
       let upgrade = button.upgrade;
 
-      ctx.fillStyle = upgrade.color;
-      ctx.fillRect(button.x, button.y, button.w, button.h);
+      let sprite =
+        upgrade.name === "+15 HP"
+          ? this.hpUpgradeImg
+          : this.energyUpgradeImg;
 
-      ctx.strokeStyle = "white";
-      ctx.lineWidth = 3;
-      ctx.strokeRect(button.x, button.y, button.w, button.h);
-
+      if (sprite && sprite.complete) {
+        ctx.drawImage(
+          sprite,
+          button.x + 15,
+          button.y,
+          200,
+          200
+        );
+      }
       ctx.fillStyle = "white";
-      ctx.font = "bold 28px Arial";
-      ctx.fillText(upgrade.name, button.x + button.w / 2, button.y + 58);
+      ctx.textAlign = "center";
 
-      ctx.font = "16px Arial";
-      ctx.fillText(upgrade.description, button.x + button.w / 2, button.y + 95);
+      ctx.font = "bold 30px Arial";
+
+      if (upgrade.name === "+15 HP") {
+        ctx.fillText(
+          "+15 Max HP",
+          button.x + button.w / 2,
+          button.y + 225
+        );
+      } else {
+        ctx.fillText(
+          "+10 Max Energy",
+          button.x + button.w / 2,
+          button.y + 225
+        );
+      }
     }
   }
 
