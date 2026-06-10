@@ -632,12 +632,26 @@ class Game {
     ];
 
     for (let i = 0; i < 10; i++) {
-      let randomX = Math.random() * (this.worldWidth - 100) + 50;
-      let randomY = Math.random() * (this.worldHeight - 100) + 50;
+      let bush;
+      let tries = 0;
+
+      do {
+        let randomX = Math.random() * (this.worldWidth - 100) + 50;
+        let randomY = Math.random() * (this.worldHeight - 100) + 50;
+
+        bush = new GameObject(new Vector(randomX, randomY), 90, 70, "green");
+        tries++;
+      } while (
+        tries < 100 &&
+        (
+          boxOverlap(bush, this.casa) ||
+          boxOverlap(bush, this.casa_lj)
+        )
+      );
+
       let randomSprite =
         bushSprites[Math.floor(Math.random() * bushSprites.length)];
 
-      let bush = new GameObject(new Vector(randomX, randomY), 90, 70, "green");
       bush.setSprite(randomSprite.src, randomSprite.rect);
 
       this.bushes.push({
@@ -646,7 +660,6 @@ class Game {
         collected: false,
       });
     }
-
     this.backgroundVilla = new GameObject(
       new Vector(0, 0),
       canvasWidth,
