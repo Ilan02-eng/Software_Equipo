@@ -589,6 +589,7 @@ class Game {
 
     this.rewardCard = null;
     this.rewardCardImage = null;
+    this.loadGame();
   }
 
   async startRunInDB() {
@@ -1006,6 +1007,7 @@ class Game {
     if (!randomCard) return;
 
     this.unlockedCards.push(randomCard);
+    this.saveGame();
     this.playSound("card");
 
     this.rewardCard = randomCard;
@@ -1136,6 +1138,7 @@ class Game {
     }
 
     this.day++;
+    this.saveGame();
     this.resetBushCards();
 
     this.randomEnemyLocation();
@@ -2136,6 +2139,65 @@ class Game {
         break;
     }
   }
+  saveGame() {
+  const saveData = {
+    day: this.day,
+
+    unlockedCards: this.unlockedCards.map(card => card.name),
+
+    maxHP: this.player.maxHP,
+    hp: this.player.hp,
+
+    maxEnergy: this.player.maxEnergy,
+    energy: this.player.energy,
+
+    hasWildcard: this.hasWildcard,
+
+    collectedRoomUpgrades: this.collectedRoomUpgrades
+  };
+
+  localStorage.setItem(
+    "catharsisSave",
+    JSON.stringify(saveData)
+  );
+}
+loadGame() {
+
+  const save = localStorage.getItem("catharsisSave");
+
+  if (!save) return;
+
+  const data = JSON.parse(save);
+
+  this.day = data.day || 1;
+
+  this.player.maxHP = data.maxHP || 100;
+  this.player.hp = data.hp || this.player.maxHP;
+
+  this.player.maxEnergy = data.maxEnergy || 150;
+  this.player.energy = data.energy || this.player.maxEnergy;
+
+  this.hasWildcard = data.hasWildcard || false;
+
+  this.collectedRoomUpgrades =
+    data.collectedRoomUpgrades || {};
+
+  this.unlockedCards = [];
+
+  if (data.unlockedCards) {
+
+    for (let cardName of data.unlockedCards) {
+
+      let card = CARD_POOL.find(
+        c => c.name === cardName
+      );
+
+      if (card) {
+        this.unlockedCards.push(card);
+      }
+    }
+  }
+}
 
   resetBushCards() {
     for (let bushData of this.bushes) {
@@ -2276,6 +2338,7 @@ class Game {
         mouseY <= button.y + button.h
       ) {
         button.upgrade.action(this.player);
+        this.saveGame();
         this.savePlayerStatsInDB();
 
         this.message = button.upgrade.name + " Upgrade!";
@@ -2429,6 +2492,7 @@ class Game {
       if (mouseX >= 210 && mouseX <= 610 && mouseY >= 495 && mouseY <= 575) {
         this.saveCombatStatsInDB();
         this.savePlayerStatsInDB();
+        this.saveGame();
         window.location.href = "../../Web/html/Run_Menu.html";
         return;
       }
