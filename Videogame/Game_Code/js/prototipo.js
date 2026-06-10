@@ -847,10 +847,10 @@ getSaveKey() {
     this.roomUpgrade.setCollider(70, 60);
 
     this.bushes = [];
+
     const bushSprites = [
-      { src: "../assets/sprites/bush.png", rect: new Rect(0, 0, 1284, 1020) },
-      { src: "../assets/sprites/bush2.png", rect: new Rect(0, 0, 1280, 640) },
-      { src: "../assets/sprites/bush3.png", rect: new Rect(0, 0, 1920, 960) },
+      { src: "../assets/sprites/bush.png", rect: new Rect(-20, 0, 500, 350) },
+      { src: "../assets/sprites/bush2.png", rect: new Rect(-5, 0, 500, 350) },
     ];
 
     for (let i = 0; i < 10; i++) {
