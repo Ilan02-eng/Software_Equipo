@@ -106,6 +106,30 @@ const cards = [
         description: "Heightened instincts allow you to react instantly to incoming danger",
         sprite: "../../VisualsVideogame/Cards/Card_eleven.png"
     },
+    {
+        name: "Wildcard: Low risk",
+        type: "Wildcard",
+        cost: "35 HP",
+        effect: "You obtain 30 energy points",
+        description: "Heightened instincts allow you to react instantly to incoming danger",
+        sprite: "../../VisualsVideogame/Cards/Card_thirteen.png"
+    },
+    {
+        name: "Wildcard: Moderate risk",
+        type: "Wildcard",
+        cost: "60 HP",
+        effect: "50 energy points",
+        description: "Heightened instincts allow you to react instantly to incoming danger",
+        sprite: "../../VisualsVideogame/Cards/Card_fourteen.png"
+    },
+    {
+        name: "Wildcard: Low risk",
+        type: "Wildcard",
+        cost: "80 HP",
+        effect: "70 energy points",
+        description: "Heightened instincts allow you to react instantly to incoming danger",
+        sprite: "../../VisualsVideogame/Cards/Card_fifteen.png"
+    },
 ];
 
 const container = document.getElementById("cardContainer");
