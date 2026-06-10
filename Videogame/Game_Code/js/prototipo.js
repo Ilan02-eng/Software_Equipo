@@ -600,6 +600,8 @@ class Game {
     this.rewardCardImage = null;
     this.loadGame();
     this.justExitedCasaLJ = false;
+
+    this.wildcardType = null;
   }
 
   async startRunInDB() {
@@ -929,6 +931,16 @@ class Game {
 
     this.energyUpgradeImg = new Image();
     this.energyUpgradeImg.src = "../../VisualsVideogame/Cards/16.png";
+
+    this.wildcardImages = {
+      1: new Image(),
+      2: new Image(),
+      3: new Image(),
+    };
+
+    this.wildcardImages[1].src = "../../VisualsVideogame/Cards/13.png";
+    this.wildcardImages[2].src = "../../VisualsVideogame/Cards/14.png";
+    this.wildcardImages[3].src = "../../VisualsVideogame/Cards/15.png";
   }
 
   playMusic(name) {
@@ -1149,21 +1161,24 @@ class Game {
   }
 
   //Generates de special card "Wildcard" for the combat UI
-  getWildcard() {
-    return {
-      x: 650,
-      y: 460,
-      w: 110,
-      h: 130,
-      name: WILDCARD.name,
-      color: WILDCARD.color,
-      cost: WILDCARD.cost,
-      effect: WILDCARD.effect,
-      action: WILDCARD.action,
-      isWildcard: true,
-    };
-  }
+    getWildcard() {
+      return {
+        x: 650,
+        y: 460,
+        w: 110,
+        h: 130,
 
+        name: WILDCARD.name,
+        color: WILDCARD.color,
+        cost: WILDCARD.cost,
+        effect: WILDCARD.effect,
+        action: WILDCARD.action,
+
+        image: this.wildcardImages[this.wildcardType],
+
+        isWildcard: true,
+      };
+    }
   enemyDefeated() {
     this.saveCombatStatsInDB();
     this.savePlayerStatsInDB();
@@ -2112,6 +2127,7 @@ class Game {
 
           if (this.currentRoom === this.wildcardRoom) {
             this.hasWildcard = true;
+            this.wildcardType = Math.floor(Math.random() * 3) + 1;
             this.messageTimer = 180;
             this.loadScene(SCENES.HABITACION);
             return;
@@ -2175,6 +2191,7 @@ class Game {
       hasWildcard: this.hasWildcard,
 
       collectedRoomUpgrades: this.collectedRoomUpgrades,
+      wildcardType: this.wildcardType,
     };
 
     localStorage.setItem(this.getSaveKey(), JSON.stringify(saveData));
@@ -2201,6 +2218,8 @@ class Game {
     this.collectedRoomUpgrades = data.collectedRoomUpgrades || {};
 
     this.unlockedCards = [];
+
+    this.wildcardType = data.wildcardType || null;
 
     if (data.unlockedCards) {
       for (let cardName of data.unlockedCards) {
