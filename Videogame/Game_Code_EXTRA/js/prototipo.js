@@ -514,8 +514,8 @@ class Game {
 
     this.casa = new GameObject(
       new Vector(canvasWidth / 4, canvasHeight / 8),
-      280,
-      150,
+      380,
+      350,
       "grey",
     );
     this.casa.setSprite(

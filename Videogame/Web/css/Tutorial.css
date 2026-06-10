@@ -7,7 +7,7 @@ body{
 
 .tutorial-container{
     width: 85%;
-    max-width: 1200px;
+    max-width: 1600px;
     margin: auto;
     padding: 40px;
     text-align: center;
@@ -75,31 +75,42 @@ ul{
     background-color: rgba(103, 43, 43, 0.15);
 }
 
-.card-box{
-    border: 2px solid rgb(103, 43, 43);
-    border-radius: 10px;
-    padding: 20px;
-    margin-top: 15px;
-    margin-bottom: 15px;
+.card-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background: #2d2424e7;
+    padding: 15px;
+    border-radius: 12px;
+    color: white;
+}
+
+#cardContainer {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.card-sprite img {
+    width: 100px;
+    height: auto;
+    image-rendering: pixelated;
+    margin-bottom: 10px;
 }
 
 button{
     display: block;
-
     width: 200px;
     height: 60px;
-
     margin: 50px auto;
-
     font-size: 20px;
     font-weight: bold;
-
     color: white;
     background-color: rgb(24, 27, 32);
-
     border: 3px solid rgb(103, 43, 43);
     border-radius: 12px;
-
     cursor: pointer;
 }
 

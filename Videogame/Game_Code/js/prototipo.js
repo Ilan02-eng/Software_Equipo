@@ -18,6 +18,11 @@ const SCENES = {
   UPGRADE: "upgrade",
   GAME_OVER: "game_over",
   VICTORY: "victory",
+  
+  PAUSE: "pause",
+  NEXT_DAY: "next_day",
+  CREDITS: "credits",
+  STATS: "stats"
 };
 
 const UPGRADES = [
@@ -474,10 +479,13 @@ class Game {
     this.currentRoom = 3;
 
     this.cards = [];
+    this.unlockedCards = [CARD_POOL[0], CARD_POOL[3]];
+    this.collectedRoomUpgrades = {};
     this.wildcard = null;
     this.isPlayerTurn = true;
 
     this.upgradeButtons = [];
+    this.upgradeReturnScene = SCENES.HABITACION;
 
     this.camera = { x: 0, y: 0 };
     this.worldWidth = canvasWidth * 3;
@@ -514,18 +522,26 @@ class Game {
 
     this.casa = new GameObject(
       new Vector(canvasWidth / 4, canvasHeight / 8),
-      280,
-      150,
+      380,
+      250,
       "grey",
     );
+
+    this.casaCollider = new GameObject(
+      new Vector(canvasWidth / 4 - 60, canvasHeight / 8 + 10),
+      240,
+      150,
+      // "rgba(255,0,0,0.4)"
+    );
+
     this.casa.setSprite(
       "../assets/sprites/house.png",
       new Rect(0, 0, 1250, 1050),
     );
     this.casa_lj = new GameObject(
       new Vector(canvasWidth - 90, canvasHeight - 200),
-      190,
-      185,
+      200,
+      245,
       "purple",
     );
     this.casa_lj.setSprite(
@@ -600,6 +616,18 @@ class Game {
       new Rect(0, 0, 1000, 1000),
     );
 
+    this.roomUpgrade = new GameObject(
+      new Vector(350, 250),
+      90,
+      90,
+      "yellow"
+    );
+
+    this.roomUpgrade.setSprite(
+      "../assets/sprites/chest.png",
+      new Rect(0,0,1064,1064)
+    );
+
     this.bushes = [];
     const bushSprites = [
       { src: "../assets/sprites/bush.png", rect: new Rect(0, 0, 1284, 1020) },
@@ -618,8 +646,8 @@ class Game {
 
       this.bushes.push({
         bush: bush,
-        hasCard: i < 5,
-        hasUpgrade: i >= 5 && i < 8,
+        hasCard: true,
+      
         collected: false,
       });
     }
@@ -643,8 +671,23 @@ class Game {
     this.backgroundMeca = new Image();
     this.backgroundMeca.src = "../assets/sprites/meca.png";
 
+    this.backgroundBackro = new Image();
+    this.backgroundBackro.src = "../assets/sprites/backro.png";
+
     this.tileVilla = new Image();
     this.tileVilla.src = "../assets/sprites/villa.png";
+
+    this.pauseScreen = new Image();
+    this.pauseScreen.src = "../assets/screens/pantalladepausa.png";
+
+    this.gameOverScreen = new Image();
+    this.gameOverScreen.src = "../assets/screens/Game Over.png";
+
+    this.nextDayScreen = new Image();
+    this.nextDayScreen.src = "../assets/screens/Next day.png";
+
+    this.creditsScreen = new Image();
+    this.creditsScreen.src = "../assets/screens/Credits.png";
   }
 
   updateCamera() {
@@ -688,7 +731,6 @@ class Game {
 
     this.currentRoom = roomID;
     this.player.velocity = new Vector(0, 0);
-
     this.setPlayerPositionFromDoor(previousRoom, roomID);
 
     if (roomID === this.enemyRoomID) {
@@ -705,9 +747,15 @@ class Game {
     if (direction === "bottom") return this.room_2;
     if (direction === "left") return this.salida_casa_lj;
     if (direction === "right") return this.room_3;
-
     return null;
   }
+
+  giveRandomCard() {
+  let randomCard = CARD_POOL[Math.floor(Math.random() * CARD_POOL.length)];
+  this.unlockedCards.push(randomCard);
+  this.message = randomCard.name + " acquired!";
+  this.messageTimer = 120;
+}
 
   //Loads the door of each room in the house
   loadHouseDoors() {
@@ -717,7 +765,6 @@ class Game {
     this.room_2.roomID = undefined;
     this.room_3.roomID = undefined;
     this.salida_casa_lj.roomID = undefined;
-
     this.actors = [this.player];
 
     for (let i = 0; i < doors.length; i++) {
@@ -735,7 +782,6 @@ class Game {
   //Defines the distance and position of the player when going through a door
   setPlayerPositionFromDoor(fromRoom, toRoom) {
     let direction = this.mapHouse.getDirection(fromRoom, toRoom);
-
     if (direction === "top") {
       this.player.position = new Vector(canvasWidth / 2, canvasHeight - 140);
     } else if (direction === "bottom") {
@@ -749,8 +795,8 @@ class Game {
 
   //Generates a random card form CARD_POOL and adds it to a specific position of the combat UI
   getRandomCard(posX) {
-    let randomIndex = Math.floor(Math.random() * CARD_POOL.length);
-    let randomCard = CARD_POOL[randomIndex];
+    let randomIndex = Math.floor(Math.random() * this.unlockedCards.length);
+    let randomCard = this.unlockedCards[randomIndex];
     return {
       x: posX,
       y: 460,
@@ -788,14 +834,10 @@ class Game {
     }
 
     this.day++;
-
     this.randomEnemyLocation();
+    this.enemy.enemyType = this.enemy.getRandomEnemy();
     this.enemy.generateStats(this.day);
-
-    this.message = "Day " + this.day;
-    this.messageTimer = 120;
-
-    this.loadScene(SCENES.CASA);
+    this.loadScene(SCENES.NEXT_DAY);
   }
 
   //Starts the combat (resets the HP and energy, generates de 4 cards of the deck, HP and energy bars and generates the enemy)
@@ -808,6 +850,7 @@ class Game {
     this.player.evasionChance = 0;
     this.enemy.hp = this.enemy.maxHP;
     this.enemy.stunnedTurns = 0;
+    this.combatFinished = false;
 
     for (let i = 0; i < 4; i++) {
       let posX = 40 + i * 140;
@@ -880,6 +923,9 @@ class Game {
       case SCENES.HABITACION:
         this.player.velocity = new Vector(0, 0);
         this.loadHouseDoors();
+        if (!this.collectedRoomUpgrades[this.currentRoom]) {
+          this.actors.push(this.roomUpgrade);
+        }
         break;
 
       case SCENES.COMBATE:
@@ -945,8 +991,92 @@ class Game {
     }
   }
 
+  drawPauseButton(ctx) {
+    if (
+      this.currentScene === SCENES.PAUSE ||
+      this.currentScene === SCENES.GAME_OVER ||
+      this.currentScene === SCENES.CREDITS ||
+      this.currentScene === SCENES.NEXT_DAY ||
+      this.currentScene === SCENES.VICTORY
+    ) {
+      return;
+    }
+
+  ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
+  ctx.fillRect(735, 15, 50, 40);
+
+  ctx.strokeStyle = "white";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(735, 15, 50, 40);
+
+  ctx.fillStyle = "white";
+  ctx.font = "bold 26px Arial";
+  ctx.textAlign = "center";
+  ctx.fillText("II", 760, 43);
+}
+
   //Draws the actors, messages and UIs of the game
   draw(ctx) {
+
+    if (this.currentScene === SCENES.NEXT_DAY) {
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+      if (this.nextDayScreen && this.nextDayScreen.complete && this.nextDayScreen.naturalWidth > 0) {
+        ctx.drawImage(this.nextDayScreen, 0, 0, canvasWidth, canvasHeight);
+      } else {
+        ctx.fillStyle = "white";
+        ctx.font = "bold 50px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("NEXT DAY", canvasWidth / 2, canvasHeight / 2);
+      }
+      return;
+    }
+
+    if (this.currentScene === SCENES.GAME_OVER) {
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+      if (this.gameOverScreen && this.gameOverScreen.complete && this.gameOverScreen.naturalWidth > 0) {
+        ctx.drawImage(this.gameOverScreen, 0, 0, canvasWidth, canvasHeight);
+      } else {
+        ctx.fillStyle = "red";
+        ctx.font = "bold 50px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("GAME OVER", canvasWidth / 2, canvasHeight / 2);
+      }
+      return;
+    }
+
+    if (this.currentScene === SCENES.PAUSE) {
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+      if (this.pauseScreen && this.pauseScreen.complete && this.pauseScreen.naturalWidth > 0) {
+        ctx.drawImage(this.pauseScreen, 0, 0, canvasWidth, canvasHeight);
+      } else {
+        ctx.fillStyle = "white";
+        ctx.font = "bold 50px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("PAUSED", canvasWidth / 2, canvasHeight / 2);
+      }
+      return;
+    }
+
+    if (this.currentScene === SCENES.CREDITS) {
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+      if (this.creditsScreen && this.creditsScreen.complete && this.creditsScreen.naturalWidth > 0) {
+        ctx.drawImage(this.creditsScreen, 0, 0, canvasWidth, canvasHeight);
+      } else {
+        ctx.fillStyle = "white";
+        ctx.font = "bold 50px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("CREDITS", canvasWidth / 2, canvasHeight / 2);
+      }
+      return;
+    }
     if (this.currentScene == SCENES.UPGRADE) {
       ctx.save();
       ctx.translate(-this.camera.x, -this.camera.y);
@@ -960,9 +1090,9 @@ class Game {
       }
 
       ctx.restore();
-
-      this.drawUpgradeScreen(ctx);
-      return;
+    
+    this.drawPauseButton(ctx);
+    return;
     }
 
     if (this.currentScene == SCENES.VILLA) {
@@ -978,7 +1108,18 @@ class Game {
       }
 
       ctx.restore();
-      return;
+
+      if (this.messageTimer > 0) {
+      ctx.fillStyle = "black";
+      ctx.font = "bold 30px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText(this.message, canvasWidth / 2, 80);
+      this.messageTimer--;
+    }
+      
+    this.drawPauseButton(ctx);
+    return;
+
     }
 
     if (this.currentScene == SCENES.CASA) {
@@ -994,12 +1135,38 @@ class Game {
       let directions = doors.map((d) =>
         this.mapHouse.getDirection(this.currentRoom, d),
       );
-      let angle = 0;
 
-      if (doors.length >= 3) {
+      let bg = this.backgroundMeca;
+      let angle = 0;
+    
+      //Room con 4 puertas: usa backro
+      if (directions.length <= 4) {
+        bg = this.backgroundBackro;
         angle = 0;
-      } else {
-        if (directions.includes("bottom") && directions.includes("left")) {
+      }
+
+      // Room con 3 puertas: usa verde y rota según la puerta que falte
+      else if (directions.length === 3) {
+        bg = this.backgroundHabitacion;
+
+        if (!directions.includes("bottom")) {
+          angle = 0;
+        } else if (!directions.includes("top")) {
+          angle = Math.PI;
+        } else if (!directions.includes("left")) {
+          angle = -Math.PI / 2;
+        } else if (!directions.includes("right")) {
+          angle = Math.PI / 2;
+        }
+      }
+
+      // Room con 2 puertas: usa meca y rota según combinación
+      else {
+        bg = this.backgroundMeca;
+
+      if (doors.length >= 3) && direction.includes("left")
+      angle = 0;
+      } else if (directions.includes("bottom") && directions.includes("left")) {
           angle = 0;
         } else if (directions.includes("top") && directions.includes("right")) {
           angle = Math.PI;
@@ -1289,7 +1456,7 @@ class Game {
           }
         }
 
-        if (boxOverlap(this.player, this.casa)) {
+        if (boxOverlap(this.player, this.casaCollider)) {
           this.player.velocity = new Vector(0, 0);
 
           this.player.position = new Vector(
@@ -1314,7 +1481,7 @@ class Game {
           this.player.velocity = new Vector(0, 0);
 
           this.player.position = new Vector(
-            canvasWidth / 4 + 90,
+            canvasWidth / 4 - 55,
             canvasHeight / 8 + 160,
           );
 
