@@ -25,6 +25,7 @@ const SCENES = {
   STATS: "stats",
 
   DECK: "deck",
+  CARD_REWARD: "card_reward",
 };
 
 const UPGRADES = [
@@ -66,19 +67,27 @@ async function loadCardsFromDB() {
 
   CARD_POOL = dbCards
     .filter((card) => card.type !== "Wildcard")
-    .map((card) => ({
-      card_ID: card.card_ID,
-      name: card.name,
-      type:
-        card.type === "Attack"
-          ? CARD_TYPES.ATTACK
-          : card.type === "Defense"
-            ? CARD_TYPES.DEFENSA
-            : CARD_TYPES.CONTROL,
-      cost: card.cost,
-      effect: card.effect,
-      action: createCardAction(card),
-    }));
+    .map((card) => {
+      const sprite = `../../VisualsVideogame/Cards/${card.card_ID}.png`;
+      const img = new Image();
+      img.src = sprite;
+
+      return {
+        card_ID: card.card_ID,
+        name: card.name,
+        sprite: sprite,
+        image: img,
+        type:
+          card.type === "Attack"
+            ? CARD_TYPES.ATTACK
+            : card.type === "Defense"
+              ? CARD_TYPES.DEFENSA
+              : CARD_TYPES.CONTROL,
+        cost: card.cost,
+        effect: card.effect,
+        action: createCardAction(card),
+      };
+    });
 }
 
 function createCardAction(card) {
@@ -577,6 +586,9 @@ class Game {
     }
 
     this.sounds.card.volume = 0.7;
+
+    this.rewardCard = null;
+    this.rewardCardImage = null;
   }
 
   async startRunInDB() {
@@ -991,14 +1003,23 @@ class Game {
     }
 
     let randomCard = CARD_POOL[Math.floor(Math.random() * CARD_POOL.length)];
+    if (!randomCard) return;
 
     this.unlockedCards.push(randomCard);
     this.playSound("card");
+
+    this.rewardCard = randomCard;
+    this.rewardCardImage = randomCard.image || new Image();
+
+    if (!randomCard.image) {
+      this.rewardCardImage.src = randomCard.sprite;
+    }
 
     this.message =
       randomCard.name + " acquired! (" + this.unlockedCards.length + "/10)";
 
     this.messageTimer = 120;
+    this.loadScene(SCENES.CARD_REWARD);
   }
   //Loads the door of each room in the house
   loadHouseDoors() {
@@ -1082,6 +1103,8 @@ class Game {
       effect: randomCard.effect,
       cost: randomCard.cost,
       action: randomCard.action,
+      sprite: randomCard.sprite,
+      image: randomCard.image,
       isWildcard: false,
     };
   }
@@ -1224,6 +1247,11 @@ class Game {
         this.combatHand();
         break;
 
+      case SCENES.CARD_REWARD:
+        this.player.velocity = new Vector(0, 0);
+        this.actors = [];
+        break;
+
       case SCENES.UPGRADE:
         this.player.velocity = new Vector(0, 0);
 
@@ -1293,7 +1321,8 @@ class Game {
       this.currentScene === SCENES.GAME_OVER ||
       this.currentScene === SCENES.CREDITS ||
       this.currentScene === SCENES.NEXT_DAY ||
-      this.currentScene === SCENES.VICTORY
+      this.currentScene === SCENES.VICTORY ||
+      this.currentScene === SCENES.CARD_REWARD
     ) {
       return;
     }
@@ -1326,12 +1355,12 @@ class Game {
       90,
     );
 
-    let startX = 80;
-    let startY = 130;
-    let cardW = 120;
-    let cardH = 80;
+    let startX = 60;
+    let startY = 115;
+    let cardW = 130;
+    let cardH = 135;
     let gapX = 20;
-    let gapY = 20;
+    let gapY = 15;
 
     for (let i = 0; i < this.unlockedCards.length; i++) {
       let card = this.unlockedCards[i];
@@ -1349,29 +1378,38 @@ class Game {
       ctx.lineWidth = 2;
       ctx.strokeRect(x, y, cardW, cardH);
 
+      if (card.image && card.image.complete && card.image.naturalWidth > 0) {
+        ctx.drawImage(card.image, x + 35, y + 8, 60, 60);
+      } else if (card.sprite) {
+        let img = new Image();
+        img.src = card.sprite;
+        card.image = img;
+      }
+
       ctx.fillStyle = "white";
       ctx.font = "bold 12px Arial";
       ctx.textAlign = "center";
-      ctx.fillText(card.name, x + cardW / 2, y + 25);
+      ctx.fillText(card.name, x + cardW / 2, y + 85);
 
-      ctx.font = "10px Arial";
-      ctx.fillText("Cost: " + card.cost, x + cardW / 2, y + 50);
+      ctx.font = "11px Arial";
+      ctx.fillText("Cost: " + card.cost, x + cardW / 2, y + 108);
+
       ctx.fillStyle = "black";
-      ctx.fillRect(x + 85, y + 55, 25, 18);
+      ctx.fillRect(x + cardW - 32, y + cardH - 28, 24, 20);
 
       ctx.fillStyle = "white";
-      ctx.font = "bold 12px Arial";
-      ctx.fillText("X", x + 97, y + 69);
+      ctx.font = "bold 14px Arial";
+      ctx.fillText("X", x + cardW - 20, y + cardH - 13);
     }
 
     ctx.fillStyle = "white";
-    ctx.font = "bold 28px Arial";
+    ctx.font = "bold 26px Arial";
     ctx.textAlign = "center";
-    ctx.fillText("UPGRADES", canvasWidth / 2, 390);
+    ctx.fillText("UPGRADES", canvasWidth / 2, 415);
 
-    ctx.font = "22px Arial";
-    ctx.fillText("Max HP: " + this.player.maxHP, canvasWidth / 2, 435);
-    ctx.fillText("Max Energy: " + this.player.maxEnergy, canvasWidth / 2, 470);
+    ctx.font = "20px Arial";
+    ctx.fillText("Max HP: " + this.player.maxHP, canvasWidth / 2, 450);
+    ctx.fillText("Max Energy: " + this.player.maxEnergy, canvasWidth / 2, 480);
 
     ctx.fillStyle = this.hasWildcard ? "purple" : "gray";
     ctx.fillRect(300, 500, 200, 45);
@@ -1396,6 +1434,45 @@ class Game {
 
   //Draws the actors, messages and UIs of the game
   draw(ctx) {
+    if (this.currentScene === SCENES.CARD_REWARD) {
+      ctx.fillStyle = "rgba(0,0,0,0.9)";
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+      ctx.fillStyle = "gold";
+      ctx.font = "bold 40px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText("NEW CARD!", canvasWidth / 2, 80);
+
+      if (
+        this.rewardCardImage &&
+        this.rewardCardImage.complete &&
+        this.rewardCardImage.naturalWidth > 0
+      ) {
+        ctx.drawImage(this.rewardCardImage, 300, 120, 200, 280);
+      } else {
+        ctx.fillStyle = "gray";
+        ctx.fillRect(300, 120, 200, 280);
+
+        ctx.fillStyle = "white";
+        ctx.font = "20px Arial";
+        ctx.fillText("NO SPRITE", 400, 260);
+      }
+
+      if (this.rewardCard) {
+        ctx.fillStyle = "white";
+        ctx.font = "bold 30px Arial";
+        ctx.fillText(this.rewardCard.name, canvasWidth / 2, 450);
+
+        ctx.font = "20px Arial";
+        ctx.fillText(this.rewardCard.effect, canvasWidth / 2, 490);
+      }
+
+      ctx.fillStyle = "yellow";
+      ctx.font = "24px Arial";
+      ctx.fillText("Click to continue", canvasWidth / 2, 550);
+      return;
+    }
+
     if (this.currentScene === SCENES.DECK) {
       this.drawDeckScreen(ctx);
       return;
@@ -1701,7 +1778,8 @@ class Game {
       this.currentScene === SCENES.PAUSE ||
       this.currentScene === SCENES.GAME_OVER ||
       this.currentScene === SCENES.CREDITS ||
-      this.currentScene === SCENES.NEXT_DAY
+      this.currentScene === SCENES.NEXT_DAY ||
+      this.currentScene === SCENES.CARD_REWARD
     ) {
       return;
     }
@@ -1730,16 +1808,20 @@ class Game {
     ctx.lineWidth = 2;
     ctx.strokeRect(card.x, card.y, card.w, card.h);
 
+    if (card.image && card.image.complete && card.image.naturalWidth > 0) {
+      ctx.drawImage(card.image, card.x + 35, card.y + 8, 40, 40);
+    }
+
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
     ctx.font = "bold 11px Arial";
 
-    ctx.fillText(card.name, card.x + card.w / 2, card.y + 25);
+    ctx.fillText(card.name, card.x + card.w / 2, card.y + 58);
 
     ctx.font = "bold 7px Arial";
     ctx.fillStyle = "white";
 
-    ctx.fillText(card.effect, card.x + card.w / 2, card.y + 60);
+    ctx.fillText(card.effect, card.x + card.w / 2, card.y + 78);
 
     if (disabledWildcard) {
       ctx.fillStyle = "white";
@@ -1897,7 +1979,8 @@ class Game {
       this.currentScene === SCENES.PAUSE ||
       this.currentScene === SCENES.CREDITS ||
       this.currentScene === SCENES.NEXT_DAY ||
-      this.currentScene === SCENES.VICTORY
+      this.currentScene === SCENES.VICTORY ||
+      this.currentScene === SCENES.CARD_REWARD
     ) {
       return;
     }
@@ -2218,12 +2301,12 @@ class Game {
 
   screenClick(mouseX, mouseY) {
     if (this.currentScene === SCENES.DECK) {
-      let startX = 80;
-      let startY = 130;
-      let cardW = 120;
-      let cardH = 80;
+      let startX = 60;
+      let startY = 115;
+      let cardW = 130;
+      let cardH = 135;
       let gapX = 20;
-      let gapY = 20;
+      let gapY = 15;
 
       for (let i = 0; i < this.unlockedCards.length; i++) {
         let col = i % 5;
@@ -2233,10 +2316,10 @@ class Game {
         let y = startY + row * (cardH + gapY);
 
         if (
-          mouseX >= x + 85 &&
-          mouseX <= x + 110 &&
-          mouseY >= y + 55 &&
-          mouseY <= y + 73
+          mouseX >= x + cardW - 32 &&
+          mouseX <= x + cardW - 8 &&
+          mouseY >= y + cardH - 28 &&
+          mouseY <= y + cardH - 8
         ) {
           this.unlockedCards.splice(i, 1);
           return;
@@ -2269,6 +2352,12 @@ class Game {
     // NEXT DAY: cualquier clic continúa
     if (this.currentScene === SCENES.NEXT_DAY) {
       this.loadScene(SCENES.CASA);
+      return;
+    }
+
+    // CARD_REWARD: cualquier clic continúa a la villa
+    if (this.currentScene === SCENES.CARD_REWARD) {
+      this.loadScene(SCENES.VILLA);
       return;
     }
 
