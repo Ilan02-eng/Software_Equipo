@@ -57,73 +57,8 @@ const CARD_TYPES = {
 };
 
 //Pool of available cards for the combat, each card has a direct effect that affects either the player or the enemy
-const CARD_POOL = [
-  {
-    name: "Sharp Claw",
-    type: CARD_TYPES.ATTACK,
-    cost: 0,
-    effect: "Damage the enemy for 15 HP",
-    action: (p, e) => {
-      e.hp -= 15;
-    },
-  },
-  {
-    name: "Shadow Pounce",
-    type: CARD_TYPES.ATTACK,
-    cost: 15,
-    effect: "Damage the enemy for 25 HP",
-    action: (p, e) => {
-      e.hp -= 25;
-    },
-  },
-  {
-    name: "Purr Attack",
-    type: CARD_TYPES.ATTACK,
-    cost: 25,
-    effect: "Damage the enemy for 35 HP",
-    action: (p, e) => {
-      e.hp -= 35;
-    },
-  },
-
-  {
-    name: "Tuna Can",
-    type: CARD_TYPES.DEFENSA,
-    cost: 0,
-    effect: "Heals you for 15 HP",
-    action: (p, e) => {
-      p.hp = Math.min(p.maxHP, p.hp + 15);
-    },
-  },
-  {
-    name: "Nine Lives",
-    type: CARD_TYPES.DEFENSA,
-    cost: 35,
-    effect: "Evade the next enemy attack",
-    action: (p, e) => {
-      p.evasionChance += 1.0;
-    },
-  },
-
-  {
-    name: "Cat Reflexes",
-    type: CARD_TYPES.CONTROL,
-    cost: 30,
-    effect: "Enemy Stun 1 Turn",
-    action: (p, e) => {
-      e.stunnedTurns += 1;
-    },
-  },
-  {
-    name: "Laser Pointer",
-    type: CARD_TYPES.CONTROL,
-    cost: 40,
-    effect: "Enemy Stun 2 Turns",
-    action: (p, e) => {
-      e.stunnedTurns += 2;
-    },
-  },
-];
+const CARD_POOL = [];
+getCardByName(name);
 
 //Defines de Wildcard card this card trades HP for energy
 const WILDCARD = {
