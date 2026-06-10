@@ -1077,18 +1077,34 @@ class Game {
   }
 
   //Defines the distance and position of the player when going through a door
-  setPlayerPositionFromDoor(fromRoom, toRoom) {
-    let direction = this.mapHouse.getDirection(fromRoom, toRoom);
-    if (direction === "top") {
-      this.player.position = new Vector(canvasWidth / 2, canvasHeight - 140);
-    } else if (direction === "bottom") {
-      this.player.position = new Vector(canvasWidth / 2, 100);
-    } else if (direction === "left") {
-      this.player.position = new Vector(canvasWidth - 170, canvasHeight / 2);
-    } else if (direction === "right") {
-      this.player.position = new Vector(120, canvasHeight / 2);
-    }
+setPlayerPositionFromDoor(fromRoom, toRoom) {
+  let direction = this.mapHouse.getDirection(fromRoom, toRoom);
+  let faceDirection = "down";
+
+  if (direction === "top") {
+    this.player.position = new Vector(canvasWidth / 2, canvasHeight - 140);
+    faceDirection = "up";
+  } else if (direction === "bottom") {
+    this.player.position = new Vector(canvasWidth / 2, 100);
+    faceDirection = "down";
+  } else if (direction === "left") {
+    this.player.position = new Vector(canvasWidth - 170, canvasHeight / 2);
+    faceDirection = "left";
+  } else if (direction === "right") {
+    this.player.position = new Vector(120, canvasHeight / 2);
+    faceDirection = "right";
   }
+
+  this.player.velocity = new Vector(0, 0);
+  this.player.keys = [];
+
+  if (this.player.motion && this.player.motion[faceDirection]) {
+    this.player.currentFrame = this.player.motion[faceDirection].idleFrames[0];
+    this.player.currentAnimation = faceDirection;
+  }
+
+  this.player.updateCollider();
+}
 
   async saveCombatStatsDB() {
     if (!this.combat_ID) return;
