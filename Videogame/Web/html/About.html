@@ -1,19 +1,61 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Catharsis</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho&display=swap" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../css/About.css">
 </head>
+
 <body>
+    <span id="userDisplay" class="user-display"></span>
+    <div class="top-bar">
+        <a href="About.html" class="top-link">ABOUT</a>
+        <a href="Login.html" class="top-link">LOGIN</a>
+        <a href="Register.html" class="top-link">REGISTER</a>
+        <a href="#" class="top-link" id="logoutBtn">LOGOUT</a>
+    </div>
 
-    <h1>About Catharsis</h1>
+    <div class="about-container">
+        <div class="content">
+            <div class="text-section">
 
-    <p>
-        Catharsis DESCRIPTION AS A PROJECT.
-    </p>
+                <img src="../../VisualsVideogame/Web/Logo.png"
+                     alt="Catharsis Logo"
+                     class="about-logo">
 
-    <button onclick="window.location.href='Run_Menu.html'">
-        Back
-    </button>
+                <p>
+                    Catharsis is a rougelite videogame presented in top-down perspective in 2D with a pixely artstyle, where you take the role of a little cat that comes to a new village and discovers his neighbours are behaving quite strange, just to learn that at night they are turning into monsters. He slowly discovers some new cards across the town that will help him protect himself and his new home. You will randomly explore the different houses of your neighbours, use your cards to save them and protect yourself, and find what is happening around the village. Every time you get to heal your neighbours you will obtain experience points that will help us keep developing the story and obtain better cards that will increase your abilities to fight, defend, heal and control your neighbours. Giving the monster random abilities every night that forces you to think about how to defend yourself without harming them. Learning more about what is the secret behind the way of how your neighbours are behaving.
+                </p>
+
+            </div>
+
+            <div class="image-section">
+
+                <img src="../../VisualsVideogame/Web/About.gif"
+                     alt="Catharsis Image"
+                     class="about-image">
+
+            </div>
+
+        </div>
+
+        <button id="backBtn">
+            Back
+        </button>
+
+    </div>
+
+    <script src="../js/About.js"></script>
 
 </body>
 </html>

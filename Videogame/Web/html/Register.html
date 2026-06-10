@@ -5,26 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register | Catharsis</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="../css/Register.css">
 </head>
 
 <body>
+       <img src="../../VisualsVideogame/Web/divider_login.png"
+         alt="Divider"
+         class="register-divider">
 
-    <div class="register-container">
-
-        <h1>Create Account</h1>
+       <div class="register-content">
+              <div class="register-container">
+                     <h1>New Account</h1>
 
         <input type="text"
-               id="username"
-               placeholder="Username">
+              id="username"
+              placeholder="Username">
 
-        <input type="email"
-               id="email"
-               placeholder="Email">
+        <input type="text"
+              id="name"
+              placeholder="Name">
+
+        <input type="text"
+              id="lastname"
+              placeholder="Last Name">
+
+        <select id="gender">
+              <option value="">Select Gender</option>
+              <option>Female</option>
+              <option>Male</option>
+              <option>Other</option>
+              <option>Prefer not to say</option>
+        </select>
+
+        <input type="text"
+              id="age"
+              placeholder="Age">
 
         <input type="password"
-               id="password"
-               placeholder="Password">
+              id="password"
+              placeholder="Password"> 
 
         <button id="registerBtn">
             REGISTER
@@ -33,12 +56,20 @@
         <p id="message"></p>
 
         <a href="Run_Menu.html" class="back-link">
-            Back to Menu
+            Menu
         </a>
+    </div>
+    
+    <div class="image-section">
+
+        <img src="../../VisualsVideogame/Web/Register.gif"
+             alt="Register Image"
+             class="register-image">
 
     </div>
 
     <script src="../js/Register.js"></script>
+    </div>
 
 </body>
 </html>

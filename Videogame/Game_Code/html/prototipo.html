@@ -1,26 +1,62 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Prototipo</title>
-        <link rel="stylesheet" href="../css/styles.css">
-        <script src="../js/libs/game_functions.js"></script>
-        <script src="../js/libs/Rect.js"></script>
-        <script src="../js/libs/Vector.js"></script>
-        <script src="../js/libs/GameObject.js"></script>
-        <script src="../js/libs/AnimatedObject.js"></script>
-        <script src="../js/libs/AnimatedPlayer.js"></script>
-        <script src="../js/libs/TextLabel.js"></script>
-        <script src="../js/prototipo.js"></script>
-    </head>
+<head>
+    <title>Prototipo</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            background-color: rgb(24, 27, 32);
+        }
 
-    <body>
-        <div id="headerContainer">
-            <h1>Prototipo</h1>
-        </div>
+        #gameContainer {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        canvas {
+            display: block;
+            width: min(800px, 95vw);
+            height: auto;
+            image-rendering: pixelated;
+        }
+    </style>
+
+    <script src="../js/libs/game_functions.js"></script>
+    <script src="../js/libs/Rect.js"></script>
+    <script src="../js/libs/Vector.js"></script>
+    <script src="../js/libs/GameObject.js"></script>
+    <script src="../js/libs/AnimatedObject.js"></script>
+    <script src="../js/libs/AnimatedPlayer.js"></script>
+    <script src="../js/libs/TextLabel.js"></script>
+    <script src="../js/prototipo.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=WDXL+Lubrifont+JP+N&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <div id="gameContainer">
         <canvas id="canvas"></canvas>
-        <a href="./">
-            <button id="backButton">Back</button>
-        </a>
-        <script> main(); </script>
-    </body>
+    </div>
+    
+    <a href="../../Web/html/Run_Menu.html">
+        <button id="backButton">BACK</button>
+    </a>
+
+    <script>
+        main();
+    </script>
+
+</body>
 </html>
+

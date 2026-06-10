@@ -765,7 +765,6 @@ this.wildcardRoom =
 
     this.currentRoom = roomID;
     this.player.velocity = new Vector(0, 0);
-
     this.setPlayerPositionFromDoor(previousRoom, roomID);
 
     if (roomID === this.enemyRoomID) {
@@ -782,7 +781,6 @@ this.wildcardRoom =
     if (direction === "bottom") return this.room_2;
     if (direction === "left") return this.salida_casa_lj;
     if (direction === "right") return this.room_3;
-
     return null;
   }
 
@@ -815,7 +813,6 @@ this.wildcardRoom =
     this.room_2.roomID = undefined;
     this.room_3.roomID = undefined;
     this.salida_casa_lj.roomID = undefined;
-
     this.actors = [this.player];
 
     for (let i = 0; i < doors.length; i++) {
@@ -833,7 +830,6 @@ this.wildcardRoom =
   //Defines the distance and position of the player when going through a door
   setPlayerPositionFromDoor(fromRoom, toRoom) {
     let direction = this.mapHouse.getDirection(fromRoom, toRoom);
-
     if (direction === "top") {
       this.player.position = new Vector(canvasWidth / 2, canvasHeight - 140);
     } else if (direction === "bottom") {

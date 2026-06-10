@@ -3,13 +3,14 @@ import dotenv from "dotenv";
 dotenv.config();
 
 //Conection pool
-const pool = mysql.createPool({
-    host: 'localhost',
-    port: '3306',
-    user: 'root',
-    password: 'Bosco7878..',
-    database: "catharsis"
-}).promise()
+export const pool = mysql.createPool({
+  host:     process.env.MYSQL_HOST,
+  user:     process.env.MYSQL_USER,
+  password: process.env.MYSQL_PASSWORD,
+  database: process.env.MYSQL_DATABASE,
+  waitForConnections: true,
+  connectionLimit: 10,
+});
 
 export async function query(sql, params = []) {
   const [rows] = await pool.execute(sql, params);
