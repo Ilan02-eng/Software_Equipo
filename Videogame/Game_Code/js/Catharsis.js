@@ -22,7 +22,9 @@ const SCENES = {
   PAUSE: "pause",
   NEXT_DAY: "next_day",
   CREDITS: "credits",
-  STATS: "stats"
+  STATS: "stats",
+
+  DECK: "deck",
 };
 
 const UPGRADES = [
@@ -479,9 +481,11 @@ class Game {
     this.currentRoom = 3;
 
     this.cards = [];
-    this.unlockedCards = [CARD_POOL[0], CARD_POOL[3]];
+    this.unlockedCards = [];
     this.collectedRoomUpgrades = {};
     this.wildcard = null;
+    this.hasWildcard = false;
+    this.wildcardRoom = null;
     this.isPlayerTurn = true;
 
     this.upgradeButtons = [];
@@ -617,7 +621,7 @@ class Game {
 
     this.roomUpgrade.setSprite(
       "../assets/sprites/chest.png",
-      new Rect(0,0,512,512)
+      new Rect(0,0,1064,1064)
     );
 
     this.bushes = [];
@@ -700,6 +704,12 @@ class Game {
   randomEnemyLocation() {
     this.mapHouse.randomEnemyRoom();
     this.enemyRoomID = this.mapHouse.enemyRoomID;
+    let possibleRooms = this.mapHouse.activeRooms.filter(
+    room => room !== 9 && room !== this.enemyRoomID
+  );
+
+this.wildcardRoom =
+  possibleRooms[Math.floor(Math.random() * possibleRooms.length)];
   }
 
   //Detects when a player is entering another room and defines which room or place is
@@ -744,15 +754,25 @@ class Game {
   }
 
   giveRandomCard() {
-  let randomCard =
-    CARD_POOL[Math.floor(Math.random() * CARD_POOL.length)];
 
-  this.unlockedCards.push(randomCard);
+    if (this.unlockedCards.length >= 10) {
+      this.message = "Deck Full! (10/10)";
+      this.messageTimer = 120;
+      return;
+    }
 
-  this.message = randomCard.name + " acquired!";
-  this.messageTimer = 120;
-}
+    let randomCard =
+      CARD_POOL[Math.floor(Math.random() * CARD_POOL.length)];
 
+    this.unlockedCards.push(randomCard);
+
+    this.message =
+      randomCard.name + " acquired! (" +
+      this.unlockedCards.length +
+      "/10)";
+
+    this.messageTimer = 120;
+  }
   //Loads the door of each room in the house
   loadHouseDoors() {
     let doors = this.mapHouse.getDoorsFrom(this.currentRoom);
@@ -793,8 +813,13 @@ class Game {
 
   //Generates a random card form CARD_POOL and adds it to a specific position of the combat UI
   getRandomCard(posX) {
+    if (this.unlockedCards.length === 0) {
+      return null;
+    }
+
     let randomIndex = Math.floor(Math.random() * this.unlockedCards.length);
     let randomCard = this.unlockedCards[randomIndex];
+
     return {
       x: posX,
       y: 460,
@@ -854,10 +879,16 @@ class Game {
 
     for (let i = 0; i < 4; i++) {
       let posX = 40 + i * 140;
-      this.cards.push(this.getRandomCard(posX));
+      let card = this.getRandomCard(posX);
+
+      if (card !== null) {
+        this.cards.push(card);
+      }
     }
 
-    this.wildcard = this.getWildcard();
+   this.wildcard = this.hasWildcard
+    ? this.getWildcard()
+    : null;
 
     this.playerHPBar = new combatBars(
       new Vector(40, 40),
@@ -991,6 +1022,55 @@ class Game {
     }
   }
 
+  drawDeckScreen(ctx) {
+  ctx.fillStyle = "#222";
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+  ctx.fillStyle = "white";
+  ctx.font = "bold 36px Arial";
+  ctx.textAlign = "center";
+
+  ctx.fillText("DECK", canvasWidth / 2, 50);
+
+  let y = 100;
+
+  ctx.font = "20px Arial";
+
+  for (let card of this.unlockedCards) {
+    ctx.fillText(card.name, 200, y);
+    y += 30;
+  }
+
+  y += 40;
+
+  ctx.font = "bold 28px Arial";
+  ctx.fillText("UPGRADES", canvasWidth / 2, y);
+
+  y += 50;
+
+  ctx.font = "20px Arial";
+
+  ctx.fillText(
+    "Max HP: " + this.player.maxHP,
+    canvasWidth / 2,
+    y
+  );
+
+  y += 30;
+
+  ctx.fillText(
+    "Max Energy: " + this.player.maxEnergy,
+    canvasWidth / 2,
+    y
+  );
+
+  ctx.fillStyle = "red";
+  ctx.fillRect(20, 520, 140, 50);
+
+  ctx.fillStyle = "white";
+  ctx.fillText("BACK", 90, 553);
+}
+
   drawPauseButton(ctx) {
   if (
     this.currentScene === SCENES.PAUSE ||
@@ -1015,8 +1095,117 @@ class Game {
   ctx.fillText("II", 760, 43);
 }
 
+drawDeckButton(ctx) {
+  if (
+    this.currentScene === SCENES.PAUSE ||
+    this.currentScene === SCENES.GAME_OVER ||
+    this.currentScene === SCENES.CREDITS ||
+    this.currentScene === SCENES.NEXT_DAY ||
+    this.currentScene === SCENES.VICTORY ||
+    this.currentScene === SCENES.DECK ||
+    this.currentScene === SCENES.UPGRADE
+  ) {
+    return;
+  }
+
+  ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
+  ctx.fillRect(15, 15, 90, 40);
+
+  ctx.strokeStyle = "white";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(15, 15, 90, 40);
+
+  ctx.fillStyle = "white";
+  ctx.font = "bold 16px Arial";
+  ctx.textAlign = "center";
+  ctx.fillText("DECK", 60, 40);
+}
+
+drawDeckScreen(ctx) {
+  ctx.fillStyle = "#1f1f1f";
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+  ctx.fillStyle = "white";
+  ctx.font = "bold 36px Arial";
+  ctx.textAlign = "center";
+  ctx.fillText("MY DECK", canvasWidth / 2, 50);
+
+  ctx.font = "bold 22px Arial";
+  ctx.fillText("Cards: " + this.unlockedCards.length + "/10", canvasWidth / 2, 90);
+
+  let startX = 80;
+  let startY = 130;
+  let cardW = 120;
+  let cardH = 80;
+  let gapX = 20;
+  let gapY = 20;
+
+  for (let i = 0; i < this.unlockedCards.length; i++) {
+    let card = this.unlockedCards[i];
+
+    let col = i % 5;
+    let row = Math.floor(i / 5);
+
+    let x = startX + col * (cardW + gapX);
+    let y = startY + row * (cardH + gapY);
+
+    ctx.fillStyle = card.type.color;
+    ctx.fillRect(x, y, cardW, cardH);
+
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(x, y, cardW, cardH);
+
+    ctx.fillStyle = "white";
+    ctx.font = "bold 12px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText(card.name, x + cardW / 2, y + 25);
+
+    ctx.font = "10px Arial";
+    ctx.fillText("Cost: " + card.cost, x + cardW / 2, y + 50);
+  }
+
+  ctx.fillStyle = "white";
+  ctx.font = "bold 28px Arial";
+  ctx.textAlign = "center";
+  ctx.fillText("UPGRADES", canvasWidth / 2, 390);
+
+  ctx.font = "22px Arial";
+  ctx.fillText("Max HP: " + this.player.maxHP, canvasWidth / 2, 435);
+  ctx.fillText("Max Energy: " + this.player.maxEnergy, canvasWidth / 2, 470);
+
+  ctx.fillStyle = this.hasWildcard ? "purple" : "gray";
+  ctx.fillRect(300, 500, 200, 45);
+
+  ctx.strokeStyle = "white";
+  ctx.strokeRect(300, 500, 200, 45);
+
+  ctx.fillStyle = "white";
+  ctx.font = "bold 18px Arial";
+  ctx.fillText(
+    this.hasWildcard ? "Wildcard: YES" : "Wildcard: NO",
+    400,
+    530
+  );
+
+  ctx.fillStyle = "red";
+  ctx.fillRect(20, 520, 130, 50);
+
+  ctx.strokeStyle = "white";
+  ctx.strokeRect(20, 520, 130, 50);
+
+  ctx.fillStyle = "white";
+  ctx.font = "bold 20px Arial";
+  ctx.fillText("BACK", 85, 552);
+}
+
   //Draws the actors, messages and UIs of the game
   draw(ctx) {
+
+    if (this.currentScene === SCENES.DECK) {
+      this.drawDeckScreen(ctx);
+      return;
+    }
 
     if (this.currentScene === SCENES.NEXT_DAY) {
       ctx.fillStyle = "black";
@@ -1118,6 +1307,7 @@ class Game {
     }
 
     this.drawPauseButton(ctx);
+    this.drawDeckButton(ctx);
     return;
       return;
     }
@@ -1276,6 +1466,30 @@ class Game {
       ctx.fillText("You survived 3 days", canvasWidth / 2, 320);
       return;
     }
+
+    this.drawDeckButton(ctx);
+  }
+
+  drawDeckButton(ctx) {
+    if (
+      this.currentScene === SCENES.PAUSE ||
+      this.currentScene === SCENES.GAME_OVER ||
+      this.currentScene === SCENES.CREDITS ||
+      this.currentScene === SCENES.NEXT_DAY
+    ) {
+      return;
+    }
+
+    ctx.fillStyle = "rgba(0,0,0,0.6)";
+    ctx.fillRect(15, 15, 80, 40);
+
+    ctx.strokeStyle = "white";
+    ctx.strokeRect(15, 15, 80, 40);
+
+    ctx.fillStyle = "white";
+    ctx.font = "bold 16px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("DECK", 55, 40);
   }
 
   //Render of each card individually
@@ -1534,20 +1748,32 @@ class Game {
       break;
 
     case SCENES.HABITACION:
-      if (
-        !this.collectedRoomUpgrades[this.currentRoom] &&
-        boxOverlap(this.player, this.roomUpgrade)
-      ) {
-        this.collectedRoomUpgrades[this.currentRoom] = true;
+    if (
+      !this.collectedRoomUpgrades[this.currentRoom] &&
+      boxOverlap(this.player, this.roomUpgrade)
+    ) {
 
-        this.savedPosition = new Vector(
-          this.player.position.x,
-          this.player.position.y
-        );
+      this.collectedRoomUpgrades[this.currentRoom] = true;
 
-        this.upgradeReturnScene = SCENES.HABITACION;
-      this.loadScene(SCENES.UPGRADE);
+      if (this.currentRoom === this.wildcardRoom) {
+
+        this.hasWildcard = true;
+
+        this.message = "Wildcard Found!";
+        this.messageTimer = 180;
+
         return;
+      }
+
+      this.savedPosition = new Vector(
+        this.player.position.x,
+        this.player.position.y
+      );
+
+      this.upgradeReturnScene = SCENES.HABITACION;
+      this.loadScene(SCENES.UPGRADE);
+
+      return;
       }
       if (
         this.salida_casa_lj.roomID !== undefined &&
@@ -1571,7 +1797,6 @@ class Game {
         this.enterRoom(this.room_3.roomID);
       }
       break;
-
         case SCENES.COMBATE:
           if (this.enemy.hp <= 0 && !this.combatFinished) {
             this.combatFinished = true;
@@ -1690,6 +1915,36 @@ class Game {
   }
 
   screenClick(mouseX, mouseY) {
+
+    if (this.currentScene === SCENES.DECK) {
+      if (
+        mouseX >= 20 &&
+        mouseX <= 150 &&
+        mouseY >= 520 &&
+        mouseY <= 570
+      ) {
+        this.loadScene(this.previousScene || SCENES.VILLA);
+      }
+
+      return;
+    }
+
+    if (
+      this.currentScene !== SCENES.PAUSE &&
+      this.currentScene !== SCENES.GAME_OVER &&
+      this.currentScene !== SCENES.CREDITS &&
+      this.currentScene !== SCENES.NEXT_DAY &&
+      this.currentScene !== SCENES.VICTORY &&
+      this.currentScene !== SCENES.UPGRADE &&
+      mouseX >= 15 &&
+      mouseX <= 105 &&
+      mouseY >= 15 &&
+      mouseY <= 55
+    ) {
+      this.previousScene = this.currentScene;
+      this.loadScene(SCENES.DECK);
+      return;
+    }
       // NEXT DAY: cualquier clic continúa
   if (this.currentScene === SCENES.NEXT_DAY) {
     this.loadScene(SCENES.CASA);
@@ -1765,6 +2020,18 @@ class Game {
       window.location.href = "../../Web/html/Run_Menu.html";
       return;
     }
+  }
+
+  if (
+    this.currentScene !== SCENES.DECK &&
+    mouseX >= 15 &&
+    mouseX <= 95 &&
+    mouseY >= 15 &&
+    mouseY <= 55
+  ) {
+    this.previousScene = this.currentScene;
+    this.currentScene = SCENES.DECK;
+    return;
   }
 }
 
