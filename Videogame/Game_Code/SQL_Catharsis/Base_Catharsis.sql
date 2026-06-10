@@ -213,15 +213,22 @@ DELIMITER ;
 
 #Set Data
 INSERT INTO Enemy (enemy_name, hp_min, hp_max, dmg_min, dmg_max, enemy_lvl) VALUES
-    ('Little Jimmy', 100, 140,  9, 15, 1),
-    ('Rotoplas',      70, 100, 15, 25, 1);
+    ('Little Jimmy', 100, 120,  9, 15, 1),
+    ('Rotoplas',      70, 85, 15, 20, 1);
  
 INSERT INTO Cards (type, name, effect, target, what_effect, cost_source, cost) VALUES
     ('Attack',   'Sharp Claw',    'Damage the enemy for 15 HP', 'Enemy', 'enemy.hp -= 15','Energy',  0),
-    ('Attack',   'Shadow Pounce', 'Damage the enemy for 25 HP', 'Enemy', 'enemy.hp -= 25','Energy', 15),
-    ('Attack',   'Purr Attack',   'Damage the enemy for 35 HP', 'Enemy', 'enemy.hp -= 35','Energy', 25),
-    ('Defense',  'Tuna Can',      'Heals you for 15 HP',        'Self',  'player.hp += 15',  'Energy',  0),
-    ('Defense',  'Nine Lives',    'Evade the next enemy attack', 'Self', 'player.evasionChance += 1', 'Energy', 35),
-    ('Control',  'Cat Reflexes',  'Enemy Stun 1 Turn',          'Enemy', 'enemy.stunnedTurns += 1',  'Energy', 30),
-    ('Control',  'Laser Pointer', 'Enemy Stun 2 Turns',         'Enemy', 'enemy.stunnedTurns += 2',  'Energy', 40),
-    ('Wildcard', 'Wildcard',      'Trade HP for 40 Energy',     'Self',  'player.hp -= 30; player.energy += 40', 'HP', 30);
+    ('Attack',   'Shadow Pounce', 'Damage the enemy for 20 HP', 'Enemy', 'enemy.hp -= 20','Energy', 10),
+    ('Attack',   'Purr Attack',   'Damage the enemy for 30 HP', 'Enemy', 'enemy.hp -= 30','Energy', 15),
+    ('Attack',   'Scratches',     'Damage the enemy for 40 HP', 'Enemy', 'enemy.hp -= 40','Energy', 25),
+    ('Attack',   'Love Bite',     'Damage the enemy for 55 HP', 'Enemy', 'enemy.hp -= 55','Energy', 55),
+    ('Defense',  'Lick Wounds',   'Heals you for 10 HP',        'Self',  'player.hp += 10','Energy', 0),
+    ('Defense',  'Tuna Can',      'Heals you for 20 HP',        'Self',  'player.hp += 20','Energy',  10),
+    ('Defense',  'Cat Nap',       'Heals you for 30 HP',        'Self',  'player.hp += 30','Energy', 20),
+    ('Defense',  'Deliciuos Treat', 'Heals you for 45 HP',      'Self',  'player.hp += 45', 'Energy', 30),
+    ('Defense',  'Nine Lives',    'Evade the next enemy attack','Self',  'player.evasionChance += 1', 'Energy', 25),
+    ('Control',  'Cat Reflexes',  'Enemy Stun 1 Turn',          'Enemy', 'enemy.stunnedTurns += 1',  'Energy', 25),
+    ('Control',  'Laser Pointer', 'Enemy Stun 2 Turns',         'Enemy', 'enemy.stunnedTurns += 2',  'Energy', 35),
+    ('Wildcard', 'Low Risk',      'Trade HP for 40 Energy',     'Self',  'player.hp -= 30; player.energy += 40', 'HP', 30),
+    ('Wildcard', 'Moderate Risk', 'Trade HP for 60 Energy',     'Self',  'player.hp -= 40; player.energy += 60', 'HP', 40),
+    ('Wildcard', 'High Risk',     'Trade HP for 80 Energy',     'Self',  'player.hp -= 50; player.energy += 80', 'HP', 50);

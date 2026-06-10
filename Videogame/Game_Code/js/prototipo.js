@@ -266,16 +266,16 @@ class Enemy extends GameObject {
       {
         name: "Little Jimmy",
         hp_min: 100,
-        hp_max: 140,
+        hp_max: 120,
         dmg_min: 9,
         dmg_max: 15,
       },
       {
         name: "Rotoplas",
         hp_min: 70,
-        hp_max: 100,
+        hp_max: 85,
         dmg_min: 15,
-        dmg_max: 25,
+        dmg_max: 20,
       },
     ];
 
