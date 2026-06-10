@@ -657,14 +657,14 @@ class Game {
     ctx.fillText(this.username, 610, 40);
   }
 
-deleteSave() {
-  if (!this.player_ID) return;
-  localStorage.removeItem(this.getSaveKey());
-}
+  deleteSave() {
+    if (!this.player_ID) return;
+    localStorage.removeItem(this.getSaveKey());
+  }
 
-getSaveKey() {
-  return "catharsisSave_" + this.player_ID;
-}
+  getSaveKey() {
+    return "catharsisSave_" + this.player_ID;
+  }
 
   resetCombatStats() {
     this.combatStats = {
@@ -990,22 +990,22 @@ getSaveKey() {
 
     let previousRoom = this.currentRoom;
 
-if (roomID === 9) {
-  this.currentRoom = 3;
-  this.player.velocity = new Vector(0, 0);
+    if (roomID === 9) {
+      this.currentRoom = 3;
+      this.player.velocity = new Vector(0, 0);
 
-  this.loadScene(SCENES.VILLA);
+      this.loadScene(SCENES.VILLA);
 
-  this.player.position = new Vector(1850, 1550);
+      this.player.position = new Vector(1850, 1550);
 
-  this.player.updateCollider();
-  this.updateCamera();
+      this.player.updateCollider();
+      this.updateCamera();
 
-  this.justExitedCasaLJ = true;
-  this.transitionCooldown = 60;
+      this.justExitedCasaLJ = true;
+      this.transitionCooldown = 60;
 
-  return;
-}
+      return;
+    }
     this.currentRoom = roomID;
     this.player.velocity = new Vector(0, 0);
     this.setPlayerPositionFromDoor(previousRoom, roomID);
@@ -1334,18 +1334,10 @@ if (roomID === 9) {
       let upgrade = button.upgrade;
 
       let sprite =
-        upgrade.name === "+15 HP"
-          ? this.hpUpgradeImg
-          : this.energyUpgradeImg;
+        upgrade.name === "+15 HP" ? this.hpUpgradeImg : this.energyUpgradeImg;
 
       if (sprite && sprite.complete) {
-        ctx.drawImage(
-          sprite,
-          button.x + 15,
-          button.y,
-          200,
-          200
-        );
+        ctx.drawImage(sprite, button.x + 15, button.y, 200, 200);
       }
       ctx.fillStyle = "white";
       ctx.textAlign = "center";
@@ -1353,17 +1345,9 @@ if (roomID === 9) {
       ctx.font = "bold 30px Arial";
 
       if (upgrade.name === "+15 HP") {
-        ctx.fillText(
-          "+15 Max HP",
-          button.x + button.w / 2,
-          button.y + 225
-        );
+        ctx.fillText("+15 Max HP", button.x + button.w / 2, button.y + 225);
       } else {
-        ctx.fillText(
-          "+10 Max Energy",
-          button.x + button.w / 2,
-          button.y + 225
-        );
+        ctx.fillText("+10 Max Energy", button.x + button.w / 2, button.y + 225);
       }
     }
   }
@@ -1424,41 +1408,22 @@ if (roomID === 9) {
       let x = startX + col * (cardW + gapX);
       let y = startY + row * (cardH + gapY);
 
-      ctx.fillStyle = card.type.color;
+      // Fondo y borde de la carta
+      ctx.fillStyle = "#222";
       ctx.fillRect(x, y, cardW, cardH);
 
       ctx.strokeStyle = "white";
       ctx.lineWidth = 2;
       ctx.strokeRect(x, y, cardW, cardH);
 
+      // Imagen ocupando toda la carta
       if (card.image && card.image.complete && card.image.naturalWidth > 0) {
-        ctx.drawImage(
-          card.image,
-          x + 5,
-          y + 5,
-          cardW - 10,
-          70
-        );
+        ctx.drawImage(card.image, x + 3, y + 3, cardW - 6, cardH - 6);
       } else if (card.sprite) {
         let img = new Image();
         img.src = card.sprite;
         card.image = img;
       }
-
-      ctx.fillStyle = "white";
-      ctx.font = "bold 12px Arial";
-      ctx.textAlign = "center";
-      ctx.fillText(card.name, x + cardW / 2, y + 95);
-
-      ctx.font = "11px Arial";
-      ctx.fillText(card.effect, x + cardW / 2, y + 115);
-
-      ctx.fillStyle = "black";
-      ctx.fillRect(x + cardW - 32, y + cardH - 28, 24, 20);
-
-      ctx.fillStyle = "white";
-      ctx.font = "bold 14px Arial";
-      ctx.fillText("X", x + cardW - 20, y + cardH - 13);
     }
 
     ctx.fillStyle = "white";
@@ -1778,17 +1743,8 @@ if (roomID === 9) {
     }
 
     if (this.currentScene == SCENES.COMBATE) {
-      if (
-        this.backgroundCombat &&
-        this.backgroundCombat.complete
-      ) {
-        ctx.drawImage(
-          this.backgroundCombat,
-          0,
-          0,
-          canvasWidth,
-          canvasHeight
-        );
+      if (this.backgroundCombat && this.backgroundCombat.complete) {
+        ctx.drawImage(this.backgroundCombat, 0, 0, canvasWidth, canvasHeight);
       } else {
         ctx.fillStyle = "#2b2b2b";
         ctx.fillRect(0, 0, canvasWidth, canvasHeight);
@@ -1803,7 +1759,7 @@ if (roomID === 9) {
       if (this.enemyHPBar) this.enemyHPBar.draw(ctx);
 
       // Render de cartas en combate
-        this.drawCombatUI(ctx);
+      this.drawCombatUI(ctx);
       return;
     }
   }
@@ -1832,42 +1788,42 @@ if (roomID === 9) {
   }
 
   //Render of each card individually
+  //Render of each card individually
+
   drawCardItem(ctx, card) {
     let disabledWildcard = card.isWildcard && this.wildcardUsed;
 
     ctx.fillStyle = disabledWildcard ? "black" : card.color;
-ctx.fillStyle = "#222";
-ctx.fillRect(card.x, card.y, card.w, card.h);
 
-ctx.strokeStyle = "white";
-ctx.lineWidth = 2;
-ctx.strokeRect(card.x, card.y, card.w, card.h);
+    ctx.fillStyle = "#222";
 
-if (card.image && card.image.complete) {
-  ctx.drawImage(
-    card.image,
-    card.x + 5,
-    card.y + 5,
-    card.w - 10,
-    70
-  );
-}
+    ctx.fillRect(card.x, card.y, card.w, card.h);
 
-    ctx.fillStyle = "white";
-    ctx.textAlign = "center";
-    ctx.font = "bold 11px Arial";
+    ctx.strokeStyle = "white";
 
-ctx.font = "bold 11px Arial";
-ctx.fillText(card.name, card.x + card.w / 2, card.y + 92);
+    ctx.lineWidth = 2;
 
-ctx.font = "9px Arial";
-ctx.fillText(card.effect, card.x + card.w / 2, card.y + 108);
+    ctx.strokeRect(card.x, card.y, card.w, card.h);
 
-    ctx.fillText(card.effect, card.x + card.w / 2, card.y + 78);
+    if (card.image && card.image.complete) {
+      ctx.drawImage(
+        card.image,
+
+        card.x + 5,
+
+        card.y + 5,
+
+        card.w - 10,
+
+        card.h - 10,
+      );
+    }
 
     if (disabledWildcard) {
       ctx.fillStyle = "white";
+
       ctx.font = "bold 22px Arial";
+
       ctx.textAlign = "center";
 
       ctx.fillText("USED", card.x + card.w / 2, card.y + card.h / 2 + 10);
@@ -1879,9 +1835,11 @@ ctx.fillText(card.effect, card.x + card.w / 2, card.y + 108);
       ctx.arc(card.x + 22, card.y + 105, 14, 0, 2 * Math.PI);
 
       ctx.fill();
+
       ctx.stroke();
 
       ctx.fillStyle = "white";
+
       ctx.font = "bold 10px Arial";
 
       ctx.fillText(card.cost, card.x + 22, card.y + 109);
@@ -2072,16 +2030,17 @@ ctx.fillText(card.effect, card.x + card.w / 2, card.y + 108);
           );
 
           this.loadScene(SCENES.CASA);
-        } if (this.justExitedCasaLJ) {
-  if (!boxOverlap(this.player, this.casa_lj)) {
-    this.justExitedCasaLJ = false;
-  }
-} else if (boxOverlap(this.player, this.casa_lj)) {
-  this.player.velocity = new Vector(0, 0);
-  this.currentRoom = 3;
-  this.player.position = new Vector(120, canvasHeight / 2);
-  this.loadScene(SCENES.CASA_LJ);
-}
+        }
+        if (this.justExitedCasaLJ) {
+          if (!boxOverlap(this.player, this.casa_lj)) {
+            this.justExitedCasaLJ = false;
+          }
+        } else if (boxOverlap(this.player, this.casa_lj)) {
+          this.player.velocity = new Vector(0, 0);
+          this.currentRoom = 3;
+          this.player.position = new Vector(120, canvasHeight / 2);
+          this.loadScene(SCENES.CASA_LJ);
+        }
 
         break;
 
@@ -2182,63 +2141,57 @@ ctx.fillText(card.effect, card.x + card.w / 2, card.y + 108);
   }
   saveGame() {
     if (!this.player_ID) return;
-  const saveData = {
-    day: this.day,
+    const saveData = {
+      day: this.day,
 
-    unlockedCards: this.unlockedCards.map(card => card.name),
+      unlockedCards: this.unlockedCards.map((card) => card.name),
 
-    maxHP: this.player.maxHP,
-    hp: this.player.hp,
+      maxHP: this.player.maxHP,
+      hp: this.player.hp,
 
-    maxEnergy: this.player.maxEnergy,
-    energy: this.player.energy,
+      maxEnergy: this.player.maxEnergy,
+      energy: this.player.energy,
 
-    hasWildcard: this.hasWildcard,
+      hasWildcard: this.hasWildcard,
 
-    collectedRoomUpgrades: this.collectedRoomUpgrades
-  };
+      collectedRoomUpgrades: this.collectedRoomUpgrades,
+    };
 
-localStorage.setItem(this.getSaveKey(), JSON.stringify(saveData));
-}
-loadGame() {
-
+    localStorage.setItem(this.getSaveKey(), JSON.stringify(saveData));
+  }
+  loadGame() {
     if (!this.player_ID) return;
 
-  const save = localStorage.getItem(this.getSaveKey());
+    const save = localStorage.getItem(this.getSaveKey());
 
-  if (!save) return;
+    if (!save) return;
 
-  const data = JSON.parse(save);
+    const data = JSON.parse(save);
 
-  this.day = data.day || 1;
+    this.day = data.day || 1;
 
-  this.player.maxHP = data.maxHP || 100;
-  this.player.hp = data.hp || this.player.maxHP;
+    this.player.maxHP = data.maxHP || 100;
+    this.player.hp = data.hp || this.player.maxHP;
 
-  this.player.maxEnergy = data.maxEnergy || 150;
-  this.player.energy = data.energy || this.player.maxEnergy;
+    this.player.maxEnergy = data.maxEnergy || 150;
+    this.player.energy = data.energy || this.player.maxEnergy;
 
-  this.hasWildcard = data.hasWildcard || false;
+    this.hasWildcard = data.hasWildcard || false;
 
-  this.collectedRoomUpgrades =
-    data.collectedRoomUpgrades || {};
+    this.collectedRoomUpgrades = data.collectedRoomUpgrades || {};
 
-  this.unlockedCards = [];
+    this.unlockedCards = [];
 
-  if (data.unlockedCards) {
+    if (data.unlockedCards) {
+      for (let cardName of data.unlockedCards) {
+        let card = CARD_POOL.find((c) => c.name === cardName);
 
-    for (let cardName of data.unlockedCards) {
-
-      let card = CARD_POOL.find(
-        c => c.name === cardName
-      );
-
-      if (card) {
-        this.unlockedCards.push(card);
+        if (card) {
+          this.unlockedCards.push(card);
+        }
       }
     }
   }
-}
 
   resetBushCards() {
     for (let bushData of this.bushes) {
@@ -2431,17 +2384,17 @@ loadGame() {
         }
       }
 
-if (mouseX >= 20 && mouseX <= 150 && mouseY >= 520 && mouseY <= 570) {
-  const scene = this.previousScene || SCENES.VILLA;
-  this.loadScene(scene);
+      if (mouseX >= 20 && mouseX <= 150 && mouseY >= 520 && mouseY <= 570) {
+        const scene = this.previousScene || SCENES.VILLA;
+        this.loadScene(scene);
 
-  if (scene === SCENES.VILLA) {
-    this.player.position = this.savedDeckPosition || this.player.position;
-    this.updateCamera();
-  }
+        if (scene === SCENES.VILLA) {
+          this.player.position = this.savedDeckPosition || this.player.position;
+          this.updateCamera();
+        }
 
-  return;
-}
+        return;
+      }
 
       return;
     }
@@ -2459,7 +2412,10 @@ if (mouseX >= 20 && mouseX <= 150 && mouseY >= 520 && mouseY <= 570) {
       mouseY <= 55
     ) {
       this.previousScene = this.currentScene;
-      this.savedDeckPosition = new Vector(this.player.position.x, this.player.position.y);
+      this.savedDeckPosition = new Vector(
+        this.player.position.x,
+        this.player.position.y,
+      );
       this.loadScene(SCENES.DECK);
       return;
     }
@@ -2523,11 +2479,10 @@ if (mouseX >= 20 && mouseX <= 150 && mouseY >= 520 && mouseY <= 570) {
     if (this.currentScene === SCENES.PAUSE) {
       // TURN OFF MUSIC
       if (mouseX >= 210 && mouseX <= 610 && mouseY >= 135 && mouseY <= 215) {
-
         this.musicEnabled = !this.musicEnabled;
 
         if (!this.musicEnabled) {
-          Object.values(this.music).forEach(song => {
+          Object.values(this.music).forEach((song) => {
             song.pause();
           });
         } else {
@@ -2539,11 +2494,10 @@ if (mouseX >= 20 && mouseX <= 150 && mouseY >= 520 && mouseY <= 570) {
 
       // TURN OFF SOUND
       if (mouseX >= 210 && mouseX <= 610 && mouseY >= 135 && mouseY <= 215) {
-
         this.musicEnabled = !this.musicEnabled;
 
         if (!this.musicEnabled) {
-          Object.values(this.music).forEach(song => {
+          Object.values(this.music).forEach((song) => {
             song.pause();
           });
         } else {
