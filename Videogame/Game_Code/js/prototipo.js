@@ -1888,7 +1888,7 @@ class Game {
       this.drawCardItem(ctx, this.wildcard);
     }
 
-    ctx.fillStyle = "black";
+    ctx.fillStyle = "white";
     ctx.font = "bold 18px Arial";
     ctx.textAlign = "center";
     if (this.isPlayerTurn) {
@@ -1897,7 +1897,7 @@ class Game {
       ctx.fillText("Enemy turn...", canvasWidth / 2, 420);
     }
 
-    ctx.fillStyle = "black";
+    ctx.fillStyle = "white";
     ctx.font = "bold 18px Arial";
     ctx.textAlign = "center";
     ctx.fillText(this.enemy.enemy_name, 635, 55);
