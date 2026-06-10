@@ -15,7 +15,7 @@ const cards = [
         cost: "0 energy points",
         effect: "15 damage points",
         description: "A quick and precise slash that tears through enemies with feline accuracy",
-        sprite: "../../VisualsVideogame/Cards/Card_one.png"
+        sprite: "../../VisualsVideogame/Cards/1.png"
     },
     {
         name: "Purr Attack",
@@ -23,7 +23,7 @@ const cards = [
         cost: "15 energy points",
         effect: "30 damage points",
         description: "A deceptively gentle attack that confuses enemies while delivering unexpected damage",
-        sprite: "../../VisualsVideogame/Cards/Card_two.png"
+        sprite: "../../VisualsVideogame/Cards/2.png"
     },
     {
         name: "Shadow Pounce",
@@ -31,7 +31,7 @@ const cards = [
         cost: "10 energy points",
         effect: "20 damage points",
         description: "Leap from the darkness and strike before the enemy can react",
-        sprite: "../../VisualsVideogame/Cards/Card_three.png"
+        sprite: "../../VisualsVideogame/Cards/3.png"
     },
     {
         name: "Scratches",
@@ -39,7 +39,7 @@ const cards = [
         cost: "25 energy points",
         effect: "40 damage points",
         description: "Rapid claw attacks that overwhelm enemies with a flurry of strikes",
-        sprite: "../../VisualsVideogame/Cards/Card_four.png"
+        sprite: "../../VisualsVideogame/Cards/4.png"
     },
     {
         name: "Love Bite",
@@ -47,7 +47,7 @@ const cards = [
         cost: "35 energy points",
         effect: "55 damage points",
         description: "A playful but painful bite that leaves enemies distracted and irritated.",
-        sprite: "../../VisualsVideogame/Cards/Card_five.png"
+        sprite: "../../VisualsVideogame/Cards/5.png"
     },
     {
         name: "Lick wounds",
@@ -55,7 +55,7 @@ const cards = [
         cost: "0 energy points",
         effect: "Restore 10 HP",
         description: "A soothing gesture that helps recover health over time",
-        sprite: "../../VisualsVideogame/Cards/Card_six.png"
+        sprite: "../../VisualsVideogame/Cards/6.png"
     },
     {
         name: "Tuna Can",
@@ -63,7 +63,7 @@ const cards = [
         cost: "10 energy points",
         effect: "Restore 20 HP",
         description: "A tasty boost that restores energy and strengthens your defenses",
-        sprite: "../../VisualsVideogame/Cards/Card_seven.png"
+        sprite: "../../VisualsVideogame/Cards/7.png"
     },
     {
         name: "Cat Nap",
@@ -71,7 +71,7 @@ const cards = [
         cost: "20 energy points",
         effect: "Restore 30 HP",
         description: "Take a quick rest to regain strength and prepare for the next encounter",
-        sprite: "../../VisualsVideogame/Cards/Card_eight.png"
+        sprite: "../../VisualsVideogame/Cards/8.png"
     },
     {
         name: "Delicious treat",
@@ -79,7 +79,7 @@ const cards = [
         cost: "30 energy points",
         effect: "Restore 45 HP",
         description: "A rewarding snack that restores health and improves resilience",
-        sprite: "../../VisualsVideogame/Cards/Card_nine.png"
+        sprite: "../../VisualsVideogame/Cards/9.png"
     },
     {
         name: "Nine lives",
@@ -87,7 +87,7 @@ const cards = [
         cost: "25 energy points",
         effect: "Evade the next enemy attack",
         description: "A mysterious blessing that lets you endure what should have been fatal",
-        sprite: "../../VisualsVideogame/Cards/Card_ten.png"
+        sprite: "../../VisualsVideogame/Cards/10.png"
     },
 
     {
@@ -96,7 +96,7 @@ const cards = [
         cost: "35 energy points",
         effect: "The enemy skips their next two turn",
         description: "Completely distracts the enemy, forcing them to lose focus on the battle",
-        sprite: "../../VisualsVideogame/Cards/Card_twelve.png"
+        sprite: "../../VisualsVideogame/Cards/11.png"
     },
     {
         name: "Cat Reflexes",
@@ -104,7 +104,7 @@ const cards = [
         cost: "25 energy points",
         effect: "The enemy skips their next turn",
         description: "Heightened instincts allow you to react instantly to incoming danger",
-        sprite: "../../VisualsVideogame/Cards/Card_eleven.png"
+        sprite: "../../VisualsVideogame/Cards/12.png"
     },
     {
         name: "Wildcard: Low risk",
@@ -112,7 +112,7 @@ const cards = [
         cost: "30 HP",
         effect: "You gain 40 energy points",
         description: "Heightened instincts allow you to react instantly to incoming danger",
-        sprite: "../../VisualsVideogame/Cards/Card_thirteen.png"
+        sprite: "../../VisualsVideogame/Cards/13.png"
     },
     {
         name: "Wildcard: Moderate risk",
@@ -120,7 +120,7 @@ const cards = [
         cost: "40 HP",
         effect: "You gain 60 energy points",
         description: "Heightened instincts allow you to react instantly to incoming danger",
-        sprite: "../../VisualsVideogame/Cards/Card_fourteen.png"
+        sprite: "../../VisualsVideogame/Cards/14.png"
     },
     {
         name: "Wildcard: Low risk",
@@ -128,7 +128,7 @@ const cards = [
         cost: "50 HP",
         effect: "You gain 80 energy points",
         description: "Heightened instincts allow you to react instantly to incoming danger",
-        sprite: "../../VisualsVideogame/Cards/Card_fifteen.png"
+        sprite: "../../VisualsVideogame/Cards/15.png"
     },
 ];
 
