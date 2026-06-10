@@ -577,6 +577,8 @@ class Game {
     };
 
     this.currentMusic = null;
+    this.musicEnabled = true;
+    this.soundEnabled = true;
 
     this.createEventListeners();
     this.initObjects();
@@ -930,6 +932,7 @@ getSaveKey() {
   }
 
   playMusic(name) {
+    if (!this.musicEnabled) return;
     if (name === SCENES.HABITACION) name = "casa_lj";
 
     if (!this.music || !this.music[name]) return;
@@ -2281,6 +2284,7 @@ loadGame() {
   }
 
   playSound(name) {
+    if (!this.soundEnabled) return;
     if (!this.sounds || !this.sounds[name]) return;
 
     const sound = this.sounds[name];
@@ -2519,13 +2523,33 @@ if (mouseX >= 20 && mouseX <= 150 && mouseY >= 520 && mouseY <= 570) {
     if (this.currentScene === SCENES.PAUSE) {
       // TURN OFF MUSIC
       if (mouseX >= 210 && mouseX <= 610 && mouseY >= 135 && mouseY <= 215) {
-        console.log("Toggle music");
+
+        this.musicEnabled = !this.musicEnabled;
+
+        if (!this.musicEnabled) {
+          Object.values(this.music).forEach(song => {
+            song.pause();
+          });
+        } else {
+          this.playMusic(this.previousScene || this.currentScene);
+        }
+
         return;
       }
 
       // TURN OFF SOUND
-      if (mouseX >= 210 && mouseX <= 610 && mouseY >= 255 && mouseY <= 335) {
-        console.log("Toggle sound");
+      if (mouseX >= 210 && mouseX <= 610 && mouseY >= 135 && mouseY <= 215) {
+
+        this.musicEnabled = !this.musicEnabled;
+
+        if (!this.musicEnabled) {
+          Object.values(this.music).forEach(song => {
+            song.pause();
+          });
+        } else {
+          this.playMusic(this.previousScene || this.currentScene);
+        }
+
         return;
       }
 
