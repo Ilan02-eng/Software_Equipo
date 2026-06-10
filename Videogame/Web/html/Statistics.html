@@ -102,12 +102,20 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
+const role = localStorage.getItem("role");
 
-// ============================================================
-//  CONFIGURACIÓN — cambia esta URL a la de tu API
-// ============================================================
+if (role !== "admin") {
+
+  // Ocultar pestaña Administrador
+  document.querySelectorAll(".tab")[1].style.display = "none";
+
+  // Ocultar sección Administrador
+  document.getElementById("sec-admin").style.display = "none";
+
+  // Asegurarse de que se quede en Jugador
+  switchTab("jugador");
+}
 const API_URL = 'http://localhost:3001/api/stats';
-// ============================================================
 
 let players = [];
 let charts = {};

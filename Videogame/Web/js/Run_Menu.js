@@ -10,9 +10,22 @@ const logoutBtn = document.getElementById("logoutBtn");
 
 if(logoutBtn){
     logoutBtn.addEventListener("click", () => {
+
         localStorage.removeItem("loggedInUser");
-        window.location.href = "Run_Menu.html";
+        localStorage.removeItem("username");
+        localStorage.removeItem("user_ID");
+        localStorage.removeItem("player_ID");
+        localStorage.removeItem("role");
+
+        window.location.href = "Login.html";
     });
+}
+
+const role = localStorage.getItem("role");
+const adminStatsBtn = document.getElementById("adminStatsBtn");
+
+if (adminStatsBtn && role !== "admin") {
+    adminStatsBtn.style.display = "none";
 }
 
 if(username){
