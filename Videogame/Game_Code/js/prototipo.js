@@ -114,6 +114,36 @@ const WILDCARD = {
 };
 
 
+
+
+// =============================
+// API helpers for Login + Stats
+// =============================
+async function apiRequest(path, method = "GET", body = null) {
+  const options = {
+    method,
+    headers: { "Content-Type": "application/json" },
+  };
+
+  if (body !== null) {
+    options.body = JSON.stringify(body);
+  }
+
+  const response = await fetch(`${API_URL}${path}`, options);
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    console.error("API error:", method, path, data);
+    throw new Error(data.error || "API request failed");
+  }
+
+  return data;
+}
+
+function getLoggedPlayerID() {
+  return localStorage.getItem("player_ID");
+}
+
 const keyDirections = {
     w: 'up',
     a: 'left',
@@ -446,6 +476,14 @@ class Game {
 
     this.enemy = null;
 
+    // Database IDs and counters
+    this.player_ID = getLoggedPlayerID();
+    this.run_ID = null;
+    this.combat_ID = null;
+    this.runFinished = false;
+    this.combatStats = null;
+    this.runPromise = this.startRunInDB();
+
     this.day = 1;
     this.maxDay = 3;
 
@@ -462,6 +500,11 @@ class Game {
     this.hasWildcard = false;
     this.wildcardRoom = null;
     this.isPlayerTurn = true;
+
+    this.dmg_done = 0;
+    this.dmg_receive = 0;
+    this.hp_recovered = 0;
+    this.cards_used = 0;
 
     this.upgradeButtons = [];
     this.upgradeReturnScene = SCENES.HABITACION;
@@ -491,12 +534,133 @@ class Game {
     this.message = "";
     this.messageTimer = 0;
 
+    this.username = localStorage.getItem("username") || "Guest";
+
     for (let key in this.music) {
       this.music[key].loop = true;
       this.music[key].volume = 0.35;
     }
 
     this.sounds.card.volume = 0.7;
+  }
+
+  async startRunInDB() {
+    if (!this.player_ID) {
+      console.warn("No player_ID found. Login first to save stats.");
+      return null;
+    }
+
+    try {
+      const data = await apiRequest("/runs", "POST", {
+        player_ID: this.player_ID,
+      });
+      this.run_ID = data.run_ID;
+      return this.run_ID;
+    } catch (error) {
+      console.error("Could not start run in DB:", error);
+      return null;
+    }
+  }
+
+  async ensureRunInDB() {
+    if (this.run_ID) return this.run_ID;
+    if (this.runPromise) await this.runPromise;
+    if (this.run_ID) return this.run_ID;
+    return await this.startRunInDB();
+  }
+
+  async startCombatInDB() {
+    try {
+      const run_ID = await this.ensureRunInDB();
+      if (!run_ID || !this.enemy) return;
+
+      const data = await apiRequest("/combats", "POST", {
+        run_ID,
+        enemy_name: this.enemy.enemy_name,
+        enemy_lvl: this.enemy.enemy_lvl,
+      });
+
+      this.combat_ID = data.combat_ID;
+    } catch (error) {
+      console.error("Could not create combat in DB:", error);
+    }
+  }
+  drawUsername(ctx) {
+
+    ctx.fillStyle = "rgba(0,0,0,0.6)";
+    ctx.fillRect(560, 15, 160, 40);
+
+    ctx.strokeStyle = "white";
+    ctx.strokeRect(560, 15, 160, 40);
+
+    ctx.fillStyle = "white";
+    ctx.font = "bold 16px Arial";
+    ctx.textAlign = "center";
+
+    ctx.fillText(this.username, 610, 40);
+  }
+
+  resetCombatStats() {
+    this.combatStats = {
+      dmg_done: 0,
+      dmg_receive: 0,
+      hp_recovered: 0,
+      cards_used: 0,
+    };
+  }
+
+  async saveCombatStatsInDB() {
+    if (!this.combat_ID || !this.combatStats) return;
+
+    try {
+      await apiRequest(`/combats/${this.combat_ID}/stats`, "POST", this.combatStats);
+    } catch (error) {
+      console.error("Could not save combat stats in DB:", error);
+    }
+  }
+
+  async saveCardUsedInDB(cardName) {
+    try {
+      const run_ID = await this.ensureRunInDB();
+      if (!run_ID || !this.combat_ID || !cardName) return;
+
+      await apiRequest(`/runs/${run_ID}/cards`, "POST", {
+        card_name: cardName,
+        combat_ID: this.combat_ID,
+      });
+    } catch (error) {
+      console.error("Could not save used card in DB:", error);
+    }
+  }
+
+  async savePlayerStatsInDB() {
+    if (!this.player_ID || !this.player) return;
+
+    try {
+      await apiRequest(`/players/${this.player_ID}`, "PATCH", {
+        hp: this.player.hp,
+        energy: this.player.energy,
+      });
+    } catch (error) {
+      console.error("Could not save player stats in DB:", error);
+    }
+  }
+
+  async finishRunInDB(result) {
+    if (this.runFinished) return;
+    this.runFinished = true;
+
+    try {
+      const run_ID = await this.ensureRunInDB();
+      if (!run_ID) return;
+
+      await this.savePlayerStatsInDB();
+      await apiRequest(`/runs/${run_ID}/finish`, "PATCH", {
+        run_result: result,
+      });
+    } catch (error) {
+      console.error("Could not finish run in DB:", error);
+    }
   }
 
   //Creates all the objects of the game includes the player, enemy, rooms, houses, etc.
@@ -841,6 +1005,23 @@ this.wildcardRoom =
     }
   }
 
+  async saveCombatStatsDB() {
+  if (!this.combat_ID) return;
+
+  await fetch(`${API_URL}/combats/${this.combat_ID}/stats`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      dmg_done: this.dmg_done,
+      dmg_receive: this.dmg_receive,
+      hp_recovered: this.hp_recovered,
+      cards_used: this.cards_used
+    })
+  });
+  }
+
   //Generates a random card form CARD_POOL and adds it to a specific position of the combat UI
   getRandomCard(posX) {
     if (this.unlockedCards.length === 0) {
@@ -891,7 +1072,11 @@ this.wildcardRoom =
   }
 
   enemyDefeated() {
+    this.saveCombatStatsInDB();
+    this.savePlayerStatsInDB();
+
     if (this.day >= this.maxDay) {
+      this.finishRunInDB("Win");
       this.loadScene(SCENES.VICTORY);
       return;
     }
@@ -910,6 +1095,9 @@ this.wildcardRoom =
   combatHand() {
     this.cards = [];
     this.wildcardUsed = false;
+    this.combat_ID = null;
+    this.resetCombatStats();
+    this.startCombatInDB();
     this.isPlayerTurn = true;
     this.player.energy = this.player.maxEnergy;
     this.player.hp = this.player.maxHP;
@@ -1278,6 +1466,7 @@ drawDeckScreen(ctx) {
 
     this.drawPauseButton(ctx);
     this.drawDeckButton(ctx);
+    this.drawUsername(ctx);
     return;
       return;
     }
@@ -1559,8 +1748,13 @@ drawDeckScreen(ctx) {
 
       if (randomRoll < this.player.evasionChance) {
       } else {
+        let hpBefore = this.player.hp;
         let damage = this.enemy.randomDamage();
         this.player.hp -= damage;
+        let realDamage = Math.max(0, hpBefore - Math.max(this.player.hp, 0));
+        if (this.combatStats) {
+          this.combatStats.dmg_receive += realDamage;
+        }
 
         this.playerDeath();
 
@@ -1581,7 +1775,14 @@ drawDeckScreen(ctx) {
 
   //Restarts the run in case of player's death
   restartRun() {
+    this.saveCombatStatsInDB();
+    this.finishRunInDB("Loss");
+
     this.day = 1;
+    this.run_ID = null;
+    this.combat_ID = null;
+    this.runFinished = false;
+    this.runPromise = this.startRunInDB();
 
     this.mapHouse.randomMap();
     this.enemyRoomID = this.mapHouse.enemyRoomID;
@@ -1616,6 +1817,8 @@ drawDeckScreen(ctx) {
   playerDeath() {
     if (this.player.hp <= 0) {
       this.player.hp = 0;
+      this.saveCombatStatsInDB();
+      this.finishRunInDB("Loss");
       this.loadScene(SCENES.GAME_OVER);
     }
   }
@@ -1859,8 +2062,32 @@ drawDeckScreen(ctx) {
     }
     }
 
+    let enemyHPBefore = this.enemy.hp;
+    let playerHPBefore = this.player.hp;
+
     selectedCard.action(this.player, this.enemy);
+
+    this.cards_used++;
+
+    if (enemyHPBefore > this.enemy.hp) {
+      this.dmg_done += enemyHPBefore - this.enemy.hp;
+    }
+
+    if (this.player.hp > playerHPBefore) {
+      this.hp_recovered += this.player.hp - playerHPBefore;
+    }
     this.playSound("card");
+
+    let damageDone = Math.max(0, enemyHPBefore - Math.max(this.enemy.hp, 0));
+    let hpRecovered = Math.max(0, this.player.hp - playerHPBefore);
+
+    if (this.combatStats) {
+      this.combatStats.dmg_done += damageDone;
+      this.combatStats.hp_recovered += hpRecovered;
+      this.combatStats.cards_used += 1;
+    }
+
+    this.saveCardUsedInDB(selectedCard.name);
 
     this.player.energy = Math.min(this.player.energy, this.player.maxEnergy);
 
@@ -1896,6 +2123,7 @@ drawDeckScreen(ctx) {
         mouseY <= button.y + button.h
       ) {
         button.upgrade.action(this.player);
+        this.savePlayerStatsInDB();
 
         this.message = button.upgrade.name + " Upgrade!";
         this.messageTimer = 120;
@@ -2046,6 +2274,8 @@ drawDeckScreen(ctx) {
 
     // SAVE AND EXIT
     if (mouseX >= 210 && mouseX <= 610 && mouseY >= 495 && mouseY <= 575) {
+      this.saveCombatStatsInDB();
+      this.savePlayerStatsInDB();
       window.location.href = "../../Web/html/Run_Menu.html";
       return;
     }

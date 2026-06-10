@@ -16,13 +16,13 @@ app.get("/", (_req, res) => res.json({ status: "Catharsis API online" }));
 //Authentification of the users
 app.post("/auth/register", async (req, res) => {
   try {
-    const { name, lastname, password, age, gender } = req.body;
+    const { username, name, lastname, password, age, gender } = req.body;
 
-    if (!name || !lastname || !password) {
-      return res.status(400).json({ error: "name, lastname and password are required." });
-    }
+  if (!username || !name || !lastname || !password) {
+    return res.status(400).json({ error: "username, name, lastname and password are required." });
+  }
 
-    const user_ID   = await db.createUser({ name, lastname, password, age, gender });
+    const user_ID = await db.createUser({ username, name, lastname, password, age, gender });
     const player_ID = await db.createPlayer(user_ID);
 
     res.status(201).json({ user_ID, player_ID });
@@ -37,13 +37,13 @@ app.post("/auth/register", async (req, res) => {
 
 app.post("/auth/login", async (req, res) => {
   try {
-    const { lastname, password } = req.body;
+    const {username, password } = req.body;
 
-    if (!lastname || !password) {
-      return res.status(400).json({ error: "lastname and password are required." });
+    if (!username || !password) {
+      return res.status(400).json({ error: "username and password are required." });
     }
 
-    const [user] = await db.getUserByCredentials(lastname, password);
+    const [user] = await db.getUserByCredentials(username, password);
     if (!user) {
       return res.status(401).json({ error: "Invalid credentials." });
     }

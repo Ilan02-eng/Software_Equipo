@@ -15,23 +15,22 @@ async function query(sql, params = []) {
 }
 
 //Finds a user
-export async function getUserByCredentials(lastname, password) {
+export async function getUserByCredentials(username, password) {
   return query(
-    "SELECT * FROM Username WHERE lastname = ? AND password = ? LIMIT 1",
-    [lastname, password]
+    "SELECT * FROM Username WHERE username = ? AND password = ? LIMIT 1",
+    [username, password]
   );
 }
-
 //Finds a user by id
 export async function getUserById(user_ID) {
   return query("SELECT * FROM Username WHERE user_ID = ? LIMIT 1", [user_ID]);
 }
 
 //Inserts a new user
-export async function createUser({ name, lastname, password, age, gender }) {
+export async function createUser({ username, name, lastname, password, age, gender }) {
   const result = await pool.execute(
-    "INSERT INTO Username (name, lastname, password, age, gender) VALUES (?, ?, ?, ?, ?)",
-    [name, lastname, password, age ?? null, gender ?? null]
+    "INSERT INTO Username (username, name, lastname, password, age, gender) VALUES (?, ?, ?, ?, ?, ?)",
+    [username, name, lastname, password, age ?? null, gender ?? null]
   );
   return result[0].insertId;
 }
