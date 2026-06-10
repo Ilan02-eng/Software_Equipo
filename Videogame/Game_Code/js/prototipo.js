@@ -1389,7 +1389,13 @@ class Game {
       ctx.strokeRect(x, y, cardW, cardH);
 
       if (card.image && card.image.complete && card.image.naturalWidth > 0) {
-        ctx.drawImage(card.image, x + 35, y + 8, 60, 60);
+        ctx.drawImage(
+          card.image,
+          x + 5,
+          y + 5,
+          cardW - 10,
+          70
+        );
       } else if (card.sprite) {
         let img = new Image();
         img.src = card.sprite;
@@ -1399,10 +1405,10 @@ class Game {
       ctx.fillStyle = "white";
       ctx.font = "bold 12px Arial";
       ctx.textAlign = "center";
-      ctx.fillText(card.name, x + cardW / 2, y + 85);
+      ctx.fillText(card.name, x + cardW / 2, y + 95);
 
       ctx.font = "11px Arial";
-      ctx.fillText("Cost: " + card.cost, x + cardW / 2, y + 108);
+      ctx.fillText(card.effect, x + cardW / 2, y + 115);
 
       ctx.fillStyle = "black";
       ctx.fillRect(x + cardW - 32, y + cardH - 28, 24, 20);
@@ -1741,44 +1747,7 @@ class Game {
       if (this.enemyHPBar) this.enemyHPBar.draw(ctx);
 
       // Render de cartas en combate
-      for (let card of this.cards) {
-        ctx.fillStyle = card.color;
-        ctx.fillRect(card.x, card.y, card.w, card.h);
-        ctx.strokeStyle = "white";
-        ctx.strokeRect(card.x, card.y, card.w, card.h);
-
-        ctx.fillStyle = "white";
-        ctx.font = "bold 12px Arial";
-        ctx.textAlign = "center";
-        ctx.fillText(card.name, card.x + card.w / 2, card.y + 30);
-        ctx.font = "10px Arial";
-        ctx.fillText(card.cost, card.x + card.w / 2, card.y + 60);
-      }
-
-      if (this.wildcard) {
-        ctx.fillStyle = this.wildcard.color;
-        ctx.fillRect(
-          this.wildcard.x,
-          this.wildcard.y,
-          this.wildcard.w,
-          this.wildcard.h,
-        );
-        ctx.strokeStyle = "white";
-        ctx.strokeRect(
-          this.wildcard.x,
-          this.wildcard.y,
-          this.wildcard.w,
-          this.wildcard.h,
-        );
-
-        ctx.fillStyle = "white";
-        ctx.font = "bold 12px Arial";
-        ctx.fillText(
-          this.wildcard.name,
-          this.wildcard.x + this.wildcard.w / 2,
-          this.wildcard.y + 30,
-        );
-      }
+        this.drawCombatUI(ctx);
       return;
     }
   }
@@ -1811,25 +1780,32 @@ class Game {
     let disabledWildcard = card.isWildcard && this.wildcardUsed;
 
     ctx.fillStyle = disabledWildcard ? "black" : card.color;
+ctx.fillStyle = "#222";
+ctx.fillRect(card.x, card.y, card.w, card.h);
 
-    ctx.fillRect(card.x, card.y, card.w, card.h);
+ctx.strokeStyle = "white";
+ctx.lineWidth = 2;
+ctx.strokeRect(card.x, card.y, card.w, card.h);
 
-    ctx.strokeStyle = "black";
-    ctx.lineWidth = 2;
-    ctx.strokeRect(card.x, card.y, card.w, card.h);
-
-    if (card.image && card.image.complete && card.image.naturalWidth > 0) {
-      ctx.drawImage(card.image, card.x + 35, card.y + 8, 40, 40);
-    }
+if (card.image && card.image.complete) {
+  ctx.drawImage(
+    card.image,
+    card.x + 5,
+    card.y + 5,
+    card.w - 10,
+    70
+  );
+}
 
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
     ctx.font = "bold 11px Arial";
 
-    ctx.fillText(card.name, card.x + card.w / 2, card.y + 58);
+ctx.font = "bold 11px Arial";
+ctx.fillText(card.name, card.x + card.w / 2, card.y + 92);
 
-    ctx.font = "bold 7px Arial";
-    ctx.fillStyle = "white";
+ctx.font = "9px Arial";
+ctx.fillText(card.effect, card.x + card.w / 2, card.y + 108);
 
     ctx.fillText(card.effect, card.x + card.w / 2, card.y + 78);
 
