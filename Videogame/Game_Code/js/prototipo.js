@@ -479,10 +479,13 @@ class Game {
     this.currentRoom = 3;
 
     this.cards = [];
+    this.unlockedCards = [CARD_POOL[0], CARD_POOL[3]];
+    this.collectedRoomUpgrades = {};
     this.wildcard = null;
     this.isPlayerTurn = true;
 
     this.upgradeButtons = [];
+    this.upgradeReturnScene = SCENES.HABITACION;
 
     this.camera = { x: 0, y: 0 };
     this.worldWidth = canvasWidth * 3;
@@ -605,6 +608,18 @@ class Game {
       new Rect(0, 0, 1000, 1000),
     );
 
+    this.roomUpgrade = new GameObject(
+      new Vector(350, 250),
+      90,
+      90,
+      "yellow"
+    );
+
+    this.roomUpgrade.setSprite(
+      "../assets/sprites/chest.png",
+      new Rect(0,0,1064,1064)
+    );
+
     this.bushes = [];
     const bushSprites = [
       { src: "../assets/sprites/bush.png", rect: new Rect(0, 0, 1284, 1020) },
@@ -623,8 +638,7 @@ class Game {
 
       this.bushes.push({
         bush: bush,
-        hasCard: i < 5,
-        hasUpgrade: i >= 5 && i < 8,
+        hasCard: true,
         collected: false,
       });
     }
@@ -729,6 +743,16 @@ class Game {
     return null;
   }
 
+  giveRandomCard() {
+  let randomCard =
+    CARD_POOL[Math.floor(Math.random() * CARD_POOL.length)];
+
+  this.unlockedCards.push(randomCard);
+
+  this.message = randomCard.name + " acquired!";
+  this.messageTimer = 120;
+}
+
   //Loads the door of each room in the house
   loadHouseDoors() {
     let doors = this.mapHouse.getDoorsFrom(this.currentRoom);
@@ -769,8 +793,8 @@ class Game {
 
   //Generates a random card form CARD_POOL and adds it to a specific position of the combat UI
   getRandomCard(posX) {
-    let randomIndex = Math.floor(Math.random() * CARD_POOL.length);
-    let randomCard = CARD_POOL[randomIndex];
+    let randomIndex = Math.floor(Math.random() * this.unlockedCards.length);
+    let randomCard = this.unlockedCards[randomIndex];
     return {
       x: posX,
       y: 460,
@@ -899,6 +923,9 @@ class Game {
       case SCENES.HABITACION:
         this.player.velocity = new Vector(0, 0);
         this.loadHouseDoors();
+        if (!this.collectedRoomUpgrades[this.currentRoom]) {
+          this.actors.push(this.roomUpgrade);
+        }
         break;
 
       case SCENES.COMBATE:
@@ -1082,7 +1109,16 @@ class Game {
 
       ctx.restore();
 
-      this.drawPauseButton(ctx);
+      if (this.messageTimer > 0) {
+      ctx.fillStyle = "black";
+      ctx.font = "bold 30px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText(this.message, canvasWidth / 2, 80);
+      this.messageTimer--;
+    }
+
+    this.drawPauseButton(ctx);
+    return;
       return;
     }
 
@@ -1423,20 +1459,8 @@ class Game {
               bushData.collected = true;
 
               this.player.velocity = new Vector(0, 0);
-
-              if (bushData.hasUpgrade) {
-                this.savedPosition = new Vector(
-                  this.player.position.x,
-                  this.player.position.y,
-                );
-
-                this.loadScene(SCENES.UPGRADE);
-                return;
-              }
-
               if (bushData.hasCard) {
-                this.message = "New card!";
-                this.messageTimer = 120;
+                this.giveRandomCard();
               }
             } else {
               this.player.position = new Vector(
@@ -1485,30 +1509,68 @@ class Game {
 
         break;
 
-      case SCENES.CASA_LJ:
-      case SCENES.HABITACION:
-        if (
-          this.salida_casa_lj.roomID !== undefined &&
-          boxOverlap(this.player, this.salida_casa_lj)
-        ) {
-          this.enterRoom(this.salida_casa_lj.roomID);
-        } else if (
-          this.room_1.roomID !== undefined &&
-          boxOverlap(this.player, this.room_1)
-        ) {
-          this.enterRoom(this.room_1.roomID);
-        } else if (
-          this.room_2.roomID !== undefined &&
-          boxOverlap(this.player, this.room_2)
-        ) {
-          this.enterRoom(this.room_2.roomID);
-        } else if (
-          this.room_3.roomID !== undefined &&
-          boxOverlap(this.player, this.room_3)
-        ) {
-          this.enterRoom(this.room_3.roomID);
-        }
-        break;
+    case SCENES.CASA_LJ:
+      if (
+        this.salida_casa_lj.roomID !== undefined &&
+        boxOverlap(this.player, this.salida_casa_lj)
+      ) {
+        this.enterRoom(this.salida_casa_lj.roomID);
+      } else if (
+        this.room_1.roomID !== undefined &&
+        boxOverlap(this.player, this.room_1)
+      ) {
+        this.enterRoom(this.room_1.roomID);
+      } else if (
+        this.room_2.roomID !== undefined &&
+        boxOverlap(this.player, this.room_2)
+      ) {
+        this.enterRoom(this.room_2.roomID);
+      } else if (
+        this.room_3.roomID !== undefined &&
+        boxOverlap(this.player, this.room_3)
+      ) {
+        this.enterRoom(this.room_3.roomID);
+      }
+      break;
+
+    case SCENES.HABITACION:
+      if (
+        !this.collectedRoomUpgrades[this.currentRoom] &&
+        boxOverlap(this.player, this.roomUpgrade)
+      ) {
+        this.collectedRoomUpgrades[this.currentRoom] = true;
+
+        this.savedPosition = new Vector(
+          this.player.position.x,
+          this.player.position.y
+        );
+
+        this.upgradeReturnScene = SCENES.HABITACION;
+      this.loadScene(SCENES.UPGRADE);
+        return;
+      }
+      if (
+        this.salida_casa_lj.roomID !== undefined &&
+        boxOverlap(this.player, this.salida_casa_lj)
+      ) {
+        this.enterRoom(this.salida_casa_lj.roomID);
+      } else if (
+        this.room_1.roomID !== undefined &&
+        boxOverlap(this.player, this.room_1)
+      ) {
+        this.enterRoom(this.room_1.roomID);
+      } else if (
+        this.room_2.roomID !== undefined &&
+        boxOverlap(this.player, this.room_2)
+      ) {
+        this.enterRoom(this.room_2.roomID);
+      } else if (
+        this.room_3.roomID !== undefined &&
+        boxOverlap(this.player, this.room_3)
+      ) {
+        this.enterRoom(this.room_3.roomID);
+      }
+      break;
 
         case SCENES.COMBATE:
           if (this.enemy.hp <= 0 && !this.combatFinished) {
@@ -1609,7 +1671,7 @@ class Game {
         this.message = button.upgrade.name + " Upgrade!";
         this.messageTimer = 120;
 
-        this.loadScene(SCENES.VILLA);
+        this.loadScene(this.upgradeReturnScene || SCENES.HABITACION);
 
         if (this.savedPosition) {
           this.player.position = new Vector(
