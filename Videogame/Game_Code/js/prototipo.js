@@ -597,6 +597,7 @@ class Game {
     this.rewardCard = null;
     this.rewardCardImage = null;
     this.loadGame();
+    this.justExitedCasaLJ = false;
   }
 
   async startRunInDB() {
@@ -977,16 +978,22 @@ getSaveKey() {
 
     let previousRoom = this.currentRoom;
 
-    if (roomID === 9) {
-      this.currentRoom = 3;
-      this.player.velocity = new Vector(0, 0);
+if (roomID === 9) {
+  this.currentRoom = 3;
+  this.player.velocity = new Vector(0, 0);
 
-      this.player.position = new Vector(canvasWidth - 220, canvasHeight - 170);
+  this.loadScene(SCENES.VILLA);
 
-      this.loadScene(SCENES.VILLA);
-      return;
-    }
+  this.player.position = new Vector(1850, 1550);
 
+  this.player.updateCollider();
+  this.updateCamera();
+
+  this.justExitedCasaLJ = true;
+  this.transitionCooldown = 60;
+
+  return;
+}
     this.currentRoom = roomID;
     this.player.velocity = new Vector(0, 0);
     this.setPlayerPositionFromDoor(previousRoom, roomID);
@@ -2021,14 +2028,16 @@ ctx.fillText(card.effect, card.x + card.w / 2, card.y + 108);
           );
 
           this.loadScene(SCENES.CASA);
-        } else if (boxOverlap(this.player, this.casa_lj)) {
-          this.player.velocity = new Vector(0, 0);
-
-          this.currentRoom = 3;
-          this.player.position = new Vector(120, canvasHeight / 2);
-
-          this.loadScene(SCENES.CASA_LJ);
-        }
+        } if (this.justExitedCasaLJ) {
+  if (!boxOverlap(this.player, this.casa_lj)) {
+    this.justExitedCasaLJ = false;
+  }
+} else if (boxOverlap(this.player, this.casa_lj)) {
+  this.player.velocity = new Vector(0, 0);
+  this.currentRoom = 3;
+  this.player.position = new Vector(120, canvasHeight / 2);
+  this.loadScene(SCENES.CASA_LJ);
+}
 
         break;
 
@@ -2377,9 +2386,17 @@ loadGame() {
         }
       }
 
-      if (mouseX >= 20 && mouseX <= 150 && mouseY >= 520 && mouseY <= 570) {
-        this.loadScene(this.previousScene || SCENES.VILLA);
-      }
+if (mouseX >= 20 && mouseX <= 150 && mouseY >= 520 && mouseY <= 570) {
+  const scene = this.previousScene || SCENES.VILLA;
+  this.loadScene(scene);
+
+  if (scene === SCENES.VILLA) {
+    this.player.position = this.savedDeckPosition || this.player.position;
+    this.updateCamera();
+  }
+
+  return;
+}
 
       return;
     }
@@ -2397,6 +2414,7 @@ loadGame() {
       mouseY <= 55
     ) {
       this.previousScene = this.currentScene;
+      this.savedDeckPosition = new Vector(this.player.position.x, this.player.position.y);
       this.loadScene(SCENES.DECK);
       return;
     }
