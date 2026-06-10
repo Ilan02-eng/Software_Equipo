@@ -1940,7 +1940,6 @@ class Game {
     this.saveCombatStatsInDB();
     this.finishRunInDB("Loss");
 
-    this.deleteSave();
     this.day = 1;
     this.run_ID = null;
     this.combat_ID = null;
@@ -1967,9 +1966,18 @@ class Game {
 
     this.loadScene(SCENES.CASA);
 
-    this.unlockedCards = [];
+    this.unlockedCards = this.unlockedCards.slice(0, 2);
+
     this.collectedRoomUpgrades = {};
     this.hasWildcard = false;
+
+    this.player.maxHP = 100;
+    this.player.hp = 100;
+    this.player.maxEnergy = 150;
+    this.player.energy = 150;
+
+    this.saveGame();
+
     this.wildcardRoom = null;
     this.resetBushCards();
     this.randomEnemyLocation();
