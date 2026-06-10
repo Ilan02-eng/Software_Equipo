@@ -645,7 +645,8 @@ class Game {
         tries < 100 &&
         (
           boxOverlap(bush, this.casa) ||
-          boxOverlap(bush, this.casa_lj)
+          boxOverlap(bush, this.casa_lj) ||
+          this.bushes.some((bushData) => boxOverlap(bush, bushData.bush))
         )
       );
 
@@ -1008,7 +1009,7 @@ this.wildcardRoom =
   }
 
   drawUpgradeScreen(ctx) {
-    ctx.fillStyle = "rgba(80, 80, 80, 0.65";
+    ctx.fillStyle = "rgba(80, 80, 80, 0.65)";
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
     ctx.fillStyle = "white";
@@ -1035,55 +1036,6 @@ this.wildcardRoom =
     }
   }
 
-  drawDeckScreen(ctx) {
-  ctx.fillStyle = "#222";
-  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-
-  ctx.fillStyle = "white";
-  ctx.font = "bold 36px Arial";
-  ctx.textAlign = "center";
-
-  ctx.fillText("DECK", canvasWidth / 2, 50);
-
-  let y = 100;
-
-  ctx.font = "20px Arial";
-
-  for (let card of this.unlockedCards) {
-    ctx.fillText(card.name, 200, y);
-    y += 30;
-  }
-
-  y += 40;
-
-  ctx.font = "bold 28px Arial";
-  ctx.fillText("UPGRADES", canvasWidth / 2, y);
-
-  y += 50;
-
-  ctx.font = "20px Arial";
-
-  ctx.fillText(
-    "Max HP: " + this.player.maxHP,
-    canvasWidth / 2,
-    y
-  );
-
-  y += 30;
-
-  ctx.fillText(
-    "Max Energy: " + this.player.maxEnergy,
-    canvasWidth / 2,
-    y
-  );
-
-  ctx.fillStyle = "red";
-  ctx.fillRect(20, 520, 140, 50);
-
-  ctx.fillStyle = "white";
-  ctx.fillText("BACK", 90, 553);
-}
-
   drawPauseButton(ctx) {
   if (
     this.currentScene === SCENES.PAUSE ||
@@ -1107,33 +1059,6 @@ this.wildcardRoom =
   ctx.textAlign = "center";
   ctx.fillText("II", 760, 43);
 }
-
-drawDeckButton(ctx) {
-  if (
-    this.currentScene === SCENES.PAUSE ||
-    this.currentScene === SCENES.GAME_OVER ||
-    this.currentScene === SCENES.CREDITS ||
-    this.currentScene === SCENES.NEXT_DAY ||
-    this.currentScene === SCENES.VICTORY ||
-    this.currentScene === SCENES.DECK ||
-    this.currentScene === SCENES.UPGRADE
-  ) {
-    return;
-  }
-
-  ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
-  ctx.fillRect(15, 15, 90, 40);
-
-  ctx.strokeStyle = "white";
-  ctx.lineWidth = 2;
-  ctx.strokeRect(15, 15, 90, 40);
-
-  ctx.fillStyle = "white";
-  ctx.font = "bold 16px Arial";
-  ctx.textAlign = "center";
-  ctx.fillText("DECK", 60, 40);
-}
-
 drawDeckScreen(ctx) {
   ctx.fillStyle = "#1f1f1f";
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
@@ -1176,6 +1101,12 @@ drawDeckScreen(ctx) {
 
     ctx.font = "10px Arial";
     ctx.fillText("Cost: " + card.cost, x + cardW / 2, y + 50);
+    ctx.fillStyle = "black";
+    ctx.fillRect(x + 85, y + 55, 25, 18);
+
+    ctx.fillStyle = "white";
+    ctx.font = "bold 12px Arial";
+    ctx.fillText("X", x + 97, y + 69);
   }
 
   ctx.fillStyle = "white";
@@ -1930,6 +1861,31 @@ drawDeckScreen(ctx) {
   screenClick(mouseX, mouseY) {
 
     if (this.currentScene === SCENES.DECK) {
+      let startX = 80;
+      let startY = 130;
+      let cardW = 120;
+      let cardH = 80;
+      let gapX = 20;
+      let gapY = 20;
+
+      for (let i = 0; i < this.unlockedCards.length; i++) {
+        let col = i % 5;
+        let row = Math.floor(i / 5);
+
+        let x = startX + col * (cardW + gapX);
+        let y = startY + row * (cardH + gapY);
+
+        if (
+          mouseX >= x + 85 &&
+          mouseX <= x + 110 &&
+          mouseY >= y + 55 &&
+          mouseY <= y + 73
+        ) {
+          this.unlockedCards.splice(i, 1);
+          return;
+        }
+      }
+
       if (
         mouseX >= 20 &&
         mouseX <= 150 &&
