@@ -1029,7 +1029,7 @@ class Game {
 
   giveRandomCard() {
     if (this.unlockedCards.length >= 10) {
-      this.message = "Deck Full! (10/10)";
+      this.message = "Deck Full! ";
       this.messageTimer = 120;
       return;
     }
@@ -1047,11 +1047,6 @@ class Game {
     if (!randomCard.image) {
       this.rewardCardImage.src = randomCard.sprite;
     }
-
-    this.message =
-      randomCard.name + " acquired! (" + this.unlockedCards.length + "/10)";
-
-    this.messageTimer = 120;
     this.loadScene(SCENES.CARD_REWARD);
   }
   //Loads the door of each room in the house
@@ -2107,7 +2102,6 @@ setPlayerPositionFromDoor(fromRoom, toRoom) {
 
           if (this.currentRoom === this.wildcardRoom) {
             this.hasWildcard = true;
-            this.message = "Wildcard Found!";
             this.messageTimer = 180;
             this.loadScene(SCENES.HABITACION);
             return;
@@ -2351,9 +2345,6 @@ setPlayerPositionFromDoor(fromRoom, toRoom) {
         button.upgrade.action(this.player);
         this.saveGame();
         this.savePlayerStatsInDB();
-
-        this.message = button.upgrade.name + " Upgrade!";
-        this.messageTimer = 120;
 
         this.loadScene(this.upgradeReturnScene || SCENES.HABITACION);
 
