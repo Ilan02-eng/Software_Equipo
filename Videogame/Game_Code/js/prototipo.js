@@ -1028,7 +1028,6 @@ class Game {
   }
 
   giveRandomCard() {
-
     let randomCard = CARD_POOL[Math.floor(Math.random() * CARD_POOL.length)];
     if (!randomCard) return;
 
@@ -1067,34 +1066,35 @@ class Game {
   }
 
   //Defines the distance and position of the player when going through a door
-setPlayerPositionFromDoor(fromRoom, toRoom) {
-  let direction = this.mapHouse.getDirection(fromRoom, toRoom);
-  let faceDirection = "down";
+  setPlayerPositionFromDoor(fromRoom, toRoom) {
+    let direction = this.mapHouse.getDirection(fromRoom, toRoom);
+    let faceDirection = "down";
 
-  if (direction === "top") {
-    this.player.position = new Vector(canvasWidth / 2, canvasHeight - 140);
-    faceDirection = "up";
-  } else if (direction === "bottom") {
-    this.player.position = new Vector(canvasWidth / 2, 100);
-    faceDirection = "down";
-  } else if (direction === "left") {
-    this.player.position = new Vector(canvasWidth - 170, canvasHeight / 2);
-    faceDirection = "left";
-  } else if (direction === "right") {
-    this.player.position = new Vector(120, canvasHeight / 2);
-    faceDirection = "right";
+    if (direction === "top") {
+      this.player.position = new Vector(canvasWidth / 2, canvasHeight - 140);
+      faceDirection = "up";
+    } else if (direction === "bottom") {
+      this.player.position = new Vector(canvasWidth / 2, 100);
+      faceDirection = "down";
+    } else if (direction === "left") {
+      this.player.position = new Vector(canvasWidth - 170, canvasHeight / 2);
+      faceDirection = "left";
+    } else if (direction === "right") {
+      this.player.position = new Vector(120, canvasHeight / 2);
+      faceDirection = "right";
+    }
+
+    this.player.velocity = new Vector(0, 0);
+    this.player.keys = [];
+
+    if (this.player.motion && this.player.motion[faceDirection]) {
+      this.player.currentFrame =
+        this.player.motion[faceDirection].idleFrames[0];
+      this.player.currentAnimation = faceDirection;
+    }
+
+    this.player.updateCollider();
   }
-
-  this.player.velocity = new Vector(0, 0);
-  this.player.keys = [];
-
-  if (this.player.motion && this.player.motion[faceDirection]) {
-    this.player.currentFrame = this.player.motion[faceDirection].idleFrames[0];
-    this.player.currentAnimation = faceDirection;
-  }
-
-  this.player.updateCollider();
-}
 
   async saveCombatStatsDB() {
     if (!this.combat_ID) return;
@@ -1382,6 +1382,7 @@ setPlayerPositionFromDoor(fromRoom, toRoom) {
     ctx.textAlign = "center";
     ctx.fillText("II", 760, 43);
   }
+
   drawDeckScreen(ctx) {
     ctx.fillStyle = "#1f1f1f";
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
@@ -1414,7 +1415,6 @@ setPlayerPositionFromDoor(fromRoom, toRoom) {
       let x = startX + col * (cardW + gapX);
       let y = startY + row * (cardH + gapY);
 
-      // Fondo y borde de la carta
       ctx.fillStyle = "#222";
       ctx.fillRect(x, y, cardW, cardH);
 
@@ -1422,7 +1422,6 @@ setPlayerPositionFromDoor(fromRoom, toRoom) {
       ctx.lineWidth = 2;
       ctx.strokeRect(x, y, cardW, cardH);
 
-      // Imagen ocupando toda la carta
       if (card.image && card.image.complete && card.image.naturalWidth > 0) {
         ctx.drawImage(card.image, x + 3, y + 3, cardW - 6, cardH - 6);
       } else if (card.sprite) {
@@ -1430,6 +1429,21 @@ setPlayerPositionFromDoor(fromRoom, toRoom) {
         img.src = card.sprite;
         card.image = img;
       }
+
+      const bx = x + cardW - 30;
+      const by = y + cardH - 30;
+
+      ctx.fillStyle = "rgba(0,0,0,0.8)";
+      ctx.fillRect(bx, by, 24, 24);
+
+      ctx.strokeStyle = "white";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(bx, by, 24, 24);
+
+      ctx.fillStyle = "white";
+      ctx.font = "bold 16px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText("X", bx + 12, by + 17);
     }
 
     ctx.fillStyle = "white";
