@@ -478,6 +478,7 @@ class Game {
     this.mapHouse = new MapHouse();
     this.mapHouse.randomMap();
     this.enemyRoomID = this.mapHouse.enemyRoomID;
+    this.randomEnemyLocation();
     this.currentRoom = 3;
 
     this.cards = [];
@@ -495,12 +496,33 @@ class Game {
     this.worldWidth = canvasWidth * 3;
     this.worldHeight = canvasHeight * 3;
 
+    this.music = {
+      villa: new Audio("../assets/audio/villa.wav"),
+      casa: new Audio("../assets/audio/casa.wav"),
+      casa_lj: new Audio("../assets/audio/casalj.mp3"),
+      habitacion: new Audio("../assets/audio/casa.wav"),
+      combate: new Audio("../assets/audio/combate.wav"),
+    };
+
+    this.sounds = {
+      card: new Audio("../assets/audio/unacarta.wav"),
+    };
+
+    this.currentMusic = null;
+
     this.createEventListeners();
     this.initObjects();
     this.loadScene(SCENES.CASA);
     this.livebars = [];
     this.message = "";
     this.messageTimer = 0;
+
+    for (let key in this.music) {
+      this.music[key].loop = true;
+      this.music[key].volume = 0.35;
+    }
+
+    this.sounds.card.volume = 0.7;
   }
 
   //Creates all the objects of the game includes the player, enemy, rooms, houses, etc.
@@ -699,6 +721,29 @@ class Game {
     this.creditsScreen.src = "../assets/screens/Credits.png";
   }
 
+  playMusic(name) {
+    if (name === SCENES.HABITACION) name = "casa_lj";
+
+    if (!this.music || !this.music[name]) return;
+
+    if (this.currentMusic === name) return;
+
+    Object.values(this.music).forEach(song => {
+      song.pause();
+      song.currentTime = 0;
+    });
+
+    let song = this.music[name];
+    song.loop = true;
+    song.volume = 0.35;
+
+    song.play().catch(error => {
+      console.log("No se pudo reproducir música:", error);
+    });
+
+    this.currentMusic = name;
+  }
+
   updateCamera() {
     this.camera.x = this.player.position.x - canvasWidth / 2;
     this.camera.y = this.player.position.y - canvasHeight / 2;
@@ -779,6 +824,7 @@ this.wildcardRoom =
       CARD_POOL[Math.floor(Math.random() * CARD_POOL.length)];
 
     this.unlockedCards.push(randomCard);
+    this.playSound("card");
 
     this.message =
       randomCard.name + " acquired! (" +
@@ -831,8 +877,18 @@ this.wildcardRoom =
       return null;
     }
 
-    let randomIndex = Math.floor(Math.random() * this.unlockedCards.length);
-    let randomCard = this.unlockedCards[randomIndex];
+    let cardsInCombat = this.cards.map((card) => card.name);
+
+    let availableCards = this.unlockedCards.filter(
+      (card) => !cardsInCombat.includes(card.name)
+    );
+
+    if (availableCards.length === 0) {
+      return null;
+    }
+
+    let randomIndex = Math.floor(Math.random() * availableCards.length);
+    let randomCard = availableCards[randomIndex];
 
     return {
       x: posX,
@@ -871,6 +927,7 @@ this.wildcardRoom =
     }
 
     this.day++;
+    this.resetBushCards();
 
     this.randomEnemyLocation();
     this.enemy.enemyType = this.enemy.getRandomEnemy();
@@ -933,6 +990,7 @@ this.wildcardRoom =
   //Changes the states of the game to specific scenes
   loadScene(scene) {
     this.currentScene = scene;
+    this.playMusic(this.currentScene);
     this.transitionCooldown = 30;
 
     if (this.player) {
@@ -981,8 +1039,6 @@ this.wildcardRoom =
 
       case SCENES.UPGRADE:
         this.player.velocity = new Vector(0, 0);
-
-        this.actors = [this.player, this.casa, this.casa_lj];
 
         for (let bushData of this.bushes) {
           this.actors.push(bushData.bush);
@@ -1577,6 +1633,13 @@ drawDeckScreen(ctx) {
     this.messageTimer = 0;
 
     this.loadScene(SCENES.CASA);
+
+    this.unlockedCards = [];
+    this.collectedRoomUpgrades = {};
+    this.hasWildcard = false;
+    this.wildcardRoom = null;
+    this.resetBushCards();
+    this.randomEnemyLocation();
   }
 
   //Detects the death of the player when the HP bar reaches 0 during combat
@@ -1699,15 +1762,13 @@ drawDeckScreen(ctx) {
 
       this.collectedRoomUpgrades[this.currentRoom] = true;
 
-      if (this.currentRoom === this.wildcardRoom) {
-
-        this.hasWildcard = true;
-
-        this.message = "Wildcard Found!";
-        this.messageTimer = 180;
-
-        return;
-      }
+    if (this.currentRoom === this.wildcardRoom) {
+      this.hasWildcard = true;
+      this.message = "Wildcard Found!";
+      this.messageTimer = 180;
+      this.loadScene(SCENES.HABITACION);
+      return;
+    }
 
       this.savedPosition = new Vector(
         this.player.position.x,
@@ -1750,6 +1811,13 @@ drawDeckScreen(ctx) {
     }
   }
 
+  resetBushCards() {
+  for (let bushData of this.bushes) {
+    bushData.hasCard = true;
+    bushData.collected = false;
+  }
+  }
+
   //Detects if the player selected a card with the CLICK
   combatClick(mouseX, mouseY) {
     if (
@@ -1786,6 +1854,15 @@ drawDeckScreen(ctx) {
     }
   }
 
+  playSound(name) {
+  if (!this.sounds || !this.sounds[name]) return;
+
+  const sound = this.sounds[name];
+  sound.currentTime = 0;
+  sound.volume = 0.6;
+
+}
+
   //Executes the selected card by the player during combat and turn
   executeCard(index, isWildcard) {
     let selectedCard = isWildcard ? this.wildcard : this.cards[index];
@@ -1807,12 +1884,19 @@ drawDeckScreen(ctx) {
     }
 
     selectedCard.action(this.player, this.enemy);
+    this.playSound("card");
 
     this.player.energy = Math.min(this.player.energy, this.player.maxEnergy);
 
     if (!isWildcard) {
       let oldX = selectedCard.x;
-      this.cards[index] = this.getRandomCard(oldX);
+      let newCard = this.getRandomCard(oldX);
+
+    if (newCard !== null) {
+      this.cards[index] = newCard;
+    } else {
+      this.cards.splice(index, 1);
+    }
     }
 
     if (this.enemy.hp <= 0) {
@@ -1990,30 +2074,20 @@ drawDeckScreen(ctx) {
       return;
     }
   }
-
-  if (
-    this.currentScene !== SCENES.DECK &&
-    mouseX >= 15 &&
-    mouseX <= 95 &&
-    mouseY >= 15 &&
-    mouseY <= 55
-  ) {
-    this.previousScene = this.currentScene;
-    this.currentScene = SCENES.DECK;
-    return;
-  }
 }
 
   //The controls of the game for movement, restarting and selecting cards during combat
   createEventListeners() {
+
     window.addEventListener("keydown", (event) => {
+      this.playMusic(this.currentScene);
       if (event.key === "Escape" || event.key.toLowerCase() === "p") {
         if (this.currentScene === SCENES.PAUSE) {
           this.loadScene(this.previousScene || SCENES.CASA);
         } else if (
           this.currentScene !== SCENES.GAME_OVER &&
           this.currentScene !== SCENES.CREDITS &&
-          this.currentScene !== SCENES.NEXT_DAY &&
+          this.currentScene !==SCENES.NEXT_DAY &&
           this.currentScene !== SCENES.VICTORY
         ) {
           this.previousScene = this.currentScene;
@@ -2043,17 +2117,20 @@ drawDeckScreen(ctx) {
     });
 
     window.addEventListener("mousedown", (event) => {
+      this.playMusic(this.currentScene);
+
       const canvas = document.getElementById("canvas");
       if (!canvas) return;
+
       const rect = canvas.getBoundingClientRect();
       const scaleX = canvas.width / rect.width;
       const scaleY = canvas.height / rect.height;
       const mouseX = (event.clientX - rect.left) * scaleX;
       const mouseY = (event.clientY - rect.top) * scaleY;
+
       this.screenClick(mouseX, mouseY);
       this.combatClick(mouseX, mouseY);
       this.upgradeClick(mouseX, mouseY);
-      
     });
   }
   addKey(direction) {
