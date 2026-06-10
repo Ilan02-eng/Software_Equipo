@@ -654,8 +654,13 @@ class Game {
     ctx.fillText(this.username, 610, 40);
   }
 
-  deleteSave() {
-  localStorage.removeItem("catharsisSave");
+deleteSave() {
+  if (!this.player_ID) return;
+  localStorage.removeItem(this.getSaveKey());
+}
+
+getSaveKey() {
+  return "catharsisSave_" + this.player_ID;
 }
 
   resetCombatStats() {
@@ -2123,6 +2128,7 @@ ctx.fillText(card.effect, card.x + card.w / 2, card.y + 108);
     }
   }
   saveGame() {
+    if (!this.player_ID) return;
   const saveData = {
     day: this.day,
 
@@ -2139,14 +2145,13 @@ ctx.fillText(card.effect, card.x + card.w / 2, card.y + 108);
     collectedRoomUpgrades: this.collectedRoomUpgrades
   };
 
-  localStorage.setItem(
-    "catharsisSave",
-    JSON.stringify(saveData)
-  );
+localStorage.setItem(this.getSaveKey(), JSON.stringify(saveData));
 }
 loadGame() {
 
-  const save = localStorage.getItem("catharsisSave");
+    if (!this.player_ID) return;
+
+  const save = localStorage.getItem(this.getSaveKey());
 
   if (!save) return;
 
