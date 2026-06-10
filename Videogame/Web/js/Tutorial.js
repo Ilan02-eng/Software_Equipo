@@ -130,6 +130,22 @@ const cards = [
         description: "Heightened instincts allow you to react instantly to incoming danger",
         sprite: "../../VisualsVideogame/Cards/15.png"
     },
+    {
+        name: "Energy Upgrade",
+        type: "Energy",
+        cost: " - ",
+        effect: "You gain 10 energy points",
+        description: "Your luck has given you a little bit more of energy to spend the day",
+        sprite: "../../VisualsVideogame/Cards/16.png"
+    },
+    {
+        name: "Life Upgrade",
+        type: "Life Card",
+        cost: " -",
+        effect: "You gain 15 life points",
+        description: "With a fresh breathe of air we gain calm and a little bit of life",
+        sprite: "../../VisualsVideogame/Cards/17.png"
+    },
 ];
 
 const container = document.getElementById("cardContainer");
