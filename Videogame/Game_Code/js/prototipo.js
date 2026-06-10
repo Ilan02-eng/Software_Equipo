@@ -313,6 +313,7 @@ class Enemy extends GameObject {
         hp_max: 120,
         dmg_min: 9,
         dmg_max: 15,
+        sprite: "../assets/sprites/monster_littlejimmy.png",
       },
       {
         name: "Rotoplas",
@@ -320,6 +321,7 @@ class Enemy extends GameObject {
         hp_max: 85,
         dmg_min: 15,
         dmg_max: 20,
+        sprite: "../assets/sprites/monster_rotoplas.png",
       },
     ];
 
@@ -358,6 +360,11 @@ class Enemy extends GameObject {
     this.maxHP = this.randomNumber(this.hp_min, this.hp_max);
     this.hp = this.maxHP;
     this.stunnedTurns = 0;
+
+    this.setSprite(
+    this.enemyType.sprite,
+    new Rect(0, 0, 1000, 1000)
+  );
   }
 
   randomDamage() {
@@ -647,6 +654,10 @@ class Game {
     ctx.fillText(this.username, 610, 40);
   }
 
+  deleteSave() {
+  localStorage.removeItem("catharsisSave");
+}
+
   resetCombatStats() {
     this.combatStats = {
       dmg_done: 0,
@@ -820,10 +831,6 @@ class Game {
       200,
       200,
       "orange",
-    );
-    this.enemy.setSprite(
-      "../assets/sprites/monster_littlejimmy.png",
-      new Rect(0, 0, 1000, 1000),
     );
 
     this.roomUpgrade = new GameObject(new Vector(350, 250), 90, 90, "yellow");
@@ -1930,6 +1937,7 @@ class Game {
     this.saveCombatStatsInDB();
     this.finishRunInDB("Loss");
 
+    this.deleteSave();
     this.day = 1;
     this.run_ID = null;
     this.combat_ID = null;
@@ -1942,7 +1950,6 @@ class Game {
 
     this.enemy.enemyType = this.enemy.getRandomEnemy();
     this.enemy.generateStats(this.day);
-    this.enemy.enemyType = this.enemy.getRandomEnemy();
 
     this.player.hp = this.player.maxHP;
     this.player.energy = this.player.maxEnergy;
