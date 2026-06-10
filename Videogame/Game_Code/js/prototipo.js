@@ -880,7 +880,7 @@ class Game {
 
       this.bushes.push({
         bush: bush,
-        hasCard: true,
+        hasCard: Math.random() < 0.4,
         collected: false,
       });
     }
@@ -2215,7 +2215,7 @@ class Game {
 
   resetBushCards() {
     for (let bushData of this.bushes) {
-      bushData.hasCard = true;
+      bushData.hasCard = Math.random() < 0.4;
       bushData.collected = false;
     }
   }
