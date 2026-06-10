@@ -13,7 +13,7 @@ const cards = [
         name: "Sharp Claw",
         type: "Attack",
         cost: "0 energy points",
-        effect: "15 damage points",
+        effect: "10 damage points",
         description: "A quick and precise slash that tears through enemies with feline accuracy",
         sprite: "../../VisualsVideogame/Cards/1.png"
     },
@@ -21,7 +21,7 @@ const cards = [
         name: "Purr Attack",
         type: "Attack",
         cost: "15 energy points",
-        effect: "30 damage points",
+        effect: "25 damage points",
         description: "A deceptively gentle attack that confuses enemies while delivering unexpected damage",
         sprite: "../../VisualsVideogame/Cards/2.png"
     },
@@ -29,7 +29,7 @@ const cards = [
         name: "Shadow Pounce",
         type: "Attack",
         cost: "10 energy points",
-        effect: "20 damage points",
+        effect: "15 damage points",
         description: "Leap from the darkness and strike before the enemy can react",
         sprite: "../../VisualsVideogame/Cards/3.png"
     },
@@ -37,7 +37,7 @@ const cards = [
         name: "Scratches",
         type: "Attack",
         cost: "25 energy points",
-        effect: "40 damage points",
+        effect: "30 damage points",
         description: "Rapid claw attacks that overwhelm enemies with a flurry of strikes",
         sprite: "../../VisualsVideogame/Cards/4.png"
     },
@@ -45,7 +45,7 @@ const cards = [
         name: "Love Bite",
         type: "Attack",
         cost: "35 energy points",
-        effect: "55 damage points",
+        effect: "45 damage points",
         description: "A playful but painful bite that leaves enemies distracted and irritated.",
         sprite: "../../VisualsVideogame/Cards/5.png"
     },

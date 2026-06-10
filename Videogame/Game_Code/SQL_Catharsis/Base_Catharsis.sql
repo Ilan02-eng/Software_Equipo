@@ -508,11 +508,11 @@ INSERT INTO Enemy (enemy_name, hp_min, hp_max, dmg_min, dmg_max, enemy_lvl) VALU
     ('Rotoplas',      70, 85, 15, 20, 1);
  
 INSERT INTO Cards (type, name, effect, target, what_effect, cost_source, cost) VALUES
-    ('Attack',   'Sharp Claw',    'Damage the enemy for 15 HP', 'Enemy', 'enemy.hp -= 15','Energy',  0),
-    ('Attack',   'Shadow Pounce', 'Damage the enemy for 20 HP', 'Enemy', 'enemy.hp -= 20','Energy', 10),
-    ('Attack',   'Purr Attack',   'Damage the enemy for 30 HP', 'Enemy', 'enemy.hp -= 30','Energy', 15),
-    ('Attack',   'Scratches',     'Damage the enemy for 40 HP', 'Enemy', 'enemy.hp -= 40','Energy', 25),
-    ('Attack',   'Love Bite',     'Damage the enemy for 55 HP', 'Enemy', 'enemy.hp -= 55','Energy', 35),
+    ('Attack',   'Sharp Claw',    'Damage the enemy for 10 HP', 'Enemy', 'enemy.hp -= 10','Energy',  0),
+    ('Attack',   'Shadow Pounce', 'Damage the enemy for 15 HP', 'Enemy', 'enemy.hp -= 15','Energy', 10),
+    ('Attack',   'Purr Attack',   'Damage the enemy for 25 HP', 'Enemy', 'enemy.hp -= 25','Energy', 15),
+    ('Attack',   'Scratches',     'Damage the enemy for 30 HP', 'Enemy', 'enemy.hp -= 30','Energy', 25),
+    ('Attack',   'Love Bite',     'Damage the enemy for 45 HP', 'Enemy', 'enemy.hp -= 45','Energy', 35),
     ('Defense',  'Lick Wounds',   'Heals you for 10 HP',        'Self',  'player.hp += 10','Energy', 0),
     ('Defense',  'Tuna Can',      'Heals you for 20 HP',        'Self',  'player.hp += 20','Energy',  10),
     ('Defense',  'Cat Nap',       'Heals you for 30 HP',        'Self',  'player.hp += 30','Energy', 20),
