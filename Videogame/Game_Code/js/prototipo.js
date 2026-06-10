@@ -1028,11 +1028,6 @@ class Game {
   }
 
   giveRandomCard() {
-    if (this.unlockedCards.length >= 10) {
-      this.message = "Deck Full! ";
-      this.messageTimer = 120;
-      return;
-    }
 
     let randomCard = CARD_POOL[Math.floor(Math.random() * CARD_POOL.length)];
     if (!randomCard) return;
@@ -1669,13 +1664,6 @@ setPlayerPositionFromDoor(fromRoom, toRoom) {
       }
 
       ctx.restore();
-
-      if (this.messageTimer > 0) {
-        ctx.fillStyle = "black";
-        ctx.font = "bold 30px Arial";
-        ctx.textAlign = "center";
-        ctx.fillText(this.message, canvasWidth / 2, 80);
-      }
 
       this.drawPauseButton(ctx);
       this.drawDeckButton(ctx);
