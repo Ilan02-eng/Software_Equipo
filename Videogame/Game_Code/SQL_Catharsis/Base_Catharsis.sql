@@ -512,7 +512,7 @@ INSERT INTO Cards (type, name, effect, target, what_effect, cost_source, cost) V
     ('Attack',   'Shadow Pounce', 'Damage the enemy for 20 HP', 'Enemy', 'enemy.hp -= 20','Energy', 10),
     ('Attack',   'Purr Attack',   'Damage the enemy for 30 HP', 'Enemy', 'enemy.hp -= 30','Energy', 15),
     ('Attack',   'Scratches',     'Damage the enemy for 40 HP', 'Enemy', 'enemy.hp -= 40','Energy', 25),
-    ('Attack',   'Love Bite',     'Damage the enemy for 55 HP', 'Enemy', 'enemy.hp -= 55','Energy', 55),
+    ('Attack',   'Love Bite',     'Damage the enemy for 55 HP', 'Enemy', 'enemy.hp -= 55','Energy', 35),
     ('Defense',  'Lick Wounds',   'Heals you for 10 HP',        'Self',  'player.hp += 10','Energy', 0),
     ('Defense',  'Tuna Can',      'Heals you for 20 HP',        'Self',  'player.hp += 20','Energy',  10),
     ('Defense',  'Cat Nap',       'Heals you for 30 HP',        'Self',  'player.hp += 30','Energy', 20),
