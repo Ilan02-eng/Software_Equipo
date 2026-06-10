@@ -48,7 +48,6 @@ const UPGRADES = [
   },
 ];
 
-
 //Types of cards and defines the colors that each type has
 const CARD_TYPES = {
   ATTACK: { color: "red", label: "Attack" },
@@ -66,35 +65,41 @@ async function loadCardsFromDB() {
   const dbCards = await response.json();
 
   CARD_POOL = dbCards
-    .filter(card => card.type !== "Wildcard")
-    .map(card => ({
+    .filter((card) => card.type !== "Wildcard")
+    .map((card) => ({
       card_ID: card.card_ID,
       name: card.name,
       type:
-        card.type === "Attack" ? CARD_TYPES.ATTACK :
-        card.type === "Defense" ? CARD_TYPES.DEFENSA :
-        CARD_TYPES.CONTROL,
+        card.type === "Attack"
+          ? CARD_TYPES.ATTACK
+          : card.type === "Defense"
+            ? CARD_TYPES.DEFENSA
+            : CARD_TYPES.CONTROL,
       cost: card.cost,
       effect: card.effect,
-      action: createCardAction(card)
+      action: createCardAction(card),
     }));
 }
 
 function createCardAction(card) {
-  if (card.name === "Sharp Claw") return (p, e) => e.hp -= 15;
-  if (card.name === "Shadow Pounce") return (p, e) => e.hp -= 20;
-  if (card.name === "Purr Attack") return (p, e) => e.hp -= 30;
-  if (card.name === "Scratches") return (p, e) => e.hp -= 40;
-  if (card.name === "Love Bite") return (p, e) => e.hp -= 55;
+  if (card.name === "Sharp Claw") return (p, e) => (e.hp -= 15);
+  if (card.name === "Shadow Pounce") return (p, e) => (e.hp -= 20);
+  if (card.name === "Purr Attack") return (p, e) => (e.hp -= 30);
+  if (card.name === "Scratches") return (p, e) => (e.hp -= 40);
+  if (card.name === "Love Bite") return (p, e) => (e.hp -= 55);
 
-  if (card.name === "Lick Wounds") return (p, e) => p.hp = Math.min(p.maxHP, p.hp + 10);
-  if (card.name === "Tuna Can") return (p, e) => p.hp = Math.min(p.maxHP, p.hp + 20);
-  if (card.name === "Cat Nap") return (p, e) => p.hp = Math.min(p.maxHP, p.hp + 30);
-  if (card.name === "Deliciuos Treat") return (p, e) => p.hp = Math.min(p.maxHP, p.hp + 45);
-  if (card.name === "Nine Lives") return (p, e) => p.evasionChance += 1;
+  if (card.name === "Lick Wounds")
+    return (p, e) => (p.hp = Math.min(p.maxHP, p.hp + 10));
+  if (card.name === "Tuna Can")
+    return (p, e) => (p.hp = Math.min(p.maxHP, p.hp + 20));
+  if (card.name === "Cat Nap")
+    return (p, e) => (p.hp = Math.min(p.maxHP, p.hp + 30));
+  if (card.name === "Deliciuos Treat")
+    return (p, e) => (p.hp = Math.min(p.maxHP, p.hp + 45));
+  if (card.name === "Nine Lives") return (p, e) => (p.evasionChance += 1);
 
-  if (card.name === "Cat Reflexes") return (p, e) => e.stunnedTurns += 1;
-  if (card.name === "Laser Pointer") return (p, e) => e.stunnedTurns += 2;
+  if (card.name === "Cat Reflexes") return (p, e) => (e.stunnedTurns += 1);
+  if (card.name === "Laser Pointer") return (p, e) => (e.stunnedTurns += 2);
 
   return (p, e) => {};
 }
@@ -113,12 +118,6 @@ const WILDCARD = {
   },
 };
 
-
-
-
-// =============================
-// API helpers for Login + Stats
-// =============================
 async function apiRequest(path, method = "GET", body = null) {
   const options = {
     method,
@@ -145,24 +144,55 @@ function getLoggedPlayerID() {
 }
 
 const keyDirections = {
-    w: 'up',
-    a: 'left',
-    s: 'down',
-    d: 'right',
-    ArrowUp: 'up',
-    ArrowLeft: 'left',
-    ArrowDown: 'down',
-    ArrowRight: 'right',
+  w: "up",
+  a: "left",
+  s: "down",
+  d: "right",
+  ArrowUp: "up",
+  ArrowLeft: "left",
+  ArrowDown: "down",
+  ArrowRight: "right",
 };
 
 // Data structure with the directions a character can move, the direction sign and the related animation.
 const playerMotion = {
-    down:  { status:false, axis:"y", sign: 1, repeat:true, duration:100, moveFrames:[0,3],  idleFrames:[0,0]  },
-    up:    { status:false, axis:"y", sign:-1, repeat:true, duration:100, moveFrames:[4,7],  idleFrames:[4,4]  },
-    right: { status:false, axis:"x", sign: 1, repeat:true, duration:100, moveFrames:[8,11], idleFrames:[8,8]  },
-    left:  { status:false, axis:"x", sign:-1, repeat:true, duration:100, moveFrames:[12,15],idleFrames:[12,12]},
+  down: {
+    status: false,
+    axis: "y",
+    sign: 1,
+    repeat: true,
+    duration: 100,
+    moveFrames: [0, 3],
+    idleFrames: [0, 0],
+  },
+  up: {
+    status: false,
+    axis: "y",
+    sign: -1,
+    repeat: true,
+    duration: 100,
+    moveFrames: [4, 7],
+    idleFrames: [4, 4],
+  },
+  right: {
+    status: false,
+    axis: "x",
+    sign: 1,
+    repeat: true,
+    duration: 100,
+    moveFrames: [8, 11],
+    idleFrames: [8, 8],
+  },
+  left: {
+    status: false,
+    axis: "x",
+    sign: -1,
+    repeat: true,
+    duration: 100,
+    moveFrames: [12, 15],
+    idleFrames: [12, 12],
+  },
 };
-
 
 //Class to create and draw the HP and energy bars during the combat scene
 class combatBars {
@@ -231,7 +261,8 @@ class Player extends GameObject {
   update(deltaTime) {
     if (
       game &&
-      (game.currentScene === SCENES.COMBATE || game.currentScene === SCENES.UPGRADE)
+      (game.currentScene === SCENES.COMBATE ||
+        game.currentScene === SCENES.UPGRADE)
     ) {
       this.velocity = new Vector(0, 0);
       return;
@@ -285,7 +316,7 @@ class Enemy extends GameObject {
 
     this.enemyType = this.getRandomEnemy();
 
-    this.enemy_name= this.enemyType.name;
+    this.enemy_name = this.enemyType.name;
 
     this.enemy_lvl = 1;
 
@@ -300,12 +331,12 @@ class Enemy extends GameObject {
     this.generateStats(1);
   }
 
-  getRandomEnemy(){
+  getRandomEnemy() {
     let randomIndex = Math.floor(Math.random() * this.enemyTypes.length);
     return this.enemyTypes[randomIndex];
   }
 
-  generateStats(level){
+  generateStats(level) {
     this.enemy_lvl = level;
     this.enemy_name = this.enemyType.name;
 
@@ -320,11 +351,11 @@ class Enemy extends GameObject {
     this.stunnedTurns = 0;
   }
 
-  randomDamage(){
+  randomDamage() {
     return this.randomNumber(this.dmg_min, this.dmg_max);
   }
 
-  randomNumber(min, max){
+  randomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 }
@@ -343,16 +374,20 @@ class Room extends GameObject {
   }
 }
 
-//Defines the random generation of the 9 rooms of the house 
+//Defines the random generation of the 9 rooms of the house
 class MapHouse {
   constructor() {
     this.map_transitions = [
       [9, 3],
-      [3, 0],[3, 4],[3, 6],
+      [3, 0],
+      [3, 4],
+      [3, 6],
       [0, 1],
-      [1, 2],[1, 4],
+      [1, 2],
+      [1, 4],
       [2, 5],
-      [4, 5],[4, 7],
+      [4, 5],
+      [4, 7],
       [5, 8],
       [6, 7],
       [7, 8],
@@ -417,7 +452,7 @@ class MapHouse {
     this.enemyRoomID = possibleRooms[random];
   }
 
-  //Lets the player go from one room to the other and the other way around 
+  //Lets the player go from one room to the other and the other way around
   canPass(fromRoom, toRoom) {
     if (!this.activeRooms.includes(toRoom)) {
       return false;
@@ -586,7 +621,6 @@ class Game {
     }
   }
   drawUsername(ctx) {
-
     ctx.fillStyle = "rgba(0,0,0,0.6)";
     ctx.fillRect(560, 15, 160, 40);
 
@@ -613,7 +647,11 @@ class Game {
     if (!this.combat_ID || !this.combatStats) return;
 
     try {
-      await apiRequest(`/combats/${this.combat_ID}/stats`, "POST", this.combatStats);
+      await apiRequest(
+        `/combats/${this.combat_ID}/stats`,
+        "POST",
+        this.combatStats,
+      );
     } catch (error) {
       console.error("Could not save combat stats in DB:", error);
     }
@@ -775,12 +813,7 @@ class Game {
       new Rect(0, 0, 1000, 1000),
     );
 
-    this.roomUpgrade = new GameObject(
-      new Vector(350, 250),
-      90,
-      90,
-      "yellow"
-    );
+    this.roomUpgrade = new GameObject(new Vector(350, 250), 90, 90, "yellow");
 
     this.roomUpgrade.setSprite(
       "../assets/sprites/chest.png",
@@ -807,11 +840,9 @@ class Game {
         tries++;
       } while (
         tries < 100 &&
-        (
-          boxOverlap(bush, this.casa) ||
+        (boxOverlap(bush, this.casa) ||
           boxOverlap(bush, this.casa_lj) ||
-          this.bushes.some((bushData) => boxOverlap(bush, bushData.bush))
-        )
+          this.bushes.some((bushData) => boxOverlap(bush, bushData.bush)))
       );
 
       let randomSprite =
@@ -870,7 +901,7 @@ class Game {
 
     if (this.currentMusic === name) return;
 
-    Object.values(this.music).forEach(song => {
+    Object.values(this.music).forEach((song) => {
       song.pause();
       song.currentTime = 0;
     });
@@ -879,7 +910,7 @@ class Game {
     song.loop = true;
     song.volume = 0.35;
 
-    song.play().catch(error => {
+    song.play().catch((error) => {
       console.log("No se pudo reproducir música:", error);
     });
 
@@ -906,11 +937,11 @@ class Game {
     this.mapHouse.randomEnemyRoom();
     this.enemyRoomID = this.mapHouse.enemyRoomID;
     let possibleRooms = this.mapHouse.activeRooms.filter(
-    room => room !== 9 && room !== this.enemyRoomID
-  );
+      (room) => room !== 9 && room !== this.enemyRoomID,
+    );
 
-this.wildcardRoom =
-  possibleRooms[Math.floor(Math.random() * possibleRooms.length)];
+    this.wildcardRoom =
+      possibleRooms[Math.floor(Math.random() * possibleRooms.length)];
   }
 
   //Detects when a player is entering another room and defines which room or place is
@@ -953,23 +984,19 @@ this.wildcardRoom =
   }
 
   giveRandomCard() {
-
     if (this.unlockedCards.length >= 10) {
       this.message = "Deck Full! (10/10)";
       this.messageTimer = 120;
       return;
     }
 
-    let randomCard =
-      CARD_POOL[Math.floor(Math.random() * CARD_POOL.length)];
+    let randomCard = CARD_POOL[Math.floor(Math.random() * CARD_POOL.length)];
 
     this.unlockedCards.push(randomCard);
     this.playSound("card");
 
     this.message =
-      randomCard.name + " acquired! (" +
-      this.unlockedCards.length +
-      "/10)";
+      randomCard.name + " acquired! (" + this.unlockedCards.length + "/10)";
 
     this.messageTimer = 120;
   }
@@ -1010,20 +1037,20 @@ this.wildcardRoom =
   }
 
   async saveCombatStatsDB() {
-  if (!this.combat_ID) return;
+    if (!this.combat_ID) return;
 
-  await fetch(`${API_URL}/combats/${this.combat_ID}/stats`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      dmg_done: this.dmg_done,
-      dmg_receive: this.dmg_receive,
-      hp_recovered: this.hp_recovered,
-      cards_used: this.cards_used
-    })
-  });
+    await fetch(`${API_URL}/combats/${this.combat_ID}/stats`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        dmg_done: this.dmg_done,
+        dmg_receive: this.dmg_receive,
+        hp_recovered: this.hp_recovered,
+        cards_used: this.cards_used,
+      }),
+    });
   }
 
   //Generates a random card form CARD_POOL and adds it to a specific position of the combat UI
@@ -1035,7 +1062,7 @@ this.wildcardRoom =
     let cardsInCombat = this.cards.map((card) => card.name);
 
     let availableCards = this.unlockedCards.filter(
-      (card) => !cardsInCombat.includes(card.name)
+      (card) => !cardsInCombat.includes(card.name),
     );
 
     if (availableCards.length === 0) {
@@ -1119,9 +1146,7 @@ this.wildcardRoom =
       }
     }
 
-   this.wildcard = this.hasWildcard
-    ? this.getWildcard()
-    : null;
+    this.wildcard = this.hasWildcard ? this.getWildcard() : null;
 
     this.playerHPBar = new combatBars(
       new Vector(40, 40),
@@ -1202,8 +1227,16 @@ this.wildcardRoom =
       case SCENES.UPGRADE:
         this.player.velocity = new Vector(0, 0);
 
-        for (let bushData of this.bushes) {
-          this.actors.push(bushData.bush);
+        if (this.upgradeReturnScene === SCENES.VILLA) {
+          this.actors = [this.player];
+          for (let bushData of this.bushes) {
+            this.actors.push(bushData.bush);
+          }
+        } else {
+          this.loadHouseDoors();
+          if (!this.collectedRoomUpgrades[this.currentRoom]) {
+            this.actors.push(this.roomUpgrade);
+          }
         }
 
         this.upgradeButtons = [
@@ -1255,115 +1288,114 @@ this.wildcardRoom =
   }
 
   drawPauseButton(ctx) {
-  if (
-    this.currentScene === SCENES.PAUSE ||
-    this.currentScene === SCENES.GAME_OVER ||
-    this.currentScene === SCENES.CREDITS ||
-    this.currentScene === SCENES.NEXT_DAY ||
-    this.currentScene === SCENES.VICTORY
-  ) {
-    return;
-  }
+    if (
+      this.currentScene === SCENES.PAUSE ||
+      this.currentScene === SCENES.GAME_OVER ||
+      this.currentScene === SCENES.CREDITS ||
+      this.currentScene === SCENES.NEXT_DAY ||
+      this.currentScene === SCENES.VICTORY
+    ) {
+      return;
+    }
 
-  ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
-  ctx.fillRect(735, 15, 50, 40);
-
-  ctx.strokeStyle = "white";
-  ctx.lineWidth = 2;
-  ctx.strokeRect(735, 15, 50, 40);
-
-  ctx.fillStyle = "white";
-  ctx.font = "bold 26px Arial";
-  ctx.textAlign = "center";
-  ctx.fillText("II", 760, 43);
-}
-drawDeckScreen(ctx) {
-  ctx.fillStyle = "#1f1f1f";
-  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-
-  ctx.fillStyle = "white";
-  ctx.font = "bold 36px Arial";
-  ctx.textAlign = "center";
-  ctx.fillText("MY DECK", canvasWidth / 2, 50);
-
-  ctx.font = "bold 22px Arial";
-  ctx.fillText("Cards: " + this.unlockedCards.length + "/10", canvasWidth / 2, 90);
-
-  let startX = 80;
-  let startY = 130;
-  let cardW = 120;
-  let cardH = 80;
-  let gapX = 20;
-  let gapY = 20;
-
-  for (let i = 0; i < this.unlockedCards.length; i++) {
-    let card = this.unlockedCards[i];
-
-    let col = i % 5;
-    let row = Math.floor(i / 5);
-
-    let x = startX + col * (cardW + gapX);
-    let y = startY + row * (cardH + gapY);
-
-    ctx.fillStyle = card.type.color;
-    ctx.fillRect(x, y, cardW, cardH);
+    ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
+    ctx.fillRect(735, 15, 50, 40);
 
     ctx.strokeStyle = "white";
     ctx.lineWidth = 2;
-    ctx.strokeRect(x, y, cardW, cardH);
+    ctx.strokeRect(735, 15, 50, 40);
 
     ctx.fillStyle = "white";
-    ctx.font = "bold 12px Arial";
+    ctx.font = "bold 26px Arial";
     ctx.textAlign = "center";
-    ctx.fillText(card.name, x + cardW / 2, y + 25);
-
-    ctx.font = "10px Arial";
-    ctx.fillText("Cost: " + card.cost, x + cardW / 2, y + 50);
-    ctx.fillStyle = "black";
-    ctx.fillRect(x + 85, y + 55, 25, 18);
+    ctx.fillText("II", 760, 43);
+  }
+  drawDeckScreen(ctx) {
+    ctx.fillStyle = "#1f1f1f";
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
     ctx.fillStyle = "white";
-    ctx.font = "bold 12px Arial";
-    ctx.fillText("X", x + 97, y + 69);
+    ctx.font = "bold 36px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("MY DECK", canvasWidth / 2, 50);
+
+    ctx.font = "bold 22px Arial";
+    ctx.fillText(
+      "Cards: " + this.unlockedCards.length + "/10",
+      canvasWidth / 2,
+      90,
+    );
+
+    let startX = 80;
+    let startY = 130;
+    let cardW = 120;
+    let cardH = 80;
+    let gapX = 20;
+    let gapY = 20;
+
+    for (let i = 0; i < this.unlockedCards.length; i++) {
+      let card = this.unlockedCards[i];
+
+      let col = i % 5;
+      let row = Math.floor(i / 5);
+
+      let x = startX + col * (cardW + gapX);
+      let y = startY + row * (cardH + gapY);
+
+      ctx.fillStyle = card.type.color;
+      ctx.fillRect(x, y, cardW, cardH);
+
+      ctx.strokeStyle = "white";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(x, y, cardW, cardH);
+
+      ctx.fillStyle = "white";
+      ctx.font = "bold 12px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText(card.name, x + cardW / 2, y + 25);
+
+      ctx.font = "10px Arial";
+      ctx.fillText("Cost: " + card.cost, x + cardW / 2, y + 50);
+      ctx.fillStyle = "black";
+      ctx.fillRect(x + 85, y + 55, 25, 18);
+
+      ctx.fillStyle = "white";
+      ctx.font = "bold 12px Arial";
+      ctx.fillText("X", x + 97, y + 69);
+    }
+
+    ctx.fillStyle = "white";
+    ctx.font = "bold 28px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("UPGRADES", canvasWidth / 2, 390);
+
+    ctx.font = "22px Arial";
+    ctx.fillText("Max HP: " + this.player.maxHP, canvasWidth / 2, 435);
+    ctx.fillText("Max Energy: " + this.player.maxEnergy, canvasWidth / 2, 470);
+
+    ctx.fillStyle = this.hasWildcard ? "purple" : "gray";
+    ctx.fillRect(300, 500, 200, 45);
+
+    ctx.strokeStyle = "white";
+    ctx.strokeRect(300, 500, 200, 45);
+
+    ctx.fillStyle = "white";
+    ctx.font = "bold 18px Arial";
+    ctx.fillText(this.hasWildcard ? "Wildcard: YES" : "Wildcard: NO", 400, 530);
+
+    ctx.fillStyle = "red";
+    ctx.fillRect(20, 520, 130, 50);
+
+    ctx.strokeStyle = "white";
+    ctx.strokeRect(20, 520, 130, 50);
+
+    ctx.fillStyle = "white";
+    ctx.font = "bold 20px Arial";
+    ctx.fillText("BACK", 85, 552);
   }
-
-  ctx.fillStyle = "white";
-  ctx.font = "bold 28px Arial";
-  ctx.textAlign = "center";
-  ctx.fillText("UPGRADES", canvasWidth / 2, 390);
-
-  ctx.font = "22px Arial";
-  ctx.fillText("Max HP: " + this.player.maxHP, canvasWidth / 2, 435);
-  ctx.fillText("Max Energy: " + this.player.maxEnergy, canvasWidth / 2, 470);
-
-  ctx.fillStyle = this.hasWildcard ? "purple" : "gray";
-  ctx.fillRect(300, 500, 200, 45);
-
-  ctx.strokeStyle = "white";
-  ctx.strokeRect(300, 500, 200, 45);
-
-  ctx.fillStyle = "white";
-  ctx.font = "bold 18px Arial";
-  ctx.fillText(
-    this.hasWildcard ? "Wildcard: YES" : "Wildcard: NO",
-    400,
-    530
-  );
-
-  ctx.fillStyle = "red";
-  ctx.fillRect(20, 520, 130, 50);
-
-  ctx.strokeStyle = "white";
-  ctx.strokeRect(20, 520, 130, 50);
-
-  ctx.fillStyle = "white";
-  ctx.font = "bold 20px Arial";
-  ctx.fillText("BACK", 85, 552);
-}
 
   //Draws the actors, messages and UIs of the game
   draw(ctx) {
-
     if (this.currentScene === SCENES.DECK) {
       this.drawDeckScreen(ctx);
       return;
@@ -1373,7 +1405,11 @@ drawDeckScreen(ctx) {
       ctx.fillStyle = "black";
       ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-      if (this.nextDayScreen && this.nextDayScreen.complete && this.nextDayScreen.naturalWidth > 0) {
+      if (
+        this.nextDayScreen &&
+        this.nextDayScreen.complete &&
+        this.nextDayScreen.naturalWidth > 0
+      ) {
         ctx.drawImage(this.nextDayScreen, 0, 0, canvasWidth, canvasHeight);
       } else {
         ctx.fillStyle = "white";
@@ -1388,7 +1424,11 @@ drawDeckScreen(ctx) {
       ctx.fillStyle = "black";
       ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-      if (this.gameOverScreen && this.gameOverScreen.complete && this.gameOverScreen.naturalWidth > 0) {
+      if (
+        this.gameOverScreen &&
+        this.gameOverScreen.complete &&
+        this.gameOverScreen.naturalWidth > 0
+      ) {
         ctx.drawImage(this.gameOverScreen, 0, 0, canvasWidth, canvasHeight);
       } else {
         ctx.fillStyle = "red";
@@ -1403,7 +1443,11 @@ drawDeckScreen(ctx) {
       ctx.fillStyle = "black";
       ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-      if (this.pauseScreen && this.pauseScreen.complete && this.pauseScreen.naturalWidth > 0) {
+      if (
+        this.pauseScreen &&
+        this.pauseScreen.complete &&
+        this.pauseScreen.naturalWidth > 0
+      ) {
         ctx.drawImage(this.pauseScreen, 0, 0, canvasWidth, canvasHeight);
       } else {
         ctx.fillStyle = "white";
@@ -1418,7 +1462,11 @@ drawDeckScreen(ctx) {
       ctx.fillStyle = "black";
       ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-      if (this.creditsScreen && this.creditsScreen.complete && this.creditsScreen.naturalWidth > 0) {
+      if (
+        this.creditsScreen &&
+        this.creditsScreen.complete &&
+        this.creditsScreen.naturalWidth > 0
+      ) {
         ctx.drawImage(this.creditsScreen, 0, 0, canvasWidth, canvasHeight);
       } else {
         ctx.fillStyle = "white";
@@ -1428,19 +1476,69 @@ drawDeckScreen(ctx) {
       }
       return;
     }
+
     if (this.currentScene == SCENES.UPGRADE) {
-      ctx.save();
-      ctx.translate(-this.camera.x, -this.camera.y);
+      if (this.upgradeReturnScene === SCENES.HABITACION) {
+        let doors = this.mapHouse.getDoorsFrom(this.currentRoom);
+        let directions = doors.map((d) =>
+          this.mapHouse.getDirection(this.currentRoom, d),
+        );
 
-      if (this.tileVilla.complete) {
-        ctx.drawImage(this.tileVilla, 0, 0, this.worldWidth, this.worldHeight);
+        let bg = this.backgroundMeca;
+        let angle = 0;
+
+        if (directions.length >= 4) {
+          bg = this.backgroundBackro;
+          angle = 0;
+        } else if (directions.length === 3) {
+          bg = this.backgroundHabitacion;
+
+          if (!directions.includes("bottom")) {
+            angle = 0;
+          } else if (!directions.includes("top")) {
+            angle = Math.PI;
+          } else if (!directions.includes("left")) {
+            angle = -Math.PI / 2;
+          } else if (!directions.includes("right")) {
+            angle = Math.PI / 2;
+          }
+        }
+
+        ctx.save();
+        ctx.translate(canvasWidth / 2, canvasHeight / 2);
+        ctx.rotate(angle);
+        ctx.drawImage(
+          bg,
+          -canvasWidth / 2,
+          -canvasHeight / 2,
+          canvasWidth,
+          canvasHeight,
+        );
+        ctx.restore();
+
+        for (let actor of this.actors) {
+          actor.draw(ctx);
+        }
+      } else {
+        ctx.save();
+        ctx.translate(-this.camera.x, -this.camera.y);
+
+        if (this.tileVilla.complete) {
+          ctx.drawImage(
+            this.tileVilla,
+            0,
+            0,
+            this.worldWidth,
+            this.worldHeight,
+          );
+        }
+
+        for (let actor of this.actors) {
+          actor.draw(ctx);
+        }
+
+        ctx.restore();
       }
-
-      for (let actor of this.actors) {
-        actor.draw(ctx);
-      }
-
-      ctx.restore();
 
       this.drawUpgradeScreen(ctx);
       return;
@@ -1461,26 +1559,32 @@ drawDeckScreen(ctx) {
       ctx.restore();
 
       if (this.messageTimer > 0) {
-      ctx.fillStyle = "black";
-      ctx.font = "bold 30px Arial";
-      ctx.textAlign = "center";
-      ctx.fillText(this.message, canvasWidth / 2, 80);
-      this.messageTimer--;
-    }
+        ctx.fillStyle = "black";
+        ctx.font = "bold 30px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText(this.message, canvasWidth / 2, 80);
+      }
 
-    this.drawPauseButton(ctx);
-    this.drawDeckButton(ctx);
-    this.drawUsername(ctx);
-    return;
+      this.drawPauseButton(ctx);
+      this.drawDeckButton(ctx);
+      this.drawUsername(ctx);
       return;
     }
 
     if (this.currentScene == SCENES.CASA) {
       ctx.drawImage(this.backgroundCasa, 0, 0, canvasWidth, canvasHeight);
+      this.player.draw(ctx);
+      this.drawPauseButton(ctx);
+      this.drawDeckButton(ctx);
+      return;
     }
 
     if (this.currentScene == SCENES.CASA_LJ) {
       ctx.drawImage(this.backgroundCasa_enemy, 0, 0, canvasWidth, canvasHeight);
+      this.player.draw(ctx);
+      this.drawPauseButton(ctx);
+      this.drawDeckButton(ctx);
+      return;
     }
 
     if (this.currentScene == SCENES.HABITACION) {
@@ -1492,14 +1596,10 @@ drawDeckScreen(ctx) {
       let bg = this.backgroundMeca;
       let angle = 0;
 
-      // Room con 4 puertas: usa backro
       if (directions.length >= 4) {
         bg = this.backgroundBackro;
         angle = 0;
-      }
-
-      // Room con 3 puertas: usa verde y rota según la puerta que falte
-      else if (directions.length === 3) {
+      } else if (directions.length === 3) {
         bg = this.backgroundHabitacion;
 
         if (!directions.includes("bottom")) {
@@ -1513,124 +1613,87 @@ drawDeckScreen(ctx) {
         }
       }
 
-      // Room con 2 puertas: usa meca y rota según combinación
-      else {
-        bg = this.backgroundMeca;
-
-        if (directions.includes("bottom") && directions.includes("left")) {
-          angle = 0;
-        } else if (directions.includes("top") && directions.includes("right")) {
-          angle = Math.PI;
-        } else if (directions.includes("bottom") && directions.includes("right")) {
-          angle = -Math.PI / 2;
-        } else if (directions.includes("top") && directions.includes("left")) {
-          angle = Math.PI / 2;
-        }
-      }
-
       ctx.save();
       ctx.translate(canvasWidth / 2, canvasHeight / 2);
       ctx.rotate(angle);
+      ctx.drawImage(
+        bg,
+        -canvasWidth / 2,
+        -canvasHeight / 2,
+        canvasWidth,
+        canvasHeight,
+      );
+      ctx.restore();
 
-      if (angle === Math.PI / 2 || angle === -Math.PI / 2) {
-        ctx.drawImage(
-          bg,
-          -canvasHeight / 2,
-          -canvasWidth / 2,
-          canvasHeight,
-          canvasWidth,
-        );
-      } else {
-        ctx.drawImage(
-          bg,
-          -canvasWidth / 2,
-          -canvasHeight / 2,
-          canvasWidth,
-          canvasHeight,
-        );
+      for (let actor of this.actors) {
+        actor.draw(ctx);
       }
 
-      ctx.restore();
-    }
+      if (this.messageTimer > 0) {
+        ctx.fillStyle = "black";
+        ctx.font = "bold 30px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText(this.message, canvasWidth / 2, 80);
+      }
 
-    for (let actor of this.actors) {
-      actor.draw(ctx);
-    }
-
-    if (this.messageTimer > 0) {
-      ctx.fillStyle = "black";
-      ctx.font = "bold 30px Arial";
-      ctx.textAlign = "center";
-      ctx.fillText(this.message, canvasWidth / 2, 80);
-      this.messageTimer--;
-    }
-
-    if (this.currentScene === SCENES.COMBATE) {
-      this.drawCombatUI(ctx);
-    }
-
-    if (this.currentScene === SCENES.PAUSE) {
-  ctx.drawImage(
-    this.pauseScreen,
-    0,
-    0,
-    canvasWidth,
-    canvasHeight
-  );
-  return;
-}
-
-    if (this.currentScene === SCENES.NEXT_DAY) {
-      ctx.drawImage(
-        this.nextDayScreen,
-        0,
-        0,
-        canvasWidth,
-        canvasHeight
-      );
+      this.drawPauseButton(ctx);
+      this.drawDeckButton(ctx);
       return;
     }
 
-    if (this.currentScene === SCENES.CREDITS) {
-      ctx.drawImage(
-        this.creditsScreen,
-        0,
-        0,
-        canvasWidth,
-        canvasHeight
-      );
-      return;
-    }
-
-    if (this.currentScene === SCENES.GAME_OVER) {
-      ctx.drawImage(
-        this.gameOverScreen,
-        0,
-        0,
-        canvasWidth,
-        canvasHeight
-      );
-      return;
-    }
-
-    this.drawPauseButton(ctx);
-
-    if (this.currentScene === SCENES.VICTORY) {
-      ctx.fillStyle = "black";
+    if (this.currentScene == SCENES.COMBATE) {
+      ctx.fillStyle = "#2b2b2b";
       ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-      ctx.fillStyle = "gold";
-      ctx.font = "bold 55px Arial";
-      ctx.textAlign = "center";
-      ctx.fillText("YOU WIN", canvasWidth / 2, 240);
+      for (let actor of this.actors) {
+        actor.draw(ctx);
+      }
 
-      ctx.fillStyle = "white";
-      ctx.font = "28px Arial";
-      ctx.fillText("You survived 3 days", canvasWidth / 2, 320);
+      if (this.playerHPBar) this.playerHPBar.draw(ctx);
+      if (this.playerEnergyBar) this.playerEnergyBar.draw(ctx);
+      if (this.enemyHPBar) this.enemyHPBar.draw(ctx);
+
+      // Render de cartas en combate
+      for (let card of this.cards) {
+        ctx.fillStyle = card.color;
+        ctx.fillRect(card.x, card.y, card.w, card.h);
+        ctx.strokeStyle = "white";
+        ctx.strokeRect(card.x, card.y, card.w, card.h);
+
+        ctx.fillStyle = "white";
+        ctx.font = "bold 12px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText(card.name, card.x + card.w / 2, card.y + 30);
+        ctx.font = "10px Arial";
+        ctx.fillText(card.cost, card.x + card.w / 2, card.y + 60);
+      }
+
+      if (this.wildcard) {
+        ctx.fillStyle = this.wildcard.color;
+        ctx.fillRect(
+          this.wildcard.x,
+          this.wildcard.y,
+          this.wildcard.w,
+          this.wildcard.h,
+        );
+        ctx.strokeStyle = "white";
+        ctx.strokeRect(
+          this.wildcard.x,
+          this.wildcard.y,
+          this.wildcard.w,
+          this.wildcard.h,
+        );
+
+        ctx.fillStyle = "white";
+        ctx.font = "bold 12px Arial";
+        ctx.fillText(
+          this.wildcard.name,
+          this.wildcard.x + this.wildcard.w / 2,
+          this.wildcard.y + 30,
+        );
+      }
       return;
     }
-
-    this.drawDeckButton(ctx);
   }
 
   drawDeckButton(ctx) {
@@ -1830,14 +1893,15 @@ drawDeckScreen(ctx) {
   //Controls the collisions of the game and what happens when the player collides with an object in each of the scenes ans states
   update(deltaTime) {
     if (
-    this.currentScene === SCENES.GAME_OVER ||
-    this.currentScene === SCENES.PAUSE ||
-    this.currentScene === SCENES.CREDITS ||
-    this.currentScene === SCENES.NEXT_DAY ||
-    this.currentScene === SCENES.VICTORY
-  ) {
-    return;
-  }
+      this.currentScene === SCENES.GAME_OVER ||
+      this.currentScene === SCENES.PAUSE ||
+      this.currentScene === SCENES.CREDITS ||
+      this.currentScene === SCENES.NEXT_DAY ||
+      this.currentScene === SCENES.VICTORY
+    ) {
+      return;
+    }
+
     this.player.update(deltaTime, ctx.canvas);
 
     if (this.player.updateCollider) {
@@ -1848,6 +1912,7 @@ drawDeckScreen(ctx) {
       this.transitionCooldown--;
       return;
     }
+
     switch (this.currentScene) {
       case SCENES.VILLA:
         this.updateCamera();
@@ -1907,92 +1972,93 @@ drawDeckScreen(ctx) {
 
         break;
 
-    case SCENES.CASA_LJ:
-      if (
-        this.salida_casa_lj.roomID !== undefined &&
-        boxOverlap(this.player, this.salida_casa_lj)
-      ) {
-        this.enterRoom(this.salida_casa_lj.roomID);
-      } else if (
-        this.room_1.roomID !== undefined &&
-        boxOverlap(this.player, this.room_1)
-      ) {
-        this.enterRoom(this.room_1.roomID);
-      } else if (
-        this.room_2.roomID !== undefined &&
-        boxOverlap(this.player, this.room_2)
-      ) {
-        this.enterRoom(this.room_2.roomID);
-      } else if (
-        this.room_3.roomID !== undefined &&
-        boxOverlap(this.player, this.room_3)
-      ) {
-        this.enterRoom(this.room_3.roomID);
-      }
-      break;
+      case SCENES.CASA_LJ:
+        if (
+          this.salida_casa_lj.roomID !== undefined &&
+          boxOverlap(this.player, this.salida_casa_lj)
+        ) {
+          this.enterRoom(this.salida_casa_lj.roomID);
+        } else if (
+          this.room_1.roomID !== undefined &&
+          boxOverlap(this.player, this.room_1)
+        ) {
+          this.enterRoom(this.room_1.roomID);
+        } else if (
+          this.room_2.roomID !== undefined &&
+          boxOverlap(this.player, this.room_2)
+        ) {
+          this.enterRoom(this.room_2.roomID);
+        } else if (
+          this.room_3.roomID !== undefined &&
+          boxOverlap(this.player, this.room_3)
+        ) {
+          this.enterRoom(this.room_3.roomID);
+        }
+        break;
 
-    case SCENES.HABITACION:
-    if (
-      !this.collectedRoomUpgrades[this.currentRoom] &&
-      boxOverlap(this.player, this.roomUpgrade)
-    ) {
+      case SCENES.HABITACION:
+        if (
+          !this.collectedRoomUpgrades[this.currentRoom] &&
+          boxOverlap(this.player, this.roomUpgrade)
+        ) {
+          this.collectedRoomUpgrades[this.currentRoom] = true;
 
-      this.collectedRoomUpgrades[this.currentRoom] = true;
-
-    if (this.currentRoom === this.wildcardRoom) {
-      this.hasWildcard = true;
-      this.message = "Wildcard Found!";
-      this.messageTimer = 180;
-      this.loadScene(SCENES.HABITACION);
-      return;
-    }
-
-      this.savedPosition = new Vector(
-        this.player.position.x,
-        this.player.position.y
-      );
-
-      this.upgradeReturnScene = SCENES.HABITACION;
-      this.loadScene(SCENES.UPGRADE);
-
-      return;
-      }
-      if (
-        this.salida_casa_lj.roomID !== undefined &&
-        boxOverlap(this.player, this.salida_casa_lj)
-      ) {
-        this.enterRoom(this.salida_casa_lj.roomID);
-      } else if (
-        this.room_1.roomID !== undefined &&
-        boxOverlap(this.player, this.room_1)
-      ) {
-        this.enterRoom(this.room_1.roomID);
-      } else if (
-        this.room_2.roomID !== undefined &&
-        boxOverlap(this.player, this.room_2)
-      ) {
-        this.enterRoom(this.room_2.roomID);
-      } else if (
-        this.room_3.roomID !== undefined &&
-        boxOverlap(this.player, this.room_3)
-      ) {
-        this.enterRoom(this.room_3.roomID);
-      }
-      break;
-        case SCENES.COMBATE:
-          if (this.enemy.hp <= 0 && !this.combatFinished) {
-            this.combatFinished = true;
-            this.enemyDefeated();
+          if (this.currentRoom === this.wildcardRoom) {
+            this.hasWildcard = true;
+            this.message = "Wildcard Found!";
+            this.messageTimer = 180;
+            this.loadScene(SCENES.HABITACION);
+            return;
           }
+
+          this.savedPosition = new Vector(
+            this.player.position.x,
+            this.player.position.y,
+          );
+
+          this.upgradeReturnScene = SCENES.HABITACION;
+          this.loadScene(SCENES.UPGRADE);
+
+          return;
+        }
+
+        if (
+          this.salida_casa_lj.roomID !== undefined &&
+          boxOverlap(this.player, this.salida_casa_lj)
+        ) {
+          this.enterRoom(this.salida_casa_lj.roomID);
+        } else if (
+          this.room_1.roomID !== undefined &&
+          boxOverlap(this.player, this.room_1)
+        ) {
+          this.enterRoom(this.room_1.roomID);
+        } else if (
+          this.room_2.roomID !== undefined &&
+          boxOverlap(this.player, this.room_2)
+        ) {
+          this.enterRoom(this.room_2.roomID);
+        } else if (
+          this.room_3.roomID !== undefined &&
+          boxOverlap(this.player, this.room_3)
+        ) {
+          this.enterRoom(this.room_3.roomID);
+        }
+        break;
+
+      case SCENES.COMBATE:
+        if (this.enemy.hp <= 0 && !this.combatFinished) {
+          this.combatFinished = true;
+          this.enemyDefeated();
+        }
         break;
     }
   }
 
   resetBushCards() {
-  for (let bushData of this.bushes) {
-    bushData.hasCard = true;
-    bushData.collected = false;
-  }
+    for (let bushData of this.bushes) {
+      bushData.hasCard = true;
+      bushData.collected = false;
+    }
   }
 
   //Detects if the player selected a card with the CLICK
@@ -2040,7 +2106,7 @@ drawDeckScreen(ctx) {
     sound.currentTime = 0;
     sound.volume = 0.6;
 
-    sound.play().catch(error => {
+    sound.play().catch((error) => {
       console.log("No se pudo reproducir sonido:", error);
     });
   }
@@ -2060,10 +2126,10 @@ drawDeckScreen(ctx) {
 
       this.player.energy -= selectedCard.cost;
 
-    if (this.player.energy <= 20) {
-      this.restartRun();
-      return;
-    }
+      if (this.player.energy <= 20) {
+        this.restartRun();
+        return;
+      }
     }
 
     let enemyHPBefore = this.enemy.hp;
@@ -2151,7 +2217,6 @@ drawDeckScreen(ctx) {
   }
 
   screenClick(mouseX, mouseY) {
-
     if (this.currentScene === SCENES.DECK) {
       let startX = 80;
       let startY = 130;
@@ -2178,12 +2243,7 @@ drawDeckScreen(ctx) {
         }
       }
 
-      if (
-        mouseX >= 20 &&
-        mouseX <= 150 &&
-        mouseY >= 520 &&
-        mouseY <= 570
-      ) {
+      if (mouseX >= 20 && mouseX <= 150 && mouseY >= 520 && mouseY <= 570) {
         this.loadScene(this.previousScene || SCENES.VILLA);
       }
 
@@ -2206,89 +2266,88 @@ drawDeckScreen(ctx) {
       this.loadScene(SCENES.DECK);
       return;
     }
-      // NEXT DAY: cualquier clic continúa
-  if (this.currentScene === SCENES.NEXT_DAY) {
-    this.loadScene(SCENES.CASA);
-    return;
+    // NEXT DAY: cualquier clic continúa
+    if (this.currentScene === SCENES.NEXT_DAY) {
+      this.loadScene(SCENES.CASA);
+      return;
+    }
+
+    // Botón de pausa arriba derecha
+    if (
+      this.currentScene !== SCENES.PAUSE &&
+      this.currentScene !== SCENES.GAME_OVER &&
+      this.currentScene !== SCENES.CREDITS &&
+      this.currentScene !== SCENES.NEXT_DAY &&
+      mouseX >= 735 &&
+      mouseX <= 785 &&
+      mouseY >= 15 &&
+      mouseY <= 55
+    ) {
+      this.previousScene = this.currentScene;
+      this.loadScene(SCENES.PAUSE);
+      return;
+    }
+    // CREDITS: RETURN
+    if (this.currentScene === SCENES.CREDITS) {
+      if (mouseX >= 15 && mouseX <= 200 && mouseY >= 520 && mouseY <= 600) {
+        this.loadScene(SCENES.GAME_OVER);
+      }
+      return;
+    }
+
+    // GAME OVER
+    if (this.currentScene === SCENES.GAME_OVER) {
+      // RETRY
+      if (mouseX >= 45 && mouseX <= 400 && mouseY >= 120 && mouseY <= 210) {
+        this.restartRun();
+        return;
+      }
+
+      // CREDITS
+      if (mouseX >= 45 && mouseX <= 400 && mouseY >= 230 && mouseY <= 320) {
+        this.loadScene(SCENES.CREDITS);
+        return;
+      }
+
+      // STATS
+      if (mouseX >= 45 && mouseX <= 400 && mouseY >= 340 && mouseY <= 430) {
+        window.location.href = "../../Web/html/estadisticas.html";
+        return;
+      }
+    }
+
+    // PAUSA
+    if (this.currentScene === SCENES.PAUSE) {
+      // TURN OFF MUSIC
+      if (mouseX >= 210 && mouseX <= 610 && mouseY >= 135 && mouseY <= 215) {
+        console.log("Toggle music");
+        return;
+      }
+
+      // TURN OFF SOUND
+      if (mouseX >= 210 && mouseX <= 610 && mouseY >= 255 && mouseY <= 335) {
+        console.log("Toggle sound");
+        return;
+      }
+
+      // RETURN
+      if (mouseX >= 210 && mouseX <= 610 && mouseY >= 375 && mouseY <= 455) {
+        this.loadScene(this.previousScene || SCENES.CASA);
+        return;
+      }
+
+      // SAVE AND EXIT
+      if (mouseX >= 210 && mouseX <= 610 && mouseY >= 495 && mouseY <= 575) {
+        this.saveCombatStatsInDB();
+        this.savePlayerStatsInDB();
+        window.location.href = "../../Web/html/Run_Menu.html";
+        return;
+      }
+    }
   }
-
-  // Botón de pausa arriba derecha
-  if (
-    this.currentScene !== SCENES.PAUSE &&
-    this.currentScene !== SCENES.GAME_OVER &&
-    this.currentScene !== SCENES.CREDITS &&
-    this.currentScene !== SCENES.NEXT_DAY &&
-    mouseX >= 735 &&
-    mouseX <= 785 &&
-    mouseY >= 15 &&
-    mouseY <= 55
-  ) {
-    this.previousScene = this.currentScene;
-    this.loadScene(SCENES.PAUSE);
-    return;
-  }
-  // CREDITS: RETURN
-  if (this.currentScene === SCENES.CREDITS) {
-    if (mouseX >= 15 && mouseX <= 200 && mouseY >= 520 && mouseY <= 600) {
-      this.loadScene(SCENES.GAME_OVER);
-    }
-    return;
-  }
-
-  // GAME OVER
-  if (this.currentScene === SCENES.GAME_OVER) {
-    // RETRY
-    if (mouseX >= 45 && mouseX <= 400 && mouseY >= 120 && mouseY <= 210) {
-      this.restartRun();
-      return;
-    }
-
-    // CREDITS
-    if (mouseX >= 45 && mouseX <= 400 && mouseY >= 230 && mouseY <= 320) {
-      this.loadScene(SCENES.CREDITS);
-      return;
-    }
-
-    // STATS
-    if (mouseX >= 45 && mouseX <= 400 && mouseY >= 340 && mouseY <= 430) {
-      window.location.href = "../../Web/html/estadisticas.html";
-      return;
-    }
-  }
-
-  // PAUSA
-  if (this.currentScene === SCENES.PAUSE) {
-    // TURN OFF MUSIC
-    if (mouseX >= 210 && mouseX <= 610 && mouseY >= 135 && mouseY <= 215) {
-      console.log("Toggle music");
-      return;
-    }
-
-    // TURN OFF SOUND
-    if (mouseX >= 210 && mouseX <= 610 && mouseY >= 255 && mouseY <= 335) {
-      console.log("Toggle sound");
-      return;
-    }
-
-    // RETURN
-    if (mouseX >= 210 && mouseX <= 610 && mouseY >= 375 && mouseY <= 455) {
-      this.loadScene(this.previousScene || SCENES.CASA);
-      return;
-    }
-
-    // SAVE AND EXIT
-    if (mouseX >= 210 && mouseX <= 610 && mouseY >= 495 && mouseY <= 575) {
-      this.saveCombatStatsInDB();
-      this.savePlayerStatsInDB();
-      window.location.href = "../../Web/html/Run_Menu.html";
-      return;
-    }
-  }
-}
 
   //The controls of the game for movement, restarting and selecting cards during combat
   createEventListeners() {
-
     window.addEventListener("keydown", (event) => {
       this.playMusic(this.currentScene);
       if (event.key === "Escape" || event.key.toLowerCase() === "p") {
@@ -2297,7 +2356,7 @@ drawDeckScreen(ctx) {
         } else if (
           this.currentScene !== SCENES.GAME_OVER &&
           this.currentScene !== SCENES.CREDITS &&
-          this.currentScene !==SCENES.NEXT_DAY &&
+          this.currentScene !== SCENES.NEXT_DAY &&
           this.currentScene !== SCENES.VICTORY
         ) {
           this.previousScene = this.currentScene;
@@ -2356,7 +2415,6 @@ drawDeckScreen(ctx) {
   }
 }
 
-
 async function main() {
   await loadCardsFromDB();
 
@@ -2370,10 +2428,10 @@ async function main() {
 }
 
 function drawScene(newTime) {
-    if (oldTime == undefined) {
-        oldTime = newTime;
-    }
-    let deltaTime = newTime - oldTime;
+  if (oldTime == undefined) {
+    oldTime = newTime;
+  }
+  let deltaTime = newTime - oldTime;
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
   game.update(deltaTime);
   game.draw(ctx);
