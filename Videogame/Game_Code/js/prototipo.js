@@ -57,74 +57,47 @@ const CARD_TYPES = {
 };
 
 //Pool of available cards for the combat, each card has a direct effect that affects either the player or the enemy
-const CARD_POOL = [
-  {
-    name: "Sharp Claw",
-    type: CARD_TYPES.ATTACK,
-    cost: 0,
-    effect: "Damage the enemy for 15 HP",
-    action: (p, e) => {
-      e.hp -= 15;
-    },
-  },
-  {
-    name: "Shadow Pounce",
-    type: CARD_TYPES.ATTACK,
-    cost: 15,
-    effect: "Damage the enemy for 25 HP",
-    action: (p, e) => {
-      e.hp -= 25;
-    },
-  },
-  {
-    name: "Purr Attack",
-    type: CARD_TYPES.ATTACK,
-    cost: 25,
-    effect: "Damage the enemy for 35 HP",
-    action: (p, e) => {
-      e.hp -= 35;
-    },
-  },
+const API_URL = "http://localhost:3000";
 
-  {
-    name: "Tuna Can",
-    type: CARD_TYPES.DEFENSA,
-    cost: 0,
-    effect: "Heals you for 15 HP",
-    action: (p, e) => {
-      p.hp = Math.min(p.maxHP, p.hp + 15);
-    },
-  },
-  {
-    name: "Nine Lives",
-    type: CARD_TYPES.DEFENSA,
-    cost: 35,
-    effect: "Evade the next enemy attack",
-    action: (p, e) => {
-      p.evasionChance += 1.0;
-    },
-  },
+let CARD_POOL = [];
 
-  {
-    name: "Cat Reflexes",
-    type: CARD_TYPES.CONTROL,
-    cost: 30,
-    effect: "Enemy Stun 1 Turn",
-    action: (p, e) => {
-      e.stunnedTurns += 1;
-    },
-  },
-  {
-    name: "Laser Pointer",
-    type: CARD_TYPES.CONTROL,
-    cost: 40,
-    effect: "Enemy Stun 2 Turns",
-    action: (p, e) => {
-      e.stunnedTurns += 2;
-    },
-  },
-];
-//getCardByName(name);
+async function loadCardsFromDB() {
+  const response = await fetch(`${API_URL}/cards`);
+  const dbCards = await response.json();
+
+  CARD_POOL = dbCards
+    .filter(card => card.type !== "Wildcard")
+    .map(card => ({
+      card_ID: card.card_ID,
+      name: card.name,
+      type:
+        card.type === "Attack" ? CARD_TYPES.ATTACK :
+        card.type === "Defense" ? CARD_TYPES.DEFENSA :
+        CARD_TYPES.CONTROL,
+      cost: card.cost,
+      effect: card.effect,
+      action: createCardAction(card)
+    }));
+}
+
+function createCardAction(card) {
+  if (card.name === "Sharp Claw") return (p, e) => e.hp -= 15;
+  if (card.name === "Shadow Pounce") return (p, e) => e.hp -= 20;
+  if (card.name === "Purr Attack") return (p, e) => e.hp -= 30;
+  if (card.name === "Scratches") return (p, e) => e.hp -= 40;
+  if (card.name === "Love Bite") return (p, e) => e.hp -= 55;
+
+  if (card.name === "Lick Wounds") return (p, e) => p.hp = Math.min(p.maxHP, p.hp + 10);
+  if (card.name === "Tuna Can") return (p, e) => p.hp = Math.min(p.maxHP, p.hp + 20);
+  if (card.name === "Cat Nap") return (p, e) => p.hp = Math.min(p.maxHP, p.hp + 30);
+  if (card.name === "Deliciuos Treat") return (p, e) => p.hp = Math.min(p.maxHP, p.hp + 45);
+  if (card.name === "Nine Lives") return (p, e) => p.evasionChance += 1;
+
+  if (card.name === "Cat Reflexes") return (p, e) => e.stunnedTurns += 1;
+  if (card.name === "Laser Pointer") return (p, e) => e.stunnedTurns += 2;
+
+  return (p, e) => {};
+}
 
 //Defines de Wildcard card this card trades HP for energy
 const WILDCARD = {
@@ -1856,13 +1829,18 @@ drawDeckScreen(ctx) {
   }
 
   playSound(name) {
-  if (!this.sounds || !this.sounds[name]) return;
+    if (!this.sounds || !this.sounds[name]) return;
 
-  const sound = this.sounds[name];
-  sound.currentTime = 0;
-  sound.volume = 0.6;
+    const sound = this.sounds[name];
 
-}
+    sound.pause();
+    sound.currentTime = 0;
+    sound.volume = 0.6;
+
+    sound.play().catch(error => {
+      console.log("No se pudo reproducir sonido:", error);
+    });
+  }
 
   //Executes the selected card by the player during combat and turn
   executeCard(index, isWildcard) {
@@ -2149,7 +2127,9 @@ drawDeckScreen(ctx) {
 }
 
 
-function main() {
+async function main() {
+  await loadCardsFromDB();
+
   const canvas = document.getElementById("canvas");
   canvas.width = canvasWidth;
   canvas.height = canvasHeight;

@@ -106,6 +106,10 @@ export async function getCardByName(name) {
   return query("SELECT * FROM Cards WHERE name = ? LIMIT 1", [name]);
 }
 
+export async function getAllCards() {
+  return query("SELECT * FROM Cards ORDER BY card_ID ASC");
+}
+
 
 //Record the new combat
 export async function createCombat(run_ID, enemy_ID, lvl) {
