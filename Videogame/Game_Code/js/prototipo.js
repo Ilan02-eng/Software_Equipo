@@ -686,24 +686,27 @@ class Game {
 
     this.casa = new GameObject(
       new Vector(canvasWidth / 4 + 450, canvasHeight + 300),
-      600,
-      450,
+      400,
+      300,
       "grey",
     );
     this.casa.setSprite(
       "../assets/sprites/house.png",
-      new Rect(0, 0, 1250, 1050),
+      new Rect(-200, 0, 1250, 1050),
     );
+    this.casa.setCollider(300, 250);
+
     this.casa_lj = new GameObject(
-      new Vector(canvasWidth * 2 +200, canvasHeight + 700),
-      550,
-      400,
+      new Vector(canvasWidth * 2 + 200, canvasHeight + 700),
+      380,
+      280,
       "purple",
     );
     this.casa_lj.setSprite(
       "../assets/sprites/house_LJ.png",
-      new Rect(0, 0, 1000, 1300),
+      new Rect(-45, 0, 1200, 1100),
     );
+    this.casa_lj.setCollider(380, 200);
 
     this.salida_casa = new GameObject(
       new Vector(canvasWidth / 2, 590),
@@ -781,8 +784,9 @@ class Game {
 
     this.roomUpgrade.setSprite(
       "../assets/sprites/chest.png",
-      new Rect(0,0,1064,1064)
+      new Rect(-180, -200, 1064, 1064),
     );
+    this.roomUpgrade.setCollider(70, 60);
 
     this.bushes = [];
     const bushSprites = [
