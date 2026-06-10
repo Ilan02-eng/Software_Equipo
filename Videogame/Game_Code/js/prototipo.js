@@ -904,6 +904,9 @@ getSaveKey() {
     this.backgroundBackro = new Image();
     this.backgroundBackro.src = "../assets/sprites/backro.png";
 
+    this.backgroundCombat = new Image();
+    this.backgroundCombat.src = "../assets/sprites/battle_room.png";
+
     this.tileVilla = new Image();
     this.tileVilla.src = "../assets/sprites/villa.png";
 
@@ -1747,8 +1750,21 @@ if (roomID === 9) {
     }
 
     if (this.currentScene == SCENES.COMBATE) {
-      ctx.fillStyle = "#2b2b2b";
-      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+      if (
+        this.backgroundCombat &&
+        this.backgroundCombat.complete
+      ) {
+        ctx.drawImage(
+          this.backgroundCombat,
+          0,
+          0,
+          canvasWidth,
+          canvasHeight
+        );
+      } else {
+        ctx.fillStyle = "#2b2b2b";
+        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+      }
 
       for (let actor of this.actors) {
         actor.draw(ctx);
