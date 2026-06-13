@@ -1,32 +1,38 @@
-import express    from "express";
-import cors       from "cors";
+import express from "express";
+import cors from "cors";
 import mysql from "mysql2";
 
+// Create the Express application
 const app = express();
+
+// Enable CORS to allow requests from other origins
 app.use(cors());
 
-//Conection pool
-const pool = mysql.createPool({
-    host: 'localhost',
-    port: '3306',
-    user: 'root',
-    password: 'Bosco7878..',
-    database: "catharsis"
-}).promise()
-    
+// Create a MySQL connection pool
+const pool = mysql
+  .createPool({
+    host: "localhost",
+    port: "3306",
+    user: "root",
+    password: "Bosco7878..",
+    database: "catharsis",
+  })
+  .promise();
+
+// Helper function to execute SQL queries
 async function query(sql, params = []) {
   const [rows] = await pool.query(sql, params);
   return rows;
 }
- 
-//Errores en pool
-pool.on('error', (err) => {
-  console.error('Error en el pool de MySQL:', err.message);
+
+// Handle MySQL pool errors
+pool.on("error", (err) => {
+  console.error("MySQL pool error:", err.message);
 });
- 
-app.get('/api/stats', async (req, res) => {
+
+app.get("/api/stats", async (req, res) => {
   try {
-    //Jugadores con al menos una run
+    // Get all players that have at least one run
     const players = await query(`
       SELECT DISTINCT u.user_ID, u.name
       FROM Username u
@@ -34,16 +40,19 @@ app.get('/api/stats', async (req, res) => {
       INNER JOIN Run    r ON p.player_ID = r.player_ID
       ORDER BY u.name
     `);
- 
+
+    // Return an empty array if there are no players with runs
     if (players.length === 0) {
-      return res.json([]); 
+      return res.json([]);
     }
- 
-    // Runs + stats por jugador
+
+    // Store the final statistics grouped by player
     const result = [];
- 
+
     for (const player of players) {
-      const rows = await query(`
+      // Get all runs and accumulated combat statistics for each player
+      const rows = await query(
+        `
         SELECT
           r.run_ID,
           r.run_result,
@@ -60,44 +69,63 @@ app.get('/api/stats', async (req, res) => {
         WHERE u.user_ID = ?
         GROUP BY r.run_ID, r.run_result
         ORDER BY r.run_ID ASC
-      `, [player.user_ID]);
- 
-      const runs = rows.map(r => ({
-        dmgDone:  r.dmg_done,
-        dmgRecv:  r.dmg_receive,
-        time:     r.combates * 60,   
-        cards:    r.cards_used,
-        heal:     r.hp_recovered,
-        complete: r.run_result === 'Win',
+      `,
+        [player.user_ID],
+      );
+
+      // Format database results for the frontend
+      const runs = rows.map((r) => ({
+        dmgDone: r.dmg_done,
+        dmgRecv: r.dmg_receive,
+        time: r.combates * 60, // Estimate time based on number of combats
+        cards: r.cards_used,
+        heal: r.hp_recovered,
+        complete: r.run_result === "Win",
       }));
- 
+
+      // Only add players that have at least one run
       if (runs.length > 0) {
         result.push({ name: player.name, runs });
       }
     }
- 
+
+    // Send the formatted statistics as JSON
     res.json(result);
- 
   } catch (err) {
-    console.error('Error en /api/stats:', err.message);
-    // Tipo de error 
-    if (err.code === 'ER_ACCESS_DENIED_ERROR') {
-      return res.status(500).json({ error: 'Credenciales de MySQL incorrectas. Revisa user/password en statistics.js' });
+    console.error("Error in /api/stats:", err.message);
+
+    // Handle specific MySQL connection or configuration errors
+    if (err.code === "ER_ACCESS_DENIED_ERROR") {
+      return res.status(500).json({
+        error:
+          "Incorrect MySQL credentials. Check user/password in statistics.js",
+      });
     }
-    if (err.code === 'ECONNREFUSED') {
-      return res.status(500).json({ error: 'No se pudo conectar a MySQL. ¿Está corriendo el servidor?' });
+
+    if (err.code === "ECONNREFUSED") {
+      return res.status(500).json({
+        error: "Could not connect to MySQL. Is the server running?",
+      });
     }
-    if (err.code === 'ER_BAD_DB_ERROR') {
-      return res.status(500).json({ error: 'La base de datos "catharsis" no existe. Ejecuta el script SQL primero.' });
+
+    if (err.code === "ER_BAD_DB_ERROR") {
+      return res.status(500).json({
+        error:
+          'The database "catharsis" does not exist. Run the SQL script first.',
+      });
     }
+
     res.status(500).json({ error: err.message });
   }
 });
- 
-app.get('/api/health', (req, res) => res.json({ ok: true }));
- 
+
+// Health check endpoint to verify that the server is running
+app.get("/api/health", (req, res) => res.json({ ok: true }));
+
+// Start the server on port 3001
 const PORT = 3001;
+
 app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`Server running at http://localhost:${PORT}`);
   console.log(`Stats: http://localhost:${PORT}/api/stats`);
 });
