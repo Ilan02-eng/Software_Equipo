@@ -1,50 +1,59 @@
-# Video game development in JavaScript
+# Catharsis Instructions
 
-## Examples of games in JS
+***Prototype edition***
 
-- https://www.lessmilk.com/
-- https://eloquentjavascript.net/16_game.html
+**How to download the game?**
 
-## JavaScript Canvas function documentation
+First, download the folder **"Videojuego"** or clone this repository in order to gain access to the folder "Videojuego". When downloaded, we need to search for a folder called **Game_Code**, inside this folder there are four visible folders:
+- assets/sprites
+- css
+- html
+- js
 
-- https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D
+The relevant folder we need to localize is **html**, inside this folder we have a file called *prototipo.html*, please select this file and open it through the browser of your choice. When done it should appear a screen similar to this one: 
 
-## Game techniques
+![alt text](image.png)
 
-- Sprite animation: https://www.youtube.com/watch?v=1bj7g6sXit8
+Feel free to start exploring the prototype (check control instruction down below)
 
-- Collision detection:
-    - https://www.sevenson.com.au/programming/sat/
-    - https://blog.bearcats.nl/capsule-triangle-sweep/
+**Objective of the protype: What does this game include?:**
 
-- Camera control:
-    - https://jsfiddle.net/gfcarv/QKgHs/
-    - https://stackoverflow.com/questions/16919601/html5-canvas-camera-viewport-how-to-actually-do-it
+The current prototype was developed in order to contain the interior maps for both houses and the exterior map for the surroundings. This work also includes the basic mechanics of the cards and their function throughout the gameplay in terms of energy and health. And the collisions with different bushes to obtain new cards are also available.
 
-    - https://www.freecodecamp.org/news/javascript-game-tutorial-stick-hero-with-html-canvas/
+**Prototype Explanation: What is the current progress**
 
-- Mouse events:
-    https://javascript.info/mouse-events-basics
+The player starts in their own home, where the only current visible sprite is the door available that will help them leave their home. When collisioning with the door, the player will be on the outside map. 
 
-## Notes on JavaScript:
+![alt text](<Game map.png>)
 
-- Using `for..in` with an Array will return the indices as strings.
+On the outside map, there are three main sprites; the house of the character, the house of the neighbour and the different bushes. The player's house will only work for entering the house, then we have the bushes; these bushes contain cards hidden betwwen them - in the case of this prototype, we are only considering that the cards are currently hidden in established bushes, yet, the project as a whole will require to randomize which bushes will have cards or not. The last relevant sprite is your neighbour's house; this house is open for you as a player in order to continue the game. When touched, you get the interior map of your neighbour's house, in which there are three visible doors. It is supposed that randomly, two rooms will be selected two include cards in them and the other one that is left, will contain the enemy that the player needs to fight. Currently, the prototype is set to have the enemy's room established, but for the final version, the enemy's room will be either of the three rooms. In there the battle scene can be performed and played with cards.
 
-## Main topics to be covered
+![alt text](Battlefield-1.png)
 
-- [ ] Embed canvas in a webpage
-- [ ] Physics
-- [ ] LERP (coordenadas, colores, etc.)
-- [ ] Basic motion
-- [ ] Collision detection
-- [ ] GUI text
-- [ ] GUI buttons
-- [ ] Audio elements
-- [ ] Saving data with `localStorage` / `sessionStorage` (https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage)
-- [ ] Switching scenes
-- [ ] Blinking effect
-- [ ] Tile maps
-- [ ] Aim with mouse
-- [ ] Animation system
-- [ ] Particle effects
-- [ ] Web requests
+**Game controls**
+
+*Movement*
+| Key | Action |
+|---|---|
+| W | Move Up |
+| A | Move Left |
+| S | Move Down |
+| D | Move Right |
+
+*Battle*
+
+For the battle section, the user is not required to move but instead to use their cursor to select the respective card they want to use to develop throughout the battle. In case the player loses, the losing screen will appear and will ask for SPACE in order to restart. If the player wins, the screen will restart at the player's house. 
+
+The battle works with a turn system that starts with the player and after each action taken by the player it switches to the enemy for it to attack and so on (the enemy turns can be affected by the control cards as listed below).
+
+During the battle the player has access to 4 cards on hand, each of this cards is selected randomly from the accesible cards and has different stats and mechanics. To use a card the player has an energy bar that decreses depending on the cost of each card.
+
+| Card Type | Color | Mechanic/Effect |
+|---|---|---|
+| Attack | Red | Deals damage to the HP of the enemy |
+| Defense | Green | Recovers HP of the player or adds the effect pf evasion that allows the player to protect itself from one attack of the enemy|
+| Control | Blue | Skips the turns or turns of the enemy not allowing it to attack | 
+
+The player has acces to a 5th card a Wildcard that has the color purple this is the only way the player has to recover energy during the battle but with a twist for the player to be able to use this card the player has to sacriface some of its HP. This card can only be used once per battle. 
+
+If the player's HP bar reaches 0 the player dies and has to restart to continue. 
