@@ -1,35 +1,53 @@
-import express    from "express";
-import cors       from "cors";
-import dotenv     from "dotenv";
-import * as db    from "./query_catharsis.js";
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import * as db from "./query_catharsis.js";
 
+// Load environment variables from the .env file
 dotenv.config();
 
-const app  = express();
+// Create the Express application
+const app = express();
 const PORT = process.env.PORT ?? 3000;
 
+// Enable CORS and JSON request parsing
 app.use(cors());
 app.use(express.json());
 
+// Basic health check route
 app.get("/", (_req, res) => res.json({ status: "Catharsis API online" }));
 
-//Authentification of the users
+// User authentication routes
 app.post("/auth/register", async (req, res) => {
   try {
+    // Get user data from the request body
     const { username, name, lastname, password, age, gender } = req.body;
 
-  if (!username || !name || !lastname || !password) {
-    return res.status(400).json({ error: "username, name, lastname and password are required." });
-  }
+    // Validate required fields
+    if (!username || !name || !lastname || !password) {
+      return res
+        .status(400)
+        .json({ error: "username, name, lastname and password are required." });
+    }
 
-    const user_ID = await db.createUser({ username, name, lastname, password, age, gender });
+    // Create a new user and its related player profile
+    const user_ID = await db.createUser({
+      username,
+      name,
+      lastname,
+      password,
+      age,
+      gender,
+    });
     const player_ID = await db.createPlayer(user_ID);
 
     res.status(201).json({ user_ID, player_ID });
   } catch (err) {
+    // Handle database validation errors
     if (err.sqlState === "45000") {
       return res.status(400).json({ error: err.message });
     }
+
     console.error(err);
     res.status(500).json({ error: "Registration failed." });
   }
@@ -37,17 +55,23 @@ app.post("/auth/register", async (req, res) => {
 
 app.post("/auth/login", async (req, res) => {
   try {
-    const {username, password } = req.body;
+    // Get login credentials
+    const { username, password } = req.body;
 
+    // Validate required fields
     if (!username || !password) {
-      return res.status(400).json({ error: "username and password are required." });
+      return res
+        .status(400)
+        .json({ error: "username and password are required." });
     }
 
+    // Search for a user with the given credentials
     const [user] = await db.getUserByCredentials(username, password);
     if (!user) {
       return res.status(401).json({ error: "Invalid credentials." });
     }
 
+    // Get the player profile linked to the user
     const [player] = await db.getPlayerByUserId(user.user_ID);
     if (!player) {
       return res.status(404).json({ error: "Player record not found." });
@@ -62,11 +86,14 @@ app.post("/auth/login", async (req, res) => {
 
 app.get("/users/:user_ID", async (req, res) => {
   try {
+    // Get user ID from the URL parameters
     const { user_ID } = req.params;
 
+    // Fetch user information
     const [user] = await db.getUserById(user_ID);
     if (!user) return res.status(404).json({ error: "User not found." });
 
+    // Fetch related player information
     const [player] = await db.getPlayerByUserId(user_ID);
 
     res.json({ user, player: player ?? null });
@@ -76,11 +103,13 @@ app.get("/users/:user_ID", async (req, res) => {
   }
 });
 
-//Runs
+// Run routes
 app.post("/runs", async (req, res) => {
   try {
+    // Start a new run for a specific player
     const { player_ID } = req.body;
-    if (!player_ID) return res.status(400).json({ error: "player_ID is required." });
+    if (!player_ID)
+      return res.status(400).json({ error: "player_ID is required." });
 
     const run_ID = await db.createRun(player_ID);
     res.status(201).json({ run_ID });
@@ -92,11 +121,14 @@ app.post("/runs", async (req, res) => {
 
 app.patch("/runs/:run_ID/finish", async (req, res) => {
   try {
-    const { run_ID }    = req.params;
+    // Finish a run with either a Win or Loss result
+    const { run_ID } = req.params;
     const { run_result } = req.body;
 
     if (!["Win", "Loss"].includes(run_result)) {
-      return res.status(400).json({ error: 'run_result must be "Win" or "Loss".' });
+      return res
+        .status(400)
+        .json({ error: 'run_result must be "Win" or "Loss".' });
     }
 
     await db.finishRun(run_ID, run_result);
@@ -107,11 +139,12 @@ app.patch("/runs/:run_ID/finish", async (req, res) => {
   }
 });
 
-
 app.get("/runs/player/:player_ID", async (req, res) => {
   try {
+    // Get all runs created by a specific player
     const { player_ID } = req.params;
     const runs = await db.getRunsByPlayer(player_ID);
+
     res.json(runs);
   } catch (err) {
     console.error(err);
@@ -119,12 +152,14 @@ app.get("/runs/player/:player_ID", async (req, res) => {
   }
 });
 
-
 app.get("/runs/:run_ID/summary", async (req, res) => {
   try {
+    // Get a summary of a specific run
     const { run_ID } = req.params;
-    const [summary]  = await db.getRunResumen(run_ID);
+    const [summary] = await db.getRunResumen(run_ID);
+
     if (!summary) return res.status(404).json({ error: "Run not found." });
+
     res.json(summary);
   } catch (err) {
     console.error(err);
@@ -132,11 +167,12 @@ app.get("/runs/:run_ID/summary", async (req, res) => {
   }
 });
 
-
 app.get("/users/:user_ID/history", async (req, res) => {
   try {
+    // Get the full game history of a specific user
     const { user_ID } = req.params;
-    const history     = await db.getHistorialByUser(user_ID);
+    const history = await db.getHistorialByUser(user_ID);
+
     res.json(history);
   } catch (err) {
     console.error(err);
@@ -144,18 +180,24 @@ app.get("/users/:user_ID/history", async (req, res) => {
   }
 });
 
-// Combat
+// Combat routes
 app.post("/combats", async (req, res) => {
   try {
+    // Create a new combat for a run
     const { run_ID, enemy_name, enemy_lvl } = req.body;
 
     if (!run_ID || !enemy_name || enemy_lvl === undefined) {
-      return res.status(400).json({ error: "run_ID, enemy_name and enemy_lvl are required." });
+      return res
+        .status(400)
+        .json({ error: "run_ID, enemy_name and enemy_lvl are required." });
     }
 
+    // Search the enemy in the database before creating the combat
     const [enemy] = await db.getEnemyByName(enemy_name);
     if (!enemy) {
-      return res.status(404).json({ error: `Enemy "${enemy_name}" not found in DB.` });
+      return res
+        .status(404)
+        .json({ error: `Enemy "${enemy_name}" not found in DB.` });
     }
 
     const combat_ID = await db.createCombat(run_ID, enemy.enemy_ID, enemy_lvl);
@@ -164,122 +206,4 @@ app.post("/combats", async (req, res) => {
     console.error(err);
     res.status(500).json({ error: "Could not create combat." });
   }
-});
-
-app.get("/combats/run/:run_ID", async (req, res) => {
-  try {
-    const { run_ID } = req.params;
-    const combats    = await db.getCombatsByRun(run_ID);
-    res.json(combats);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Could not fetch combats." });
-  }
-});
-
-
-app.post("/combats/:combat_ID/stats", async (req, res) => {
-  try {
-    const { combat_ID } = req.params;
-    const { dmg_done, dmg_receive, hp_recovered, cards_used } = req.body;
-
-    const combat_stats_ID = await db.saveCombatStats(combat_ID, {
-      dmg_done:     dmg_done     ?? 0,
-      dmg_receive:  dmg_receive  ?? 0,
-      hp_recovered: hp_recovered ?? 0,
-      cards_used:   cards_used   ?? 0,
-    });
-
-    res.status(201).json({ combat_stats_ID });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Could not save combat stats." });
-  }
-});
-
-app.get("/combats/:combat_ID/stats", async (req, res) => {
-  try {
-    const { combat_ID } = req.params;
-    const [stats]       = await db.getStatsByCombat(combat_ID);
-    if (!stats) return res.status(404).json({ error: "Stats not found." });
-    res.json(stats);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Could not fetch stats." });
-  }
-});
-
-// Cards
-app.get("/cards", async (_req, res) => {
-  try {
-    const cards = await db.getAllCards();
-    res.json(cards);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Could not fetch cards." });
-  }
-});
-
-app.post("/runs/:run_ID/cards", async (req, res) => {
-  try {
-    const { run_ID }               = req.params;
-    const { card_name, combat_ID } = req.body;
-
-    if (!card_name || !combat_ID) {
-      return res.status(400).json({ error: "card_name and combat_ID are required." });
-    }
-
-    const [card] = await db.getCardByName(card_name);
-    if (!card) return res.status(404).json({ error: `Card "${card_name}" not found in DB.` });
-
-    await db.addRunCard(card.card_ID, run_ID, combat_ID);
-    res.status(201).json({ message: "Card recorded." });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Could not record card." });
-  }
-});
-
-app.get("/runs/:run_ID/cards", async (req, res) => {
-  try {
-    const { run_ID } = req.params;
-    const cards      = await db.getCardsByRun(run_ID);
-    res.json(cards);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Could not fetch run cards." });
-  }
-});
-
-//Enemy catalog
-app.get("/enemies", async (_req, res) => {
-  try {
-    const enemies = await db.getAllEnemies();
-    res.json(enemies);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Could not fetch enemies." });
-  }
-});
-
-//Player stats
-app.patch("/players/:player_ID", async (req, res) => {
-  try {
-    const { player_ID }  = req.params;
-    const { hp, energy } = req.body;
-
-    if (hp === undefined || energy === undefined) {
-      return res.status(400).json({ error: "hp and energy are required." });
-    }
-
-    await db.updatePlayerStats(player_ID, hp, energy);
-    res.json({ message: "Player stats updated." });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Could not update player." });
-  }
-});
-
-app.listen(PORT, () => {
-  console.log(`Catharsis API running on http://localhost:${PORT}`);
 });
