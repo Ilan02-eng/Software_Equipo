@@ -341,7 +341,7 @@ The map represents the area (both interior of the house and exterior) where the 
 ### **Game Flow**
 
 **Game Starts**
-1. A start menu appears displaying the game's title and a button to begin.
+1. The game starts in their personal new house and can only move towards the door
 2. The player spawns in a flat village featuring bushes, trees, and another house aside from their own.
 3. The card deck button is displayed 
 
@@ -357,36 +357,30 @@ The map represents the area (both interior of the house and exterior) where the 
 2. The player starts moving around the house, surprised to discover random cards around the house
 3. The fight is triggered when the player enters to a randomly assigned room. The combat encounter begins in an attempt to cure Little Jimmy.
 4. If the player is defeated, the game resets and the player retains only 2 randomly selected cards from their deck.
-5. If the player wins, Little Jimmy increases their level of difficulty randomly for the next combat.
+5. If the player wins, Little Jimmy is cured yet increases their level of difficulty randomly for the next combat.
 6. The player is transported to their home to rest.
 
 
 **Second Day**
 1. The player resumes their investigation of the village.
 2. The player continues to discover new cards throughout the environment.
-
-
-**Second Night**
-1. The player returns to Little Jimmy's house.
-2. A second combat encounter begins in another attempt to cure Little Jimmy.
-3. If the player is defeated, the game resets and the player retains only 3 randomly selected cards from their deck.
-4. If the player wins, Little Jimmy is further cured.
-5. The player returns home to rest.
+3. The player returns to Little Jimmy's house.
+4. A second exploration of the house is performed
+5. A second combat encounter begins in another attempt to cure Little Jimmy.
+6. If the player is defeated, the game resets and the player retains only 2 randomly selected cards from their deck.
+7. If the player wins, Little Jimmy is further cured yet increases their level of difficulty randomly for the next combat.
+8. The player is transported to their home to rest.
 
 
 **Third Day**
-
 1. The player resumes their investigation of the village.
 2. The player continues to discover new cards throughout the environment.
-
-
-**Third Night**
-
-1. The player returns to Little Jimmy's house.
-2. A third and final combat encounter begins in a last attempt to cure Little Jimmy.
-3. If the player is defeated, the game resets and the player retains only 3 randomly selected cards from their deck.
-4. If the player wins, Little Jimmy is fully cured and appears in his normal form.
-5. The player saves the village and the game concludes.
+3. The player returns to Little Jimmy's house.
+4. A second exploration of the house is performed
+5. A second combat encounter begins in another attempt to cure Little Jimmy.
+6. If the player is defeated, the game resets and the player retains only 2 randomly selected cards from their deck.
+7. If the player wins, Little Jimmy is cured yet and disappears.
+8. The player saves the village and the game concludes.
 
 
 ## _Development_
@@ -441,17 +435,16 @@ Controls all the logic and mechanics of the game such as the combat, cards, flow
 ### **Style Attributes**
 
 The game's visual identity is built around contrast as its core design principle. The pixel-art style remains consistent throughout the entire game, but the shift between day and night creates a striking tonal difference that reinforces the game's emotional duality.
-Daytime is characterized by a warm, soft color palette with high brightness and gentle saturation. The exterior world feels inviting and safe, the village is filled with small trees,bushes and colorful flowers that encourage the player to explore freely. The lighting is even and welcoming giving the impression that everything is as it should be.
+Outside surroundings are characterized by a warm, soft color palette with high brightness and gentle saturation. The exterior world feels inviting and safe, the village is filled with small bushes that encourage the player to explore freely. The lighting is even and welcoming giving the impression that everything is as it should be. And on the opposite, you are the odd one out considering your darker color palette.
 
 
 ![alt text](image-10.png)
 
-Nighttime transitions into a darker and more desaturated palette where shadows dominate and familiar shapes become unsettling.m The same village that felt cozy during the day now carries an underlying tension. The pixel art style is preserved but the color choices and lighting shifts make the environment feel strange and unpredictable, as if the world itself has changed. 
+The inside of Little Jimmy's house, transitions into a darker and more desaturated palette where shadows dominate and familiar shapes become unsettling. Compared to the outside village that felt cozy the inside carries an underlying tension. The pixel art style is preserved but the color choices and lighting shifts make the environment feel strange and unpredictable, as if the world itself has changed. 
 
 ![alt text](image-17.png)
 
-Little Jimmy's house serves as the most extreme expression of this contrast. Its interior is divided into different rooms each sharing a sense of wrongness, minimalist layouts, oppressive darkness and an atmosphere that feels far removed from the warmth of the daytime world. The two room versions (I and II) escalate this feeling progressively, moving from unsettling to outright disturbing, reflecting the deeper the player ventures into the mystery of the village. 
-
+The randomly generated rooms of Little Jimmy's house serve as the most extreme expression of this contrast. Its interior is divided into different rooms each sharing a sense of wrongness, minimalist layouts, oppressive darkness and an atmosphere that feels far removed from the warmth of the daytime world. The different room versions escalate this feeling progressively, moving from unsettling to outright disturbing, reflecting the deeper the player ventures into the mystery of the village. Adding to the strangeness the fact that rooms may be in different positions to add to the weir surrounding.
 
 This visual contrast is not purely aesthetic, it is a storytelling tool. The player learns to read the environment that warmth means safety, darkness means danger.
 
@@ -462,45 +455,32 @@ This visual contrast is not purely aesthetic, it is a storytelling tool. The pla
     1. Protagonist (player)
         1. Black cat (idle, walking up/down/left/right)
     2. NPCs
-        1. Little Jimmy - normal form (idle, sleeping)
-        2. Little Jimmy - monster form (idle, attacking, defeated)
+        1. Little Jimmy - monster form (idle)
 2. Tiles / Environment
     1. Exterior
         1. Grass
-        2. Dirt path
-        3. Flowers
-        4. Bush (regular, interactive)
-        5. Tree
-        6. Fence
+        2. Bush (regular, interactive)
     2. Interior - Player's house
         1. Wooden floor
         2. Walls (cozy style)
         3. Furniture (bed, table, chair)
     3. Interior - Little Jimmy's house
         1. Dark floor
-        2. Walls (unsettling style, Version I and II)
+        2. Walls (unsettling style)
+        3. Furniture (tables, lights, pots, doors)
 3. Interactable Objects
-    1. Letter (on table)
-    2. Door (house exterior)
-    3. Discoverable cards 
-    4. Fruit (on bushes and trees)
+    1. Door (house interior and exterior)
+    2. Discoverable cards 
 4. HUD / UI
     1. Health bar (player and enemy)
     2. Energy bar
-    3. Card frame (per category: attack, defense, healing, crowd control)
+    3. Card frame (per category: attack, defense, control, and wildcard)
     4. Card illustrations (one per card)
     5. Inventory screen background
-    6. Statistics menu overlay
-    7. Saving screen overlay
 5. Screens
-    1. Title screen background
-    2. Game logo / wordmark
+    1. Pause screen
+    2. Next day screen
     3. Credits screen background
-6. Effects
-    1. Day/night lighting overlay
-    2. Damage / heal visual feedback
-    3. Victory effect (Little Jimmy cured)
-
 
 ## _Sounds & Music_
 
@@ -517,16 +497,8 @@ This way we maintain a cohesive atmosphere while providing a dynamic shift in th
 
 1. ***Effects***
 - The sound effects (SFX) are designed to provide feedback to the auditory player, ensuring each interaction from the player feels responsive, intuitive and impactful. To maintain the aesthetic of the game, the sound effects design will be inspired by a retro bit style, matching the game’s pixel-art identity.
-- **Movement**   
-    - A walking/foot steps effect while the player is exploring and moving around the map.
 - **Interactions**  
-    - Finding a card, like a shimmer effect.
-    - Opening a door, a wooden creak effect (when you enter the house of the enemy).
-- **Cards/Combat**
-    - Healing card effect.
-    - Attack card effect. 
-    - Control card effect (like a freezing effect).
-    - Victory/defeating the enemy.
+    - Finding a card, like a folding card effect.
 
 2. ***Feedback***
 - Due to current development scope, the feedback from sound effects will be kept  direct and functional. Beyond basic interactions, the sound effects serve to communicate the player’s status and the weight of their choices, the combat feedback is prioritized through different sounds that signal the state of the battle and the actions that are taking place.
