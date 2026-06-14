@@ -6,7 +6,7 @@
 
 ##### **Copyright notice / author information / boring legal stuff nobody likes**
 
-This videogames has been developed thoughout the February-June 2026 semester (April 6th, 2026 - ____) for the subject TC2005B: Software Construction and Decision Making (Group 501) for the Tecnológico de Monterrey in Campus Santa Fe
+This videogames has been developed thoughout the February-June 2026 semester (April 6th, 2026 - June 13th, 2026) for the subject TC2005B: Software Construction and Decision Making (Group 501) for the Tecnológico de Monterrey in Campus Santa Fe
 
 
 *Supervisors:* 
@@ -60,16 +60,16 @@ This videogames has been developed thoughout the February-June 2026 semester (Ap
 
 ### **Summary**
 *Catharsis* is a rougelite videogame presented in top-down perspective in 2D with a pixely artstyle, where you take the role of a little cat that comes to a new village and discovers his neighbours are behaving quite strange, just to learn that at night they are turning into monsters. He slowly discovers some new cards across the town that will help him protect himself and his new home. 
-You will randomly explore the different houses of your neighbours, use your cards to save them and protect yourself, and find what is happening around the village.
+You will randomly explore the house of your neighbour, use your cards to save them and protect yourself, and find what is happening around the village.
 
-Every time you get to heal your neighbours you will obtain experience points that will help us keep developing the story and obtain better cards that will increase your abilities to fight, defend, heal and control your neighbours. Giving the monster random abilities every night that forces you to think about how to defend yourself without harming them. Learning more about what is the secret behind the way of how your neighbours are behaving.
+Every time you get to heal your neighbours you will advance the day and go to a next level that will increase the difficulty. Giving the monster a power-up every night that forces you to think about how to defend yourself with your cards. Learning more about what is the secret behind the way of how your neighbours are behaving.
 
 ### **Gameplay**
 **Description and context**
 
-*Catharsis* is a story that will follow you; a little black cat that moves to a new village "Finetown" - in search for a new home, at first glance, the town will appear warm and welcoming since it is a colorful village with peaceful routines. In there he meets his new neighbours, who seem to not behave so fine - they rarely go out and do not seem to talk a lot, as the night falls, the cat will begin to notice many unsettling changes: the villagers seem to behave erratically, eventually transforming into strange and hostile creatures.
+*Catharsis* is a story that will follow you; a little black cat that moves to a new village "Finetown" - in search for a new home, at first glance, the town will appear warm and welcoming since it is a colorful village with peaceful routines. In there we acknowedge our new neighbours, who seem to not behave so fine - they do not go out and do not seem to talk a lot, as the time comes, the cat will begin to notice many unsettling changes: the villagers seem to behave erratically, eventually transforming into strange and hostile creatures.
 
-The game starts by showing your new house in your new neighbourhood - inside the house we can see a small letter that explains the rules of your new home:
+The game starts by showing your new house in your new neighbourhood - inside the tutorial we can see a small letter that explains the rules of your new home:
 1. Feel free to explore your surroundings, the nature is full of fruits and surprises.
 2. Please return home before nightfall. Nights can be unpredictable
 3. Be nice to everyone! A small act of kindness may be remembered longer than you think!
@@ -81,20 +81,20 @@ The game starts by showing your new house in your new neighbourhood - inside the
 
 The letter will also include the basic instructions about how to develop themselves in the game in terms of both tasks and movement *(check in control section)*. 
  
-After reading the letter, you go outside where you meet a villager who live next to your house; **Little Jimmy**, a fluffy dog who always wear a night gown and a sleeping hat, he is always tired yet he never opens his eyes. As a protagonist, the user must explore the village by entering their neigbour's different houses. In this case, upon entering Little Jimmy's house, the player will encounter three rooms whose order is randomized every run, ensuring no two playthroughs feel the same. Two of the rooms serve as exploration spaces,they appear empty at first glance, but contain hidden cards scattered throughout that reward careful observation and encourage the player to search thoroughly before moving on. The third room is where Little Jimmy resides in his monster form, triggering the combat encounter. Since the player never knows which room holds the encounter, every door opened carries a sense of tension and uncertainty, reinforcing the unpredictable nature of the roguelite experience. 
+Knowing this instructions, you can go outside where you see the house of the villager who lives next to your house; **Little Jimmy**, a fluffy dog who always wear a night gown and a sleeping hat, he is always tired yet he never opens his eyes. As a protagonist, the user must explore the village by entering their neigbour's different houses. In this case, upon entering Little Jimmy's house, the player will encounter a main room, in there we can find other three doors that will help you run around the house, in one of the rooms in the house - a monster will be hidden, this is randomized every run, ensuring no two playthroughs feel the same. THe rest of the rooms serve as exploration spaces,they may contain hidden power-up cards inside a chest that work as power-ups, in order to encourage the player to search thoroughly before moving on. The room where Little Jimmy resides in his monster form, triggering the combat encounter. Since the player never knows which room holds the encounter, every door opened carries a sense of tension and uncertainty, reinforcing the unpredictable nature of the roguelite experience. 
 The rougelite elements depend a lot on how the procedurally change the layout and the powers of each creature every time. Allowing the player to keep learning fragments of the story, hidden secrets and discover the different cards. 
 
 **Objective**
 
-The final goal will be to cure the different neighbours that live across your home through a card-based combat interaction system, where the user is capable of collecting different cards that obtain different capacities like attacking, healing, defending and controlling your enemies, yet unlike usual combat systems - the user should not search to eliminate the neighbours but instead to protect or 'purify' them, allowing them to return to their normal state without harm and trying to learn more about the weird curse that seems to posess the village.
+The final goal will be to cure your neighbour that lives across your home through a card-based combat interaction system, where the user is capable of collecting different cards that obtain different capacities like attacking, healing, defending and controlling your enemies, yet unlike usual combat systems - the user should not search to eliminate the neighbours but instead to protect or 'purify' them, allowing them to return to their normal state without harm and trying to learn more about the weird curse that seems to posess the village.
 
 **Important elements**
 
-For the Rougelite mechanics, it has been cosndiered the need for replayability for the multiple runs. Throughout the gameplay, the player will engage in the exploration of the village - in there the layout of the houses, the encounters and rewards will change every night. This random system will be reinforced through a card-based system that will be described below, where the player will gradually build their set up and how they choose between the options to fight and defend - trying to force the user to think strategiacally to achieve a win. Adding the fact that the game will depend on a progression system that will depend on healing the neighbours in order to keep obtaining experience points to unlock cards, abilities and upgrades for the next turn. In case we are presented with a failure during the night, it will be presented as a dream and will force the user to restart the current run - preserving the long-time progress yet allowing to try the again and grow and experiment with different cards. At the same time, considering that the randomized enemy behaviour wil be changed every night, and will force the player to adapt to grow. The unpredicatbility will help the storyline to progress and create a balance between abilities.
+For the Rougelite mechanics, it has been cosndiered the need for replayability for the multiple runs. Throughout the gameplay, the player will engage in the exploration of the village - in there, the layout of the houses, the encounters and rewards will change every night. This random system will be reinforced through a card-based system that will be described below, where the player will gradually build their set up and how they choose between the options to fight and defend - trying to force the user to think strategiacally to achieve a win. Adding the fact that the game will depend on a progression system that will depend on healing the neighbour in order to keep obtaining experience points to unlock cards, abilities and upgrades for the next turn. In case we are presented with a failure during the night, it will be presented as a dream and will force the user to restart the current run - preserving the long-time progress yet allowing to try the again and grow and experiment with different cards. At the same time, considering that the randomized enemy behaviour wil be changed every night, and will force the player to adapt to grow. The unpredicatbility will help the storyline to progress and create a balance between abilities.
 
-This game is built arround a dynamic card based combat system with four card categories that are attack,, defense, crowd control and healing. Every card consumes energy that regenerates each turn preventing spam and forcing players to think carefully about every move. Cards are discovered through exploration across a randomized map that ensures no runs are the same. Winning an encounter rewards the player with cards and duplicates can be fused together to level up their stats.
+This game is built arround a dynamic card based combat system with four card categories that are attack, defense, control and wildcards. Every card consumes energy that regenerates each turn preventing spam and forcing players to think carefully about every move. Cards are discovered through exploration across a randomized map that ensures no runs are the same. Winning an encounter rewards the player with cards and duplicates can be fused together or discarded.
 
-Death means that the player go down to just 3 random cards pushing them to explore aggressively and rebild from scratch. Each run ends with a boss encounter that puts every skill and card the player has gathered to the ultimate test. 
+Death means that the player loses cards, except for 2 random ones, pushing them to explore aggressively and rebild from scratch. Each run ends with a boss encounter that puts every skill and card the player has gathered to the ultimate test. 
 
 
 **References and Inspirations**
@@ -145,8 +145,7 @@ Purpose: It is the first impression that the player gets of our game, it gives t
 - Start Button: A flashy button with the word “START” to draw the player to start the game’s experience.
 - Options Menu Button: A button to allow the player to configure some aspects of the game.
 - Credits Button: A section to recognize the game collaborators and developers.
-- Background Music: An attractive and thematic track that sets the tone for the adventure.  
-- Studio’s Name and Year: Supernova @2026. 
+- Background Music: An attractive and thematic track that sets the tone for the adventure.   
 
 ![alt text](image-11.png)
 *(Title screen initial concept)*
@@ -162,6 +161,7 @@ Purpose: The main screen where the player navigates and interacts with the map.
  *(Game screen initial concept)* 
 
 3. Inventory (Card Collection)
+
 Purpose: Shows the player the cards they have acquired, it includes:
 
 - Cards: Shows all the cards the player currently has and allows to show the player the information of each card.
@@ -170,38 +170,23 @@ Purpose: Shows the player the cards they have acquired, it includes:
 ![alt text](iventory.png)
 *(Inventory screen initial concept)*
 
-4. Statistics Menu
+4. Pause screen
 
-Purpose: It allows the player to show their progress and interact with some aspects of the game, it includes:
-- Statistics: Allows the player to see the current stats of the game’s round.
-- Back: During a round it allows the player to return to the game’s screen.
-
-![alt text](statistics.png)
-*(Statistics screen initial concept)*
+Purpose: It allows the player to manage functions like the sound and music as well as the stop and return to the gamescreen
+![alt text](pantalladepausa.png)
+*(Pause screen final concept)*
 
 5. Combat Screen
 
 Purpose: It provides a visual stage for the battle between the player and the opponent/enemy, includes: 
 - Battlefield: The area where the combat takes place and the cards are played.
-- Hand Overlay: Positioned at the bottom part showing the player’s current playable cards.
+- Hand Overlay: Positioned at the top part of the screen, showing the player’s current playable cards.
 - Music: The track that sets the tone of the combat.
-- Health (life) Bar: Indicates the amount of health that the player and the enemy currently have.
-- Energy Bar: Shows the player the amount of available energy to play cards.
 
 ![alt text](<Choosing arena.png>)
-*(Choosing arena screen initial concept)*
+*(Choosing rooms screen initial concept)*
 ![alt text](Battlefield-1.png)
 *(Combat main screen initial concept)*
-
-6. Saving Menu:
-
-Purpose: Screen that will allow the system to save the game and statistics of the progress and stop the game.
-- Save **and** exit button: Button that allows to save the progress of the game and saves the current development of the player
-- Exit button: Button to leave the game without updating the statistics about the player's progress.
-- Return to game: Button to stop the saving process and return to gameplay mode 
-
-![alt text](Saving.png)
-*(Saving menu screen initial concept)*
 
 7. Ending Credits: 
 
@@ -213,15 +198,19 @@ Purpose: Show the developers and collaborators of the game, includes:
 
 ![alt text](Credits.png)
 *(Ending credits screen initial concept)*
-
+![alt text](Credits-1.png)
+*(Ending credits screen final concept)*
 
 ### **Controls**
 
-1. Moving: The controls will require the usage of the W, A, S, and D for determining the movement.
-    - W: up
-    - A: left
-    - S: down
-    - D: right 
+1. Moving: The controls will require the usage of either the W, A, S, and D for determining the movement.
+
+| Letter Key |  Arrow key |    Action  |
+|------------|------------|------------|
+|      W     |      ↑     |   Move Up  |
+|      A     |      ←     |  Move Left |
+|      S     |      ↓     |  Move Down |
+|      D     |      →     | Move Right |
 
 2. Combat: 
 - Selection: Hover the mouse to select a card and see the description, effects and cost of each card.
@@ -232,16 +221,15 @@ Purpose: Show the developers and collaborators of the game, includes:
 - Click on the button that you want to interact with.  
 
 
-
 ### **Mechanics**
 
 Our game introduces multiple mechanics that allow the game to feel unique, strategic and interactive.
 
 **1. Random Generation:** 
-- Map Generation: Every time the player starts a new run the map inside the house will generate randomly from 2 map designs.
-- Enemy’s stats and gameplay: Every run and combat encounter, the enemy health will change depending on the level or difficulty. The heath is generated from a predefined numerical range. Additionally, the enemy may have slight variations in behavior, making each encounter less predictable.
+- Map Generation: Every time the player starts a new run the map inside the neighbour's house will be generated randomly, alternating constantly between the three different rooms.
+- Enemy’s stats and gameplay: Every run and combat encounter, the enemy health will change depending on the level or difficulty. The health is generated from a predefined numerical range. Additionally, the enemy may have slight variations in behavior, making each encounter less predictable.
 - Card Placement: The location of cards that are hidden around the map is different every level and run, encouraging exploration.
-- Hand Overplay or Deck System: In every combat encounter, the cards available in the player’s hand are randomly drawn from the deck of cards the player has acquired up to that point. Cards can appear multiple times in the deck. This introduces variability in each turn and forces the player’s strategy to adapt based on the current hand.
+- Hand Overplay or Deck System: In every combat encounter, the cards available in the player’s hand are randomly drawn from the deck of cards the player has acquired up to that point (maximum 10). Cards can appear multiple times in the deck. This introduces variability in each turn and forces the player’s strategy to adapt based on the current hand.
 
 **2. Energy:**
 - Cards Energy Cost: Each card requires a certain amount of energy to be played. The player has a fixed amount of energy available in every combat encounter, meaning the available energy doesn’t change between combats. This forces a strategic decision making, as the player must carefully choose how to spend their energy each turn. More powerful cards consume more energy, while simpler cards require less. 
@@ -256,15 +244,15 @@ The cards are the main element of the game. These are the primary way the player
 
 ![alt text](image-12.png)
 
-    - *Defense*: Cards that provide protection or restore health. 
+- *Defense*: Cards that provide protection or restore health. 
 
 ![alt text](image-13.png)
 
-    - *Control*: Cards that affect the flow of the combat, such as limiting the enemy actions.
+- *Control*: Cards that affect the flow of the combat, such as limiting the enemy actions.
 
 ![alt text](image-14.png)
 
-    - *Wildcard*: Special cards with the unique effect of trading health for energy, introducing high risk decisions. This special cards can only be used once per combat. 
+- *Wildcard*: Special cards with the unique effect of trading health for energy, introducing high risk decisions. This special cards can only be used once per combat. 
 
 ![alt text](image-15.png)
 
@@ -282,16 +270,16 @@ The objective of the scoring system is to encourage the player to continue playi
     - Cards Collected 
     - Level Difficulty Reached
     - Time of the Run
-- End of Run Display: When the player dies or finishes the run, a summary screen is shown displaying the collected stats. This allows the player to see their performance and improvement areas in future runs. 
+- End of Run: When the player dies or finishes the run, a screen is shown displaying the change of level. 
 
 5. Map
 
 The map represents the area (both interior of the house and exterior) where the player explores each run. Designed to encourage exploration and decision making.
-- Exterior Area: This area remains the same in every run and it's not generated randomly. The player can explore this area to find and acquire cards for progression.
-- Interior Area: This is in the interior of the house, each run generates a small set of rooms inside the house. In addition to the entrance there are 3-4 rooms randomly generated. The position and connection of these rooms changes every run.
-- Enemy/Boss Room: One of the interior rooms contains the main enemy, its location is randomized every run. This is the key objective of the run, and the payer must face it to complete the level.
+- Exterior Area: This area is not entirely generated randomly, but instead the bushes are generated randomly. The player can explore this area to find and acquire cards for progression inside the bushes.
+- Interior Area: This is in the interior of the neighbour's house, each run generates a small set of rooms inside the house. In addition to the entrance there are 3 rooms that will open the door to other randomly generated rooms. The position and connection of these rooms changes every run.
+- Enemy/Boss Room: One of the interior rooms contains the main enemy, its location is randomized every run. This is the key objective of the run, and the player must face it to complete the level.
 - Exploration: The remaining rooms of the house and the exterior can be both explored to find new cards, allowing the player to prepare and progress before facing the main enemy. 
-- Player Interaction: The player can move around the exterior and interior areas of the map, upon entering a room the player can interact with it to find and collect cards. The player’s exploration is sequential, meaning the player chooses the order in which to visit the rooms. The hidden cards of each room cannot be collected more than once.
+- Player Interaction: The player can move around the exterior and interior areas of the map, upon entering a room the player can interact with objects like bushes or chests to find and collect cards. The player’s exploration is sequential, meaning the player chooses the order in which to visit the rooms. 
 - Random Layout: The position of each interior room is randomized every run, encouraging exploration.
 
 6. Enemy
@@ -315,12 +303,10 @@ The map represents the area (both interior of the house and exterior) where the 
         1. Light, soft, and calm. 
     2. Objects
         1. _Ambient_
-            1. Flowers
-            2. Grass
+            1. Grass
         2. _Interactive_
             1. Bushes
-            2. Trees
-            3. Houses (Personal and Neighbour's)
+            2. Houses (Personal and Neighbour's)
 2. Personal House
     1. Mood
         1. Cozy, warm and homelike
@@ -328,9 +314,7 @@ The map represents the area (both interior of the house and exterior) where the 
         1. _Ambient_
             1. Furniture
         2. _Interactive_
-            1. Letter
-            2. Bed
-            3. Door
+            1. Door
 3. Little Jimmy's House
     1. Mood
         1. Version I: Unsettling, weird, and not entirely safe - backroom similarities
@@ -338,12 +322,12 @@ The map represents the area (both interior of the house and exterior) where the 
 
          *(Inspiration for the Version I room)*
 
-        2. Version II: Dark, scary and mysterious - entirely dark room where barely anything sees the light
+        2. Version II: Dark, scary and mysterious - entirely dark room where barely anything sees the light yet seems fullfilled with mechanical objects
         ![alt text](image-8.png)
         
         *(Inspiration for the Version II room)*
 
-        3. Version III: Muted, silent and very lonely - the area is fulfilled with plants yet there is no sign of life.
+        3. Version III: Muted, silent and very lonely - the area is seems cozy yet there is no sign of life.
         ![alt text](image-18.png)
 
         *(Inspiration for the Version III room)*
@@ -352,14 +336,14 @@ The map represents the area (both interior of the house and exterior) where the 
         1. _Interactive_
             1. Enemy
             2. Doors
-            3. Cards
+            3. Chests with power-up cards
 
 ### **Game Flow**
 
 **Game Starts**
 1. A start menu appears displaying the game's title and a button to begin.
 2. The player spawns in a flat village featuring bushes, trees, and two houses.
-3. The HUD is displayed, including the player's health bar.
+3. The card deck button is displayed 
 
 **Initial Exploration**
 1. The player begins inside their own house, where a letter is found explaining the game's controls and the village's rules.
