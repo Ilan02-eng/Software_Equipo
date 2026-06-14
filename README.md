@@ -133,3 +133,5 @@ Opening this folder will open a webpage that will display the webpage with diffe
 - Login and logout
 - Register as a new user
 - Show information about the project 
+
+![alt text](image.png)
