@@ -533,33 +533,31 @@ The game will feature two tracks that define the gameplay state, designed to dis
 - Base Classes: Development of the fundamental architectural components:
     - Base Entity: Core logic for game objects.
         - Base Player: Handles character-specific logic.
-        - Base Enemy: Handles AI and adversary logic.
 - Base App State: Management of different game phases:
-    - Game World: Implementation of exterior maps and interior house layouts.
-    - Menu World: Development of the title screen and navigation.
-- Controls: Player movement using WASD and implementation of basic collision systems.
+    - Game World: Implementation of interior of both houses and exteriror map exploring.
+    - Menu World: Development of initia screen and navigation.
+- Controls: Player movement using WASD or arrow keys and implementation of basic collision systems.
 
 
 **2. Week 2 — Exploration and World** (May 12–18)
-- Interactions: A robust system for object interaction, including:
-    - Starting Letter: Serves as the controls tutorial for the player.
+- Interactions: A system for object interaction, including:
     - Doors: Mechanics for entering and exiting houses.
     - Hidden Cards: Discoverable elements scattered across the map.
-- Environment: Day/night cycle with dynamic palette and lighting shifts.
 - UI/HUD: Basic interface elements for tracking gameplay:
     - Health Bar: Visual representation of player vitality.
     - Energy Bar: Visual representation of resource levels.
+- Battle: Enemy interaction and card development to fight with it
 
 
 **3. Week 3 — Combat System** (May 19–25)
 - Mechanics: Core card system functionality:
-    - Hand Overplay: Management of the player&apos;s active hand.
+    - Hand Overplay: Management of the player's active hand.
     - Energy Trade-Off: Consumption of energy per turn.
     - Interaction: Card execution triggered on click events.
 - Classification: Implementation of card types:
     - Attack: Cards that deal damage.
     - Defense: Cards that provide protection.
-    - Healing: Cards that restore health.
+    - Wildcard: Cards that restore health.
     - Control: Cards for crowd management.
 - Encounter: Initial combat sequence against Little Jimmy.
 - Logic: Defeat conditions and reset mechanics (return to 3 random cards).
@@ -567,23 +565,20 @@ The game will feature two tracks that define the gameplay state, designed to dis
 
 **4. Week 4 — Progression and Content** (May 26 – June 1)
 - Progression: Experience system and card unlocking mechanics.
-- Upgrades: Fusion of duplicate cards to level up stats.
+- Upgrades: Upgrade cards developed in Little Jimmy's house.
 - Scaling: Three distinct combat encounters against Little Jimmy with escalating difficulty.
-- Variability: Roguelite elements introduced via layout variations per night.
+- Variability: Roguelite elements introduced via layout variations per round.
 
 
 **5. Week 5 — Polish and Delivery** (Jun 2–8)
 - Art Assets: Final sprites and illustrations, including:
     - Protagonist: Idle and movement animations.
-    - Little Jimmy: Sprites for normal and monster forms.
+    - Little Jimmy: Sprites for monster forms.
     - Cards: Unique illustrations for each card category.
 - Audio Design: Soundscape development:
     - Exploration Music: Looping ambient tracks.
     - Combat Music: Looping high-energy tracks.
     - Sound Effects: Specific audio cues for gameplay:
-        - Environment: Player footsteps and door opening sounds.
-        - Interactions: Shimmer sounds for card discovery.
-        - Mechanics: Audio effects tailored to each card type.
 - Interface: Creation of secondary game screens:
     - Collection: Inventory and card collection screens.
     - Credits: Ending sequence and contributor list.
