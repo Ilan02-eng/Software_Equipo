@@ -499,6 +499,7 @@ This way we maintain a cohesive atmosphere while providing a dynamic shift in th
 - The sound effects (SFX) are designed to provide feedback to the auditory player, ensuring each interaction from the player feels responsive, intuitive and impactful. To maintain the aesthetic of the game, the sound effects design will be inspired by a retro bit style, matching the game’s pixel-art identity.
 - **Interactions**  
     - Finding a card, like a folding card effect.
+    - Entering Little Jimmy's House: door creek and wind sound, typical scary movie audio
 
 2. ***Feedback***
 - Due to current development scope, the feedback from sound effects will be kept  direct and functional. Beyond basic interactions, the sound effects serve to communicate the player’s status and the weight of their choices, the combat feedback is prioritized through different sounds that signal the state of the battle and the actions that are taking place.
@@ -512,7 +513,11 @@ The game will feature two tracks that define the gameplay state, designed to dis
 ***Details:***
 - **Atmospheric Exploration (Main Track):** 
     - Style: Ambient, melodic and immersive.
-    - Function: This track plays during the Title Screen, World Map, Inventory and Credits. It’s meant to be non-intrusive, allowing the player to focus on the game while still being immersed in the atmosphere that it provides for the game.
+    - Function: This track plays during the World Map, Inventory and Credits. It’s meant to be non-intrusive, allowing the player to focus on the game while still being immersed in the atmosphere that it provides for the game.
+
+- **Inside your house:**
+    - Style: Funky rhythm and animated style
+    - Function: Compared to the main track, this song is supposed to symbolize how you are supposed to stay happy throughout the game and keep everything running.  
 
 - **Combat (Battle Track):**
     - Style: High tempo, percussive and driving.
