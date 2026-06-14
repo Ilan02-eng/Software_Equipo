@@ -120,6 +120,7 @@ Then, we require the usage of a second terminal, in there we should include the 
 node statistics.js
 ```
 
+## Instructions for the game itself 
 **Game controls**
 
 *Movement*
