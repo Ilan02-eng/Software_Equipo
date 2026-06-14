@@ -91,14 +91,34 @@ Software_Equipo/
 ## Running the game
 
 ### How to download the files?
-For running the game,
+For running the game, we will require to either download all the files or clone the repository [Software_Equipo](https://github.com/Ilan02-eng/Software_Equipo). 
 
+For clonning use the commands
+```
+git clone <repository-url> 
+cd Software_Equipo
+```
 
-**What does this repository include?:**
+### Requirements before the run
+Install the following libraries:
+- Node.js
+- npm
+- express
+- cors
+- dotenv
+- mysql2
 
+### After downloads
+Open the terminal and run the command
+```
+node API_Catharsis.js
+```
 
+Then, we require the usage of a second terminal, in there we should include the command:
 
-
+```
+node statistics.js
+```
 
 **Game controls**
 
