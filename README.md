@@ -11,7 +11,7 @@
 
 ## Structure of the repository
 
-```text
+```
 Software_Equipo/
 │
 ├── Actividades/
@@ -120,15 +120,16 @@ Then, we require the usage of a second terminal, in there we should include the 
 node statistics.js
 ```
 
-## Instructions for the game itself 
-**Game controls**
+When this process is completed, we will open the file "[Run_Menu](https://github.com/Ilan02-eng/Software_Equipo/blob/main/Videogame/Web/html/Run_Menu.html)" that is placed inside the folder ***Web***, through the browser of your choice
 
-*Movement*
+```
+Videogame/Web/html/Run_Menu.html
+```
 
-| Letter Key |  Arrow key |    Action  |
-|------------|------------|------------|
-|      W     |      ↑     |   Move Up  |
-|      A     |      ←     |  Move Left |
-|      S     |      ↓     |  Move Down |
-|      D     |      →     | Move Right |
-
+Opening this folder will open a webpage that will display the webpage with different options about the game, including the options to:
+- Start the game
+- Browse the tutorial
+- Display the statistics
+- Login and logout
+- Register as a new user
+- Show information about the project 
