@@ -1,12 +1,12 @@
 "use strict";
 
-const canvasWidth = 800;
-const canvasHeight = 600;
+const canvasWidth = 800; //Fixed width of the game canvas in pixels
+const canvasHeight = 600; //Fixed height of tne game canvas in pixels
 
-let ctx;
-let game;
-let oldTime;
-let playerSpeed = 0.3;
+let ctx; //Canvas 2D rendering conext
+let game; //Main game object
+let oldTime; //Time of previous frame
+let playerSpeed = 0.3; //Base movement speed for the player
 
 //Main states and scenes of the game
 const SCENES = {
@@ -18,22 +18,23 @@ const SCENES = {
   UPGRADE: "upgrade",
   GAME_OVER: "game_over",
   VICTORY: "victory",
-
   PAUSE: "pause",
   NEXT_DAY: "next_day",
   CREDITS: "credits",
   STATS: "stats",
-
   DECK: "deck",
   CARD_REWARD: "card_reward",
 };
 
+//Array that has the available character upgrades
+//and their stat affected
 const UPGRADES = [
   {
     name: "+15 HP",
     description: "Increase max life",
     color: "green",
     action: (player) => {
+      //Increases max HP by 15
       player.maxHP += 15;
       player.hp = player.maxHP;
     },
@@ -43,31 +44,38 @@ const UPGRADES = [
     description: "Increase max energy",
     color: "blue",
     action: (player) => {
+      //Increases max energy by 10
       player.maxEnergy += 10;
       player.energy = player.maxEnergy;
     },
   },
 ];
 
-//Types of cards and defines the colors that each type has
+//Types of cards available for constant use
 const CARD_TYPES = {
   ATTACK: { color: "red", label: "Attack" },
   DEFENSA: { color: "lightgreen", label: "Defensive" },
   CONTROL: { color: "lightblue", label: "Control" },
 };
 
-//Pool of available cards for the combat, each card has a direct effect that affects either the player or the enemy
+//API to connect the game to the database
 const API_URL = "http://localhost:3000";
 
+//Array of cards empty that updates depending on the cards the player finds
+//during a run
 let CARD_POOL = [];
 
+//Fetches the card data from the API and populates the CARD_POOL array
 async function loadCardsFromDB() {
+  //Retrieves the JSON list of cards from the database
   const response = await fetch(`${API_URL}/cards`);
   const dbCards = await response.json();
 
+  //Filters out the wildcards  and formats the remaining cards for use in game
   CARD_POOL = dbCards
     .filter((card) => card.type !== "Wildcard")
     .map((card) => {
+      //Loads the visual sprite of each of the cards
       const sprite = `../../VisualsVideogame/Cards/${card.card_ID}.png`;
       const img = new Image();
       img.src = sprite;
@@ -77,6 +85,7 @@ async function loadCardsFromDB() {
         name: card.name,
         sprite: sprite,
         image: img,
+        //Maps the database card types to the game
         type:
           card.type === "Attack"
             ? CARD_TYPES.ATTACK
@@ -90,6 +99,7 @@ async function loadCardsFromDB() {
     });
 }
 
+//Backup function for cards actions
 function createCardAction(card) {
   if (card.name === "Sharp Claw") return (p, e) => (e.hp -= 15);
   if (card.name === "Shadow Pounce") return (p, e) => (e.hp -= 20);
@@ -113,7 +123,7 @@ function createCardAction(card) {
   return (p, e) => {};
 }
 
-//Defines de Wildcard card this card trades HP for energy
+//Back function for wildcard
 const WILDCARD = {
   name: "Wildcard",
   color: "purple",
@@ -127,19 +137,24 @@ const WILDCARD = {
   },
 };
 
+//Helper function to handle API request and error handling
 async function apiRequest(path, method = "GET", body = null) {
+  //Sets up the request with the HTTP method and JSON
   const options = {
     method,
     headers: { "Content-Type": "application/json" },
   };
 
+  //Gives a seriess to the apyload into a JSON string
   if (body !== null) {
     options.body = JSON.stringify(body);
   }
 
+  //Executes the fetch request and parses the JSON
   const response = await fetch(`${API_URL}${path}`, options);
   const data = await response.json().catch(() => ({}));
 
+  //Logs the error in casa of request failed
   if (!response.ok) {
     console.error("API error:", method, path, data);
     throw new Error(data.error || "API request failed");
@@ -148,10 +163,12 @@ async function apiRequest(path, method = "GET", body = null) {
   return data;
 }
 
+//Retrives the currently logged player's information ID from the browser storage
 function getLoggedPlayerID() {
   return localStorage.getItem("player_ID");
 }
 
+//Maps the keyboard inputs (WASD and arrow keys) for the standard movement directions
 const keyDirections = {
   w: "up",
   a: "left",
@@ -163,8 +180,9 @@ const keyDirections = {
   ArrowRight: "right",
 };
 
-// Data structure with the directions a character can move, the direction sign and the related animation.
+//Configuration object for the movement physics and animation frames
 const playerMotion = {
+  //Handles downward movement along with positive Y axis
   down: {
     status: false,
     axis: "y",
@@ -174,6 +192,7 @@ const playerMotion = {
     moveFrames: [0, 3],
     idleFrames: [0, 0],
   },
+  //Handles upward movement along with negative Y axis
   up: {
     status: false,
     axis: "y",
@@ -183,6 +202,7 @@ const playerMotion = {
     moveFrames: [4, 7],
     idleFrames: [4, 4],
   },
+  //Handles rightward movement along with positive X axis
   right: {
     status: false,
     axis: "x",
@@ -192,6 +212,7 @@ const playerMotion = {
     moveFrames: [8, 11],
     idleFrames: [8, 8],
   },
+  //Handles leftward movement along with negative X axis
   left: {
     status: false,
     axis: "x",
@@ -203,8 +224,9 @@ const playerMotion = {
   },
 };
 
-//Class to create and draw the HP and energy bars during the combat scene
+//Class responsible for rendering HP and energy UI bars for the combat state
 class combatBars {
+  //Initializes the bar's dimensions, target, stat type (HP or Energy) and color
   constructor(position, width, height, target, type, color) {
     this.position = position;
     this.width = width;
@@ -214,6 +236,7 @@ class combatBars {
     this.barColor = color;
   }
 
+  //Calculates the stat percentage and renders the bar
   draw(ctx) {
     let current;
     let max;
@@ -254,19 +277,21 @@ class combatBars {
   }
 }
 
-//Defines de character that the player plays as, controls the movement, stats, collisons and characteristics of the player.
+//Controls the player character's movement, stats and collisions
 class Player extends GameObject {
+  //Initializes player base stats, velocity and visual properties
   constructor(position, width, height, color, sheetCols) {
     super(position, width, height, color, "player", sheetCols);
     this.velocity = new Vector(0, 0);
 
     this.maxHP = 100;
     this.hp = this.maxHP;
-    this.evasionChance = 0;
+    this.evasionChance = 0; //Stat that allows the player to block an dincoming attack
     this.maxEnergy = 150;
     this.energy = this.maxEnergy;
   }
 
+  //Updates movement per frame
   update(deltaTime) {
     if (
       game &&
@@ -286,6 +311,7 @@ class Player extends GameObject {
     this.clampWithinCanvas();
   }
 
+  //Prevents the player from movimg outside the map boundaries/limits
   clampWithinCanvas() {
     if (this.position.y < 0) {
       this.position.y = 0;
@@ -301,13 +327,17 @@ class Player extends GameObject {
   }
 }
 
-//Defines the enemy during combat (stats of the enemy)
+//Defines the enemy during combat, handles their random generation, stat scaling
+//and damage calculation per attack during combat
 class Enemy extends GameObject {
+  //Initializes the enemy with a random type from a predefined list
+  //and generates stats
   constructor(position, width, height, color) {
     super(position, width, height, color);
 
     this.enemyTypes = [
       {
+        //Little Jimmy stats (has more HP and less damage) and sprite
         name: "Little Jimmy",
         hp_min: 100,
         hp_max: 120,
@@ -316,6 +346,7 @@ class Enemy extends GameObject {
         sprite: "../assets/sprites/monster_littlejimmy.png",
       },
       {
+        //Rotoplas stats (has more damage and less HP) and sprite
         name: "Rotoplas",
         hp_min: 70,
         hp_max: 85,
@@ -342,11 +373,13 @@ class Enemy extends GameObject {
     this.generateStats(1);
   }
 
+  //Selects and returns a random enemy type from the pool
   getRandomEnemy() {
     let randomIndex = Math.floor(Math.random() * this.enemyTypes.length);
     return this.enemyTypes[randomIndex];
   }
 
+  //Calculates and assigns maximum HP and damage ranges scaled by enemy's level
   generateStats(level) {
     this.enemy_lvl = level;
     this.enemy_name = this.enemyType.name;
@@ -361,28 +394,29 @@ class Enemy extends GameObject {
     this.hp = this.maxHP;
     this.stunnedTurns = 0;
 
-    this.setSprite(
-    this.enemyType.sprite,
-    new Rect(0, 0, 1000, 1000)
-  );
+    this.setSprite(this.enemyType.sprite, new Rect(0, 0, 1000, 1000));
   }
 
+  //returns  a random damage amount based on the nemy's calculating damage ranges
   randomDamage() {
     return this.randomNumber(this.dmg_min, this.dmg_max);
   }
 
+  //Helper function that returns integer value between ranges min and max
   randomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 }
 
-//Represents the interior areas of the map
+///Represents interior map areas, amanaging physics and collisions in it
 class Room extends GameObject {
+  //Initializes room properties inclidong dimensions and apperance
   constructor(position, width, height, color, sheetCols) {
     super(position, width, height, color, "room", sheetCols);
     this.velocity = new Vector(0, 0);
   }
 
+  //Updates room movement based on delta time and respawns the player and collisions
   update(deltaTime) {
     this.velocity = this.velocity.normalize().times(playerSpeed);
     this.position = this.position.plus(this.velocity.times(deltaTime));
@@ -390,8 +424,9 @@ class Room extends GameObject {
   }
 }
 
-//Defines the random generation of the 9 rooms of the house
+//Manages the generation, layout and room conections for the house map
 class MapHouse {
+  //Defines map and room transitions, coordinate positions and categorization
   constructor() {
     this.map_transitions = [
       [9, 3],
@@ -430,7 +465,7 @@ class MapHouse {
     this.enemyRoomID = null;
   }
 
-  //Generates all the "normal" rooms of the house
+  //Populates the map with fixed rooms assigns a spawn chance to random rooms
   randomMap() {
     this.activeRooms = [];
 
@@ -468,7 +503,7 @@ class MapHouse {
     this.enemyRoomID = possibleRooms[random];
   }
 
-  //Lets the player go from one room to the other and the other way around
+  //Validates if movement between 2 adjacent active rooms is valid
   canPass(fromRoom, toRoom) {
     if (!this.activeRooms.includes(toRoom)) {
       return false;
@@ -485,7 +520,7 @@ class MapHouse {
     return false;
   }
 
-  //Defines the position of each door in the new room
+  //Returns array of active adjacent rooms connected to the room ID
   getDoorsFrom(roomID) {
     let doors = [];
 
@@ -505,6 +540,7 @@ class MapHouse {
     return doors;
   }
 
+  //Calculates and returns the cardinaldirection from one rooom to another
   getDirection(fromRoom, toRoom) {
     let from = this.roomPositions[fromRoom];
     let to = this.roomPositions[toRoom];
@@ -518,8 +554,9 @@ class MapHouse {
   }
 }
 
-//Controls all the logic and mechanics of the game such as the combat, cards, flow, collisions, etc.
+//Central controller for game logic, managing scenes, actors, state and database interactions
 class Game {
+  //Initializes game state, database variables, map generation, stats and visual/audio assets
   constructor() {
     this.currentScene = SCENES.CASA;
     this.actors = [];
@@ -527,7 +564,6 @@ class Game {
 
     this.enemy = null;
 
-    // Database IDs and counters
     this.player_ID = getLoggedPlayerID();
     this.run_ID = null;
     this.combat_ID = null;
@@ -565,15 +601,14 @@ class Game {
     this.worldHeight = canvasHeight * 3;
 
     this.music = {
-      villa: new Audio("../assets/audio/villa.wav"),
-      casa: new Audio("../assets/audio/casa.wav"),
-      casa_lj: new Audio("../assets/audio/casalj.mp3"),
-      habitacion: new Audio("../assets/audio/casa.wav"),
-      combate: new Audio("../assets/audio/combate.wav"),
+      villa: new Audio("../assets/audio/villa.wav"), //Music for the outside map (VILLA)
+      casa: new Audio("../assets/audio/casa.wav"), //Music for the player's house
+      casa_lj: new Audio("../assets/audio/casalj.mp3"), //Music for the enemy house
+      habitacion: new Audio("../assets/audio/casa.wav"), //Music for each room
+      combate: new Audio("../assets/audio/combate.wav"), //Music for combat state
     };
-
     this.sounds = {
-      card: new Audio("../assets/audio/unacarta.wav"),
+      card: new Audio("../assets/audio/unacarta.wav"), //Audio when finding a new card
     };
 
     this.currentMusic = null;
@@ -604,6 +639,7 @@ class Game {
     this.wildcardType = null;
   }
 
+  //Initializes a new game run in the databse for the logged player and generates the run ID
   async startRunInDB() {
     if (!this.player_ID) {
       console.warn("No player_ID found. Login first to save stats.");
@@ -622,6 +658,7 @@ class Game {
     }
   }
 
+  //Ensures a valid run ID exists, waiting pending initialization or creating a new run if needed
   async ensureRunInDB() {
     if (this.run_ID) return this.run_ID;
     if (this.runPromise) await this.runPromise;
@@ -629,6 +666,8 @@ class Game {
     return await this.startRunInDB();
   }
 
+  //Creates a new combat record in the database for the current run and enemy
+  //returns the combat ID
   async startCombatInDB() {
     try {
       const run_ID = await this.ensureRunInDB();
@@ -645,6 +684,8 @@ class Game {
       console.error("Could not create combat in DB:", error);
     }
   }
+
+  //Renders a UI displayimg the username on the canvas
   drawUsername(ctx) {
     ctx.fillStyle = "rgba(0,0,0,0.6)";
     ctx.fillRect(560, 15, 160, 40);
@@ -659,15 +700,18 @@ class Game {
     ctx.fillText(this.username, 610, 40);
   }
 
+  //Deletes current player's save data from the browser's storage
   deleteSave() {
     if (!this.player_ID) return;
     localStorage.removeItem(this.getSaveKey());
   }
 
+  //Generates a unique storage key used to save and load current player's data
   getSaveKey() {
     return "catharsisSave_" + this.player_ID;
   }
 
+  //Resets the tarcking metrics for the current combat to 0
   resetCombatStats() {
     this.combatStats = {
       dmg_done: 0,
@@ -677,6 +721,7 @@ class Game {
     };
   }
 
+  //Sends and saves the tracked statistics for the current combat to the database
   async saveCombatStatsInDB() {
     if (!this.combat_ID || !this.combatStats) return;
 
@@ -691,6 +736,7 @@ class Game {
     }
   }
 
+  //logs a played card to the database with the current run and combat
   async saveCardUsedInDB(cardName) {
     try {
       const run_ID = await this.ensureRunInDB();
@@ -705,6 +751,7 @@ class Game {
     }
   }
 
+  //Updates the current player's HP and energy stats in the database
   async savePlayerStatsInDB() {
     if (!this.player_ID || !this.player) return;
 
@@ -718,6 +765,7 @@ class Game {
     }
   }
 
+  //Marks the run as finished, saves and updates final player statistics to the database with the run's result
   async finishRunInDB(result) {
     if (this.runFinished) return;
     this.runFinished = true;
@@ -735,8 +783,9 @@ class Game {
     }
   }
 
-  //Creates all the objects of the game includes the player, enemy, rooms, houses, etc.
+  //Configures all game entities (player, enemies, houses, rooms, bushes)
   initObjects() {
+    //Creates main character , sets initial stats, assigns spites and defines movement
     this.player = new AnimatedPlayer(
       new Vector(canvasWidth / 2, canvasHeight / 2),
       80,
@@ -756,6 +805,7 @@ class Game {
     this.player.maxEnergy = 150;
     this.player.energy = 150;
 
+    //Creates and sets up the main game strcutures (character's house and enemy house)
     this.casa = new GameObject(
       new Vector(canvasWidth / 4 + 450, canvasHeight + 300),
       400,
@@ -780,6 +830,7 @@ class Game {
     );
     this.casa_lj.setCollider(380, 200);
 
+    //Defines the trigger and collision areas used for scene stransitions
     this.salida_casa = new GameObject(
       new Vector(canvasWidth / 2, 590),
       120,
@@ -815,6 +866,7 @@ class Game {
       "rgba(0,0,0,0)",
     );
 
+    //Defines room limits
     this.room_1 = new Room(
       new Vector(canvasWidth / 2 + 60, canvasHeight - canvasHeight + 60),
       200,
@@ -836,6 +888,7 @@ class Game {
       "rgba(0,0,0,0)",
     );
 
+    //Creates the enemy entity and it's sprite
     this.enemy = new Enemy(
       new Vector(canvasWidth - 170, 195),
       200,
@@ -843,6 +896,7 @@ class Game {
       "orange",
     );
 
+    //Creates treasure chest objects inside the rooms to find upgrades or wildcards and it's sprite
     this.roomUpgrade = new GameObject(new Vector(350, 250), 90, 90, "yellow");
 
     this.roomUpgrade.setSprite(
@@ -851,6 +905,7 @@ class Game {
     );
     this.roomUpgrade.setCollider(70, 60);
 
+    //Generates the bushes accross the exterior map, ensuring no overlap with houses and card drops
     this.bushes = [];
 
     const bushSprites = [
@@ -886,6 +941,7 @@ class Game {
         collected: false,
       });
     }
+    //Loads allrequired sprites for backgrounds and screens of the game
     this.backgroundVilla = new GameObject(
       new Vector(0, 0),
       canvasWidth,
@@ -932,6 +988,7 @@ class Game {
     this.energyUpgradeImg = new Image();
     this.energyUpgradeImg.src = "../../VisualsVideogame/Cards/16.png";
 
+    //Creates the wildcards and assigns the sprite of each one
     this.wildcardImages = {
       1: new Image(),
       2: new Image(),
@@ -943,6 +1000,8 @@ class Game {
     this.wildcardImages[3].src = "../../VisualsVideogame/Cards/15.png";
   }
 
+  //handles the audio playback logic, ensurin only one track is playing at a time
+  //Sets the music for each scene transition
   playMusic(name) {
     if (!this.musicEnabled) return;
     if (name === SCENES.HABITACION) name = "casa_lj";
@@ -967,11 +1026,11 @@ class Game {
     this.currentMusic = name;
   }
 
+  //Updates the camera postions to follow the player within the map
   updateCamera() {
     this.camera.x = this.player.position.x - canvasWidth / 2;
     this.camera.y = this.player.position.y - canvasHeight / 2;
 
-    // Clamping para no salir del mundo
     this.camera.x = Math.max(
       0,
       Math.min(this.camera.x, this.worldWidth - canvasWidth),
@@ -994,14 +1053,16 @@ class Game {
       possibleRooms[Math.floor(Math.random() * possibleRooms.length)];
   }
 
-  //Detects when a player is entering another room and defines which room or place is
+  //Manages the logic miving between rooms and triggering transitions
   enterRoom(roomID) {
+    //Checks if the movement to the target room is allowed based on the house map configuration
     if (!this.mapHouse.canPass(this.currentRoom, roomID)) {
       return;
     }
 
     let previousRoom = this.currentRoom;
 
+    //Handles specific logic for exiting the house
     if (roomID === 9) {
       this.currentRoom = 3;
       this.player.velocity = new Vector(0, 0);
@@ -1018,19 +1079,21 @@ class Game {
 
       return;
     }
+
+    //Updates room state and repostions the player based on the entry door
     this.currentRoom = roomID;
     this.player.velocity = new Vector(0, 0);
     this.setPlayerPositionFromDoor(previousRoom, roomID);
 
+    //Transitions to combat or interior room scenes based on the room ID
     if (roomID === this.enemyRoomID) {
       this.loadScene(SCENES.COMBATE);
       return;
     }
-
     this.loadScene(SCENES.HABITACION);
   }
 
-  //Position of the other of the house
+  //Maps a navigation direction to its corresponding room or exit
   getDoorByDirection(direction) {
     if (direction === "top") return this.room_1;
     if (direction === "bottom") return this.room_2;
@@ -1039,6 +1102,7 @@ class Game {
     return null;
   }
 
+  //selects a random card from the available pool and triggers the rewards scene
   giveRandomCard() {
     let randomCard = CARD_POOL[Math.floor(Math.random() * CARD_POOL.length)];
     if (!randomCard) return;
@@ -1055,16 +1119,19 @@ class Game {
     }
     this.loadScene(SCENES.CARD_REWARD);
   }
-  //Loads the door of each room in the house
+
+  //Configures exit doors for the current room based on the map generation
   loadHouseDoors() {
     let doors = this.mapHouse.getDoorsFrom(this.currentRoom);
 
+    //Reset current room's exit trggers
     this.room_1.roomID = undefined;
     this.room_2.roomID = undefined;
     this.room_3.roomID = undefined;
     this.salida_casa_lj.roomID = undefined;
     this.actors = [this.player];
 
+    //Assign new room IDs to active doors and adds them into the actors list interactions
     for (let i = 0; i < doors.length; i++) {
       let roomID = doors[i];
       let direction = this.mapHouse.getDirection(this.currentRoom, roomID);
@@ -1077,11 +1144,12 @@ class Game {
     }
   }
 
-  //Defines the distance and position of the player when going through a door
+  //Sets the player's entry position and oriantation based on the direction they entered the new room
   setPlayerPositionFromDoor(fromRoom, toRoom) {
     let direction = this.mapHouse.getDirection(fromRoom, toRoom);
     let faceDirection = "down";
 
+    //Calculates entry point based on the direction of the door
     if (direction === "top") {
       this.player.position = new Vector(canvasWidth / 2, canvasHeight - 140);
       faceDirection = "up";
@@ -1096,18 +1164,22 @@ class Game {
       faceDirection = "right";
     }
 
+    //Stops the player movement
     this.player.velocity = new Vector(0, 0);
     this.player.keys = [];
 
+    //Sets animation ,atching entry direction
     if (this.player.motion && this.player.motion[faceDirection]) {
       this.player.currentFrame =
         this.player.motion[faceDirection].idleFrames[0];
       this.player.currentAnimation = faceDirection;
     }
 
+    //Collision box for the new position
     this.player.updateCollider();
   }
 
+  //Saves and posts the current cpmbat stats to the database
   async saveCombatStatsDB() {
     if (!this.combat_ID) return;
 
@@ -1125,14 +1197,15 @@ class Game {
     });
   }
 
-  //Generates a random card form CARD_POOL and adds it to a specific position of the combat UI
+  //Generates a random (non-duplicate) card from the available pool of card of the run
   getRandomCard(posX) {
+    //Ensure there are available cards
     if (this.unlockedCards.length === 0) {
       return null;
     }
 
+    //Filter to prevent drawing cards thata are already in the current combat hand
     let cardsInCombat = this.cards.map((card) => card.name);
-
     let availableCards = this.unlockedCards.filter(
       (card) => !cardsInCombat.includes(card.name),
     );
@@ -1141,6 +1214,7 @@ class Game {
       return null;
     }
 
+    //Selects a random card and puts it the specific UI positioning and properties (and spite)
     let randomIndex = Math.floor(Math.random() * availableCards.length);
     let randomCard = availableCards[randomIndex];
 
@@ -1160,48 +1234,60 @@ class Game {
     };
   }
 
-  //Generates de special card "Wildcard" for the combat UI
-    getWildcard() {
-      return {
-        x: 650,
-        y: 460,
-        w: 110,
-        h: 130,
+  //Generates and gives the format to the wildcard object with its fixed UI and sprite
+  getWildcard() {
+    //Fixed positioning and dimensions for the wildcard slot of the UI
+    return {
+      x: 650,
+      y: 460,
+      w: 110,
+      h: 130,
 
-        name: WILDCARD.name,
-        color: WILDCARD.color,
-        cost: WILDCARD.cost,
-        effect: WILDCARD.effect,
-        action: WILDCARD.action,
+      //Properties inherited from the wildcard contant
+      name: WILDCARD.name,
+      color: WILDCARD.color,
+      cost: WILDCARD.cost,
+      effect: WILDCARD.effect,
+      action: WILDCARD.action,
 
-        image: this.wildcardImages[this.wildcardType],
+      //Assigns the specific visual based on the current wildcard
+      image: this.wildcardImages[this.wildcardType],
 
-        isWildcard: true,
-      };
-    }
+      isWildcard: true,
+    };
+  }
+
+  //Handles post-combat logic upon defeating an enemy, managing victory conditions
+  //or advancing to the next day/level
   enemyDefeated() {
+    //Log the results of the recent combat and update player stats in the database
     this.saveCombatStatsInDB();
     this.savePlayerStatsInDB();
 
+    //If the max day is reached, registers the win and has a transition to the victory screen
     if (this.day >= this.maxDay) {
       this.finishRunInDB("Win");
       this.loadScene(SCENES.VICTORY);
       return;
     }
 
+    //Advences to the next day and resets the map for the bushes rewards
     this.day++;
     this.saveGame();
     this.resetBushCards();
 
+    //Relocates the enemy to a new room and increases it's stats for the new level difficulty
     this.randomEnemyLocation();
     this.enemy.enemyType = this.enemy.getRandomEnemy();
     this.enemy.generateStats(this.day);
 
+    //Shows the next day screen
     this.loadScene(SCENES.NEXT_DAY);
   }
 
-  //Starts the combat (resets the HP and energy, generates de 4 cards of the deck, HP and energy bars and generates the enemy)
+  //Initializes a new combat encounter by ressetting stats and setting up UI elemnts for the combat
   combatHand() {
+    //Clears previus combat data, restores stats and effects and logs to the database
     this.cards = [];
     this.wildcardUsed = false;
     this.combat_ID = null;
@@ -1215,6 +1301,7 @@ class Game {
     this.enemy.stunnedTurns = 0;
     this.combatFinished = false;
 
+    //Creates the player´s hand with up to 4 cards
     for (let i = 0; i < 4; i++) {
       let posX = 40 + i * 140;
       let card = this.getRandomCard(posX);
@@ -1224,8 +1311,10 @@ class Game {
       }
     }
 
+    //Conditionally loads the wildcard into the hand if the players has found it
     this.wildcard = this.hasWildcard ? this.getWildcard() : null;
 
+    //Generates the visual HP and energy bars for both player and enemy
     this.playerHPBar = new combatBars(
       new Vector(40, 40),
       250,
@@ -1252,8 +1341,9 @@ class Game {
     );
   }
 
-  //Changes the states of the game to specific scenes
+  //Handles the transition logic between different game scenes, updating actors, music and player state
   loadScene(scene) {
+    //Updates the current scene state and triggers music, makes the transition and stops the player movement
     this.currentScene = scene;
     this.playMusic(this.currentScene);
     this.transitionCooldown = 30;
@@ -1263,8 +1353,10 @@ class Game {
       this.player.keys = [];
     }
 
+    //Configures the enviroment and active actors based on the scene
     switch (scene) {
       case SCENES.VILLA:
+        //Exterior map: loads player, houses and bushes
         this.player.velocity = new Vector(0, 0);
         this.actors = [this.player, this.casa, this.casa_lj];
 
@@ -1274,6 +1366,7 @@ class Game {
         break;
 
       case SCENES.CASA:
+        //Player's house: centers the player near the entrance
         this.player.velocity = new Vector(0, 0);
 
         this.player.position = new Vector(canvasWidth / 2, canvasHeight - 120);
@@ -1282,6 +1375,7 @@ class Game {
         break;
 
       case SCENES.CASA_LJ:
+        //Enemy house: Generates the doors
         this.player.velocity = new Vector(0, 0);
         this.loadHouseDoors();
         this.hiddenDoors = this.actors.filter((a) => a !== this.player);
@@ -1289,6 +1383,7 @@ class Game {
         break;
 
       case SCENES.HABITACION:
+        //Standar room: loads doors and spawns the upgrade chests
         this.player.velocity = new Vector(0, 0);
         this.loadHouseDoors();
         if (!this.collectedRoomUpgrades[this.currentRoom]) {
@@ -1297,17 +1392,20 @@ class Game {
         break;
 
       case SCENES.COMBATE:
+        //Combat: repositions the player and starts the combat state
         this.actors = [this.player, this.enemy];
         this.player.position = new Vector(150, canvasHeight * 0.3);
         this.combatHand();
         break;
 
       case SCENES.CARD_REWARD:
+        //Reward card: displays the UI of the card the players has found
         this.player.velocity = new Vector(0, 0);
         this.actors = [];
         break;
 
       case SCENES.UPGRADE:
+        //Upgrade slection: defines the UI buttons for the upgrades.
         this.player.velocity = new Vector(0, 0);
 
         if (this.upgradeReturnScene === SCENES.VILLA) {
@@ -1342,6 +1440,7 @@ class Game {
     }
   }
 
+  //Renders the upgrade UI with information of each upgrade and their sprites
   drawUpgradeScreen(ctx) {
     ctx.fillStyle = "rgba(80, 80, 80, 0.65)";
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
@@ -1351,12 +1450,15 @@ class Game {
     ctx.textAlign = "center";
     ctx.fillText("Choose an Upgrade", canvasWidth / 2, 150);
 
+    //Iterates the upgrade options to draw their graphics and labels
     for (let button of this.upgradeButtons) {
       let upgrade = button.upgrade;
 
+      //Determines which sprite to display based on the upgrade type
       let sprite =
         upgrade.name === "+15 HP" ? this.hpUpgradeImg : this.energyUpgradeImg;
 
+      //Renders the sprite and the description below it
       if (sprite && sprite.complete) {
         ctx.drawImage(sprite, button.x + 15, button.y, 200, 200);
       }
@@ -1373,7 +1475,9 @@ class Game {
     }
   }
 
+  //Renders the pause button UIand initializes the screen
   drawPauseButton(ctx) {
+    //Prevents the button from being drawn durin non-interactive screens
     if (
       this.currentScene === SCENES.PAUSE ||
       this.currentScene === SCENES.GAME_OVER ||
@@ -1398,7 +1502,9 @@ class Game {
     ctx.fillText("II", 760, 43);
   }
 
+  //Renders the deck managment screen, displaying the player's found cards and stats
   drawDeckScreen(ctx) {
+    //Sets up the main UIand displays the card inventory count
     ctx.fillStyle = "#1f1f1f";
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
@@ -1414,6 +1520,8 @@ class Game {
       90,
     );
 
+    //Iterates over unlocked cardsto drw them in a 5 column layout
+    //Generates an "X" button so the player can delete a card if they want to from their inventory
     let startX = 60;
     let startY = 115;
     let cardW = 130;
@@ -1461,6 +1569,7 @@ class Game {
       ctx.fillText("X", bx + 12, by + 17);
     }
 
+    //Shows the player's current HP and energy, and if they have unlocked the wildcard
     ctx.fillStyle = "white";
     ctx.font = "bold 26px Arial";
     ctx.textAlign = "center";
@@ -1491,8 +1600,9 @@ class Game {
     ctx.fillText("BACK", 85, 552);
   }
 
-  //Draws the actors, messages and UIs of the game
+  //Acts as the main function that draw calls for background, actors, UI and screens
   draw(ctx) {
+    //Draws the reward card screen highlighting the newly acquired card and its effects
     if (this.currentScene === SCENES.CARD_REWARD) {
       ctx.fillStyle = "rgba(0,0,0,0.9)";
       ctx.fillRect(0, 0, canvasWidth, canvasHeight);
@@ -1532,11 +1642,13 @@ class Game {
       return;
     }
 
+    //Draws the deck screen that shows the acquired cards of the player and their stats
     if (this.currentScene === SCENES.DECK) {
       this.drawDeckScreen(ctx);
       return;
     }
 
+    //Draws the screen that indicates the player that they have passed to the next day/level
     if (this.currentScene === SCENES.NEXT_DAY) {
       ctx.fillStyle = "black";
       ctx.fillRect(0, 0, canvasWidth, canvasHeight);
@@ -1556,6 +1668,7 @@ class Game {
       return;
     }
 
+    //Draws the game over screen for when the player has lost the combat encounter
     if (this.currentScene === SCENES.GAME_OVER) {
       ctx.fillStyle = "black";
       ctx.fillRect(0, 0, canvasWidth, canvasHeight);
@@ -1575,6 +1688,7 @@ class Game {
       return;
     }
 
+    //Draws the pause screen for the player to stop the game for a moment
     if (this.currentScene === SCENES.PAUSE) {
       ctx.fillStyle = "black";
       ctx.fillRect(0, 0, canvasWidth, canvasHeight);
@@ -1594,6 +1708,7 @@ class Game {
       return;
     }
 
+    //Draws the screen scree that shows the names of the team members and inspirations for the game
     if (this.currentScene === SCENES.CREDITS) {
       ctx.fillStyle = "black";
       ctx.fillRect(0, 0, canvasWidth, canvasHeight);
@@ -1613,6 +1728,7 @@ class Game {
       return;
     }
 
+    //Draws the upgrade screen where the player can choose which upgrade they want to choose
     if (this.currentScene == SCENES.UPGRADE) {
       if (this.upgradeReturnScene === SCENES.HABITACION) {
         let doors = this.mapHouse.getDoorsFrom(this.currentRoom);
@@ -1680,6 +1796,7 @@ class Game {
       return;
     }
 
+    //Applies the camera  translations to handle scrolling, renders the actors and UI buttons
     if (this.currentScene == SCENES.VILLA) {
       ctx.save();
       ctx.translate(-this.camera.x, -this.camera.y);
@@ -1700,6 +1817,7 @@ class Game {
       return;
     }
 
+    //Draws the background along with the players as an actor and UI
     if (this.currentScene == SCENES.CASA) {
       ctx.drawImage(this.backgroundCasa, 0, 0, canvasWidth, canvasHeight);
       this.player.draw(ctx);
@@ -1708,6 +1826,7 @@ class Game {
       return;
     }
 
+    //Draws the background along with the players as an actor and UI
     if (this.currentScene == SCENES.CASA_LJ) {
       ctx.drawImage(this.backgroundCasa_enemy, 0, 0, canvasWidth, canvasHeight);
       this.player.draw(ctx);
@@ -1716,6 +1835,7 @@ class Game {
       return;
     }
 
+    //Calculates the door layout to select the proper backgound image, then draws the actors
     if (this.currentScene == SCENES.HABITACION) {
       let doors = this.mapHouse.getDoorsFrom(this.currentRoom);
       let directions = doors.map((d) =>
@@ -1770,6 +1890,7 @@ class Game {
       return;
     }
 
+    //Renders the combat backgound, entities, combat UI and the card hand of the player
     if (this.currentScene == SCENES.COMBATE) {
       if (this.backgroundCombat && this.backgroundCombat.complete) {
         ctx.drawImage(this.backgroundCombat, 0, 0, canvasWidth, canvasHeight);
@@ -1792,6 +1913,7 @@ class Game {
     }
   }
 
+  //Renders the deck acces button
   drawDeckButton(ctx) {
     if (
       this.currentScene === SCENES.PAUSE ||
@@ -1815,79 +1937,59 @@ class Game {
     ctx.fillText("DECK", 55, 40);
   }
 
-  //Render of each card individually
-  //Render of each card individually
-
+  //Renders an individual card within the UI, handling its visual state and asset sprite
   drawCardItem(ctx, card) {
+    //Checks if the card is a used wildcard to change its apperance
     let disabledWildcard = card.isWildcard && this.wildcardUsed;
-
     ctx.fillStyle = disabledWildcard ? "black" : card.color;
-
     ctx.fillStyle = "#222";
-
     ctx.fillRect(card.x, card.y, card.w, card.h);
-
     ctx.strokeStyle = "white";
-
     ctx.lineWidth = 2;
-
     ctx.strokeRect(card.x, card.y, card.w, card.h);
 
     if (card.image && card.image.complete) {
       ctx.drawImage(
         card.image,
-
         card.x + 5,
-
         card.y + 5,
-
         card.w - 10,
-
         card.h - 10,
       );
     }
-
     if (disabledWildcard) {
       ctx.fillStyle = "white";
-
       ctx.font = "bold 22px Arial";
-
       ctx.textAlign = "center";
-
       ctx.fillText("USED", card.x + card.w / 2, card.y + card.h / 2 + 10);
     } else {
       ctx.fillStyle = card.isWildcard ? "#cc0000" : "#e6b800";
-
       ctx.beginPath();
-
       ctx.arc(card.x + 22, card.y + 105, 14, 0, 2 * Math.PI);
-
       ctx.fill();
-
       ctx.stroke();
-
       ctx.fillStyle = "white";
-
       ctx.font = "bold 10px Arial";
-
       ctx.fillText(card.cost, card.x + 22, card.y + 109);
     }
   }
 
-  //UI of the combat scene
+  //Renders the interactive UI elements specific for the combat state
   drawCombatUI(ctx) {
+    //Renders HP and energy progress bars for both player and enemy
     this.playerHPBar.draw(ctx);
     this.playerEnergyBar.draw(ctx);
     this.enemyHPBar.draw(ctx);
 
+    //Iterates the active deck to draw the cards, and adds the wildcard if it's available
     for (let card of this.cards) {
       this.drawCardItem(ctx, card);
     }
-
     if (this.wildcard) {
       this.drawCardItem(ctx, this.wildcard);
     }
 
+    //Combat messages and enemy name
     ctx.fillStyle = "white";
     ctx.font = "bold 18px Arial";
     ctx.textAlign = "center";
@@ -1903,28 +2005,31 @@ class Game {
     ctx.fillText(this.enemy.enemy_name, 635, 55);
   }
 
-  //Controls the turns of the enemy during combat
+  //Executes the enemy's turn logic with an artificial delay, handling status effects and turn transitions
   enemyTurn() {
+    //Makes sure the game is still in combat screen before scheduling a turn
     if (this.currentScene !== SCENES.COMBATE) {
       return;
     }
-
+    //Introduces a 2 seconds delay to give a sense of time pace during the combat
     setTimeout(() => {
+      //Revalidates that the state in casa de scene changed during the timeoit
       if (this.currentScene !== SCENES.COMBATE) {
         return;
       }
-
+      //Checks if the nemy has any status effects of control, if so the effect counter is decrease and skip the attack
       if (this.enemy.stunnedTurns > 0) {
         this.enemy.stunnedTurns--;
         this.player.evasionChance = 0;
         this.endTurn();
         return;
       }
-
+      //Determines if the attack hits
       let randomRoll = Math.random();
-
+      //If the player has an evsaion effect they succesfully take 0 damage
       if (randomRoll < this.player.evasionChance) {
       } else {
+        //If they don't have an evasion effect calculates damage and is applied to the players HP and statistics
         let hpBefore = this.player.hp;
         let damage = this.enemy.randomDamage();
         this.player.hp -= damage;
@@ -1932,42 +2037,42 @@ class Game {
         if (this.combatStats) {
           this.combatStats.dmg_receive += realDamage;
         }
-
+        //Determines if the damage was enough to kill the player to transition to the game over screen
         this.playerDeath();
 
         if (this.currentScene === SCENES.GAME_OVER) {
           return;
         }
       }
-
+      //Resets the players effects (evasion) and pass control back to the player
       this.player.evasionChance = 0;
       this.endTurn();
     }, 2000);
   }
 
-  //Gives the turn back to the player
+  //Gives the turn back to the player after the enemy turn
   endTurn() {
     this.isPlayerTurn = true;
   }
 
-  //Restarts the run in case of player's death
+  //Handles the restart of the game after a player's death, logging the loss and starting a new run
   restartRun() {
+    //Finalizes the current combat and registers a Loss in the database
     this.saveCombatStatsInDB();
     this.finishRunInDB("Loss");
-
+    //Resets the day counter and beging a new run tracking session in the database
     this.day = 1;
     this.run_ID = null;
     this.combat_ID = null;
     this.runFinished = false;
     this.runPromise = this.startRunInDB();
-
+    //Rabdomizes the house layout again and slects a new enemy with day 1 stats
     this.mapHouse.randomMap();
     this.enemyRoomID = this.mapHouse.enemyRoomID;
     this.currentRoom = 3;
-
     this.enemy.enemyType = this.enemy.getRandomEnemy();
     this.enemy.generateStats(this.day);
-
+    //Restores the player
     this.player.hp = this.player.maxHP;
     this.player.energy = this.player.maxEnergy;
     this.player.evasionChance = 0;
@@ -1978,11 +2083,10 @@ class Game {
 
     this.message = "";
     this.messageTimer = 0;
-
+    //Loads the initial spawn scene
     this.loadScene(SCENES.CASA);
-
+    //Reverts the deck to starter cards only, removes the collected upgrades and resets the stats
     this.unlockedCards = this.unlockedCards.slice(0, 2);
-
     this.collectedRoomUpgrades = {};
     this.hasWildcard = false;
 
@@ -1998,12 +2102,15 @@ class Game {
     this.randomEnemyLocation();
   }
 
-  //Detects the death of the player when the HP bar reaches 0 during combat
+  //Evaluates if the player's HP has been depleted triggering the game over sequence
   playerDeath() {
+    //Verifies if the HP has dorpped to 0 or below
     if (this.player.hp <= 0) {
       this.player.hp = 0;
+      //Commits the final combat statistics and registers the overall run as a Loss
       this.saveCombatStatsInDB();
       this.finishRunInDB("Loss");
+      //Loads the game over screen
       this.loadScene(SCENES.GAME_OVER);
     }
   }
@@ -2175,8 +2282,12 @@ class Game {
         break;
     }
   }
+
+  //Stores the current game progression and player stats into local storage for the session persistence
   saveGame() {
+    //Ensures the valid player session exists before attempting to save
     if (!this.player_ID) return;
+    //Extracts the essential run data
     const saveData = {
       day: this.day,
 
@@ -2193,10 +2304,13 @@ class Game {
       collectedRoomUpgrades: this.collectedRoomUpgrades,
       wildcardType: this.wildcardType,
     };
-
+    //Converts the payload to a JSON string and saves it to the browser using a generated key
     localStorage.setItem(this.getSaveKey(), JSON.stringify(saveData));
   }
+
+  //Retrives and restores a previosly saved game state from the local storage
   loadGame() {
+    //Aborts if no player session exists and attempts to fetch the save payload if no data is found
     if (!this.player_ID) return;
 
     const save = localStorage.getItem(this.getSaveKey());
@@ -2204,7 +2318,7 @@ class Game {
     if (!save) return;
 
     const data = JSON.parse(save);
-
+    //Reassigns core progression and player attributes and cards
     this.day = data.day || 1;
 
     this.player.maxHP = data.maxHP || 100;
@@ -2232,22 +2346,26 @@ class Game {
     }
   }
 
+  //Iterates through the map the interactable bushes to randomize their cards and interactions for a new day
   resetBushCards() {
+    //Loops through all bushes reseting their collected flagso the can be interacted with again
     for (let bushData of this.bushes) {
       bushData.hasCard = Math.random() < 0.4;
       bushData.collected = false;
     }
   }
 
-  //Detects if the player selected a card with the CLICK
+  //Processes mouse clicks during the combat scene to detect card selections
   combatClick(mouseX, mouseY) {
+    //Ignores inputs if the game is not in active combat or if the enemy is attacking
     if (
       this.currentScene !== SCENES.COMBATE ||
       !this.isPlayerTurn ||
       this.player.hp <= 0
     )
       return;
-
+    //Iterates over the player's active hand, checking if the mouse coordinates with the card's box
+    //and executes the selected card
     for (let i = 0; i < this.cards.length; i++) {
       let card = this.cards[i];
       if (
@@ -2260,7 +2378,8 @@ class Game {
         return;
       }
     }
-
+    //Separetly evaluates the wildcard ensuring it exists and hasn't been used
+    //Validates if the player meets the HP cost
     let wild = this.wildcard;
     if (
       wild &&
@@ -2275,12 +2394,14 @@ class Game {
     }
   }
 
+  //Handles the playback of specific sound effects
   playSound(name) {
+    //Verifies that audio is globally enabled and that the requested audio asset exits
     if (!this.soundEnabled) return;
     if (!this.sounds || !this.sounds[name]) return;
 
     const sound = this.sounds[name];
-
+    //Pauses and rewinds the tarck to the beginning like a loop
     sound.pause();
     sound.currentTime = 0;
     sound.volume = 0.6;
@@ -2290,8 +2411,9 @@ class Game {
     });
   }
 
-  //Executes the selected card by the player during combat and turn
+  //Processes the logic for a player playing card, handling costs, card effects, tracking statistics and advancing turn
   executeCard(index, isWildcard) {
+    //Identifies the card being played and verifies the player can afford its cost
     let selectedCard = isWildcard ? this.wildcard : this.cards[index];
     if (!selectedCard) return;
 
@@ -2310,12 +2432,12 @@ class Game {
         return;
       }
     }
-
+    //Triggers the card effects related to Hp values
     let enemyHPBefore = this.enemy.hp;
     let playerHPBefore = this.player.hp;
 
     selectedCard.action(this.player, this.enemy);
-
+    //Calculates the damage dealt or HP recovered and plays the card sound effect
     this.cards_used++;
 
     if (enemyHPBefore > this.enemy.hp) {
@@ -2337,7 +2459,7 @@ class Game {
     }
 
     this.saveCardUsedInDB(selectedCard.name);
-
+    //Ensures palyer's energy doesn't exceed maximums
     this.player.energy = Math.min(this.player.energy, this.player.maxEnergy);
 
     if (!isWildcard) {
@@ -2350,7 +2472,7 @@ class Game {
         this.cards.splice(index, 1);
       }
     }
-
+    //Checks if the enemy was defeated by the attack to stop any actions, otherwise gives the turn to the enemy
     if (this.enemy.hp <= 0) {
       return;
     }
@@ -2359,11 +2481,13 @@ class Game {
     this.enemyTurn();
   }
 
+  //Processes player inpit on the upgrade screen, applying the selected upgrade
   upgradeClick(mouseX, mouseY) {
+    //Ensures click events are only processed if the active screen sis Upgrade
     if (this.currentScene !== SCENES.UPGRADE) {
       return;
     }
-
+    //Evaluates the mouse coordinates with the bounding boxes of the upgrade options
     for (let button of this.upgradeButtons) {
       if (
         mouseX >= button.x &&
@@ -2371,10 +2495,11 @@ class Game {
         mouseY >= button.y &&
         mouseY <= button.y + button.h
       ) {
+        //Applies the specific upgrade effect and saves it locally and to the database
         button.upgrade.action(this.player);
         this.saveGame();
         this.savePlayerStatsInDB();
-
+        //Transitions back to the scene from which the upgrade was found
         this.loadScene(this.upgradeReturnScene || SCENES.HABITACION);
 
         if (this.savedPosition) {
@@ -2393,7 +2518,9 @@ class Game {
     }
   }
 
+  //Handles click acts triggering intercations and scene transitions on the current active state
   screenClick(mouseX, mouseY) {
+    //handles clicking the X buttonto remove a card or the back button to the previous scene
     if (this.currentScene === SCENES.DECK) {
       let startX = 60;
       let startY = 115;
@@ -2435,6 +2562,7 @@ class Game {
       return;
     }
 
+    //Detects clicks on thepersistent UI durin active gamplay saving the player's position before opening the menu
     if (
       this.currentScene !== SCENES.PAUSE &&
       this.currentScene !== SCENES.GAME_OVER &&
@@ -2455,19 +2583,16 @@ class Game {
       this.loadScene(SCENES.DECK);
       return;
     }
-    // NEXT DAY: cualquier clic continúa
     if (this.currentScene === SCENES.NEXT_DAY) {
       this.loadScene(SCENES.CASA);
       return;
     }
-
-    // CARD_REWARD: cualquier clic continúa a la villa
+    //Detects clicks on the active new card screen
     if (this.currentScene === SCENES.CARD_REWARD) {
       this.loadScene(SCENES.VILLA);
       return;
     }
-
-    // Botón de pausa arriba derecha
+    //Detects clickson the persistent UI element during gameplay
     if (
       this.currentScene !== SCENES.PAUSE &&
       this.currentScene !== SCENES.GAME_OVER &&
@@ -2482,38 +2607,32 @@ class Game {
       this.loadScene(SCENES.PAUSE);
       return;
     }
-    // CREDITS: RETURN
+    //Handles the navigation back to the game over screen
     if (this.currentScene === SCENES.CREDITS) {
       if (mouseX >= 15 && mouseX <= 200 && mouseY >= 520 && mouseY <= 600) {
         this.loadScene(SCENES.GAME_OVER);
       }
       return;
     }
-
-    // GAME OVER
+    //Routes clicks to the corresponding menu (Restart, Credits or Web page of stats)
     if (this.currentScene === SCENES.GAME_OVER) {
-      // RETRY
       if (mouseX >= 45 && mouseX <= 400 && mouseY >= 120 && mouseY <= 210) {
         this.restartRun();
         return;
       }
 
-      // CREDITS
       if (mouseX >= 45 && mouseX <= 400 && mouseY >= 230 && mouseY <= 320) {
         this.loadScene(SCENES.CREDITS);
         return;
       }
 
-      // STATS
       if (mouseX >= 45 && mouseX <= 400 && mouseY >= 340 && mouseY <= 430) {
         window.location.href = "../../Web/html/estadisticas.html";
         return;
       }
     }
-
-    // PAUSA
+    //Manages the game's audio toggle, resuming the game and returning to the main menu
     if (this.currentScene === SCENES.PAUSE) {
-      // TURN OFF MUSIC
       if (mouseX >= 210 && mouseX <= 610 && mouseY >= 135 && mouseY <= 215) {
         this.musicEnabled = !this.musicEnabled;
 
@@ -2528,7 +2647,6 @@ class Game {
         return;
       }
 
-      // TURN OFF SOUND
       if (mouseX >= 210 && mouseX <= 610 && mouseY >= 135 && mouseY <= 215) {
         this.musicEnabled = !this.musicEnabled;
 
@@ -2542,14 +2660,12 @@ class Game {
 
         return;
       }
-
-      // RETURN
+      //resumes game
       if (mouseX >= 210 && mouseX <= 610 && mouseY >= 375 && mouseY <= 455) {
         this.loadScene(this.previousScene || SCENES.CASA);
         return;
       }
-
-      // SAVE AND EXIT
+      //Save and exit
       if (mouseX >= 210 && mouseX <= 610 && mouseY >= 495 && mouseY <= 575) {
         this.saveCombatStatsInDB();
         this.savePlayerStatsInDB();
@@ -2560,10 +2676,14 @@ class Game {
     }
   }
 
-  //The controls of the game for movement, restarting and selecting cards during combat
+  //Initializes global event listenrs to capture player inputs via keyboard and mouse
+  //Assings the proper game actions to each event listener like movement or clicks
   createEventListeners() {
+    //Handles UI state toggles and player movement
     window.addEventListener("keydown", (event) => {
+      //Unlocks browser audio context upon first user intecation
       this.playMusic(this.currentScene);
+      //Pause menu toggle, escape or p to pause/resume the game
       if (event.key === "Escape" || event.key.toLowerCase() === "p") {
         if (this.currentScene === SCENES.PAUSE) {
           this.loadScene(this.previousScene || SCENES.CASA);
@@ -2591,20 +2711,20 @@ class Game {
         this.player.startMovement(keyDirections[event.key]);
       }
     });
-
+    //Captures the key releases to halt player momentum in the corresponding direction
     window.addEventListener("keyup", (event) => {
       if (event.key in keyDirections) {
         this.delKey(keyDirections[event.key]);
         this.player.stopMovement(keyDirections[event.key]);
       }
     });
-
+    //calculates relative clicks
     window.addEventListener("mousedown", (event) => {
       this.playMusic(this.currentScene);
 
       const canvas = document.getElementById("canvas");
       if (!canvas) return;
-
+      //Transforms raw browser coordinates into accurate canvas coordinates
       const rect = canvas.getBoundingClientRect();
       const scaleX = canvas.width / rect.width;
       const scaleY = canvas.height / rect.height;
@@ -2616,12 +2736,13 @@ class Game {
       this.upgradeClick(mouseX, mouseY);
     });
   }
+  //Registers an active directional input to the player's movemt array
   addKey(direction) {
     if (!this.player.keys.includes(direction)) {
       this.player.keys.push(direction);
     }
   }
-
+  //Removes an active directional input to the player's movemt array
   delKey(direction) {
     if (this.player.keys.includes(direction)) {
       this.player.keys.splice(this.player.keys.indexOf(direction), 1);
@@ -2629,7 +2750,9 @@ class Game {
   }
 }
 
+//Core initialization of the game
 async function main() {
+  //Halts any initialization until the card pool is succesfully retrieve from the database
   await loadCardsFromDB();
 
   const canvas = document.getElementById("canvas");
