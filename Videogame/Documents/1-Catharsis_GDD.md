@@ -391,41 +391,50 @@ The map represents the area (both interior of the house and exterior) where the 
 
 For the creation of the game Catharsis, we need to consider the next classes and components that will be used for the game’s development.
 
-1. GameObject: Base class for all visible elements on screen, storing transform properties, dimensions, colors, and sprite data.
-2. combatBars: Class to create and draw the HP and energy bars during the combat scene.
-3. SCENES (Data): Defines the main states and scenes of the game (VILLA, CASA, CASA_LJ, HABITACION, COMBATE, GAME_OVER).
-4. CARD_POOL (Data): Pool of available cards for the combat, each card has a direct effect that affects either the player or the enemy.
-5. WILDCARD (Data): Defines the wildcard card that trades player HP for energy points during combat.
-
+1. GameObject: Base class for all visible elements. Manages transform (position), dimensions, colors, and asset references.
+2. CombatBars: UI component for rendering and updating HP and energy progress bars during combat.
+3. Vector: Utility class for handling 2D spatial coordinates and velocity.
+4. SCENES (Data): Global enumeration defining game states (e.g., VILLA, CASA, COMBATE, PAUSE, DECK, etc.).
+5. CARD_POOL (Data): Registry of available combat cards and their associated effect logic.
 
 ### **Derived Classes / Component Compositions**
 
 1. GameObject Extensions
 
-- Player: Extension of GameObject. Defines the character that the player plays as, controls the movement, stats, collisions and characteristics of the player.
-- Enemy: Extension of GameObject. Defines the enemy during combat (stats of the enemy).
-- Room: Extension of GameObject. Represents the interior areas of the map.
+- Player (GameObject Extension): Manages character-specific logic including movement input, collision state, health/energy management, and evasion stats.
+- Enemy (GameObject Extension): Handles AI-controlled combatants, including statistical scaling per day and randomized attack patterns.
+- Room (GameObject Extension): Represents spatial environments and interior layouts, including interaction hooks for map elements like bushes.
 
-1. Game (The Game's Controller)
-Controls all the logic and mechanics of the game such as the combat, cards, flow, scenes, events, and collisions.
+1. Game (Controller): The central hub managing game flow, logic, and state.
 
-- `initObjects()`: Creates all the objects of the game includes the player, enemy, rooms, houses, etc.
-- `randomEnemyLocation()`: Random generation of the enemy in the rooms of the house.
-- `getRandomCard(posX)`: Generates a random card from CARD_POOL and adds it to a specific position of the combat UI.
-- `getWildcard()`: Generates the special card "Wildcard" for the combat UI.
-- `combatHand()`: Starts the combat (resets the HP and energy, generates the 4 cards of the deck, HP and energy bars and generates the enemy).
-- `loadScene(scene)`: Changes the states of the game to specific scenes.
-- `draw(ctx, card)`: Draws the actors, messages and UIs of the game.
-- `drawCardItem(ctx, card)`: Render of each card individually.
-- `drawCombatUI(ctx)`: UI of the combat scene.
-- `enemyTurn()`: Controls the turns of the enemy during combat.
-- `endTurn()`: Gives the turn back to the player.
-- `restartRun()`: Restarts the run in case of player's death.
-- `playerDeath()`: Detects the death of the player when the HP bar reaches 0 during combat.
-- `update(deltaTime)`: Controls the collisions of the game and what happens when the player collides with an object in each of the scenes and states.
-- `combatClick(mouseX, mouseY)`: Detects if the player selected a card with the CLICK.
-- `executeCard(index, isWildcard)`: Executes the selected card by the player during combat.
-- `createEventListeners()`: The controls of the game for movement, restarting and selecting cards during combat.
+- initObjects(): Initializes all game entities including the player, enemy, rooms, and houses.
+- randomEnemyLocation(): Randomly assigns the enemy's spawn location within the house rooms.
+- getRandomCard(posX): Generates a random card from CARD_POOL and adds it to a specific position of the combat UI.
+- getWildcard(): Generates the special card "Wildcard" for the combat UI.
+- combatHand(): Starts the combat (resets the HP and energy, generates the 4 cards of the deck, HP and energy bars and generates the enemy).
+- loadScene(scene): Manages state transitions between game screens.
+- draw(ctx, card): The primary rendering pipeline for actors, messages, and UI elements.
+- drawCardItem(ctx, card): Renders individual card components.
+- drawCombatUI(ctx): Renders the HUD for the combat scene.
+- enemyTurn(): Executes enemy combat logic and AI actions.
+- endTurn(): Transitions control back to the player.
+- restartRun(): Resets session data and restarts the game state upon death.
+- playerDeath(): Monitors HP thresholds to trigger the game-over sequence.
+- update(deltaTime): Updates physics, collision detection, and logic states across scenes.
+- combatClick(mouseX, mouseY): Processes input for card selection during combat.
+- executeCard(index, isWildcard): Resolves card effects, resource costs, and statistical tracking.
+- createEventListeners(): Binds global input events for movement, UI interaction, and combat controls.
+- saveGame(): Serializes the current game state to local storage.
+- loadGame(): Restores a session from saved local storage data.
+- saveCombatStatsInDB(): Commits combat performance metrics to the database.
+- finishRunInDB(result): Finalizes the run status (Win/Loss) in the database.
+- saveCardUsedInDB(name): Tracks specific card usage for analytics.
+- savePlayerStatsInDB(): Persists player progress and attributes to the database.
+- playSound(name): Handles audio asset playback with reset logic.
+- playMusic(scene): Manages background music tracks based on scene context.
+- resetBushCards(): Randomizes loot distribution and state for map interactables.
+- upgradeClick(mouseX, mouseY): Processes user selections within the upgrade menu.
+- screenClick(mouseX, mouseY): Central router for all non-combat UI interactions.
 
 
 ## _Graphics_
