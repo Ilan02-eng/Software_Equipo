@@ -76,10 +76,22 @@ Software_Equipo/
 ```
 
 ### Brief description of folders
+**Actividades:** A folder for non-project related activities that were completed during the course
 
+**Videogame/Data_Bases:** In here the have all the database related files, schemas, scripts, diagrams and the normalization used
 
-**How to download the game?**
+**Videogame/Documents:** The project documentation; files like the Game Design Document and the images that appear in there as well as user stories file
 
+**Videogame/Game_code:** Complete set of code related files, including both frontend and backend as well as the logic, assets and libraries that were used for the project
+
+**Videogame/VisualsVideogame:** The visual resources that were initially created for the game, including designs and concept art.
+
+**Videogame/Presentation:** Files required for the final delivery that include the video and personal reflections.
+
+## Running the game
+
+### How to download the files?
+For running the game,
 
 
 **What does this repository include?:**
