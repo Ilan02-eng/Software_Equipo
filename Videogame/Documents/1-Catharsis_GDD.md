@@ -342,24 +342,23 @@ The map represents the area (both interior of the house and exterior) where the 
 
 **Game Starts**
 1. A start menu appears displaying the game's title and a button to begin.
-2. The player spawns in a flat village featuring bushes, trees, and two houses.
+2. The player spawns in a flat village featuring bushes, trees, and another house aside from their own.
 3. The card deck button is displayed 
 
 **Initial Exploration**
-1. The player begins inside their own house, where a letter is found explaining the game's controls and the village's rules.
-2. The player explores the village, discovering letters scattered near bushes, chairs, and trees.
-3. The player notices that their neighbor is asleep outside their house.
-4. The player observes that Little Jimmy's house is emanating loud and unusual noises.
+1. The player begins inside their own house, and is only allowed to leave through the door
+2. The player explores the village, discovering cards scattered near bushes on the town.
+3. The player observes that Little Jimmy's house is not empty.
 
 
-**Night Exploration**
+**House Exploration**
 
-1. The player exits their house to find that Little Jimmy is still inside his home, which continues to produce loud noises.
-2. The player enters the house to investigate and ensure everything is alright.
-3. A combat encounter begins in an attempt to cure Little Jimmy.
-4. If the player is defeated, the game resets and the player retains only 3 randomly selected cards from their deck.
-5. If the player wins, Little Jimmy is partially cured.
-6. The player returns home to rest.
+1. The player enters the house to investigate and ensure everything is alright.
+2. The player starts moving around the house, surprised to discover random cards around the house
+3. The fight is triggered when the player enters to a randomly assigned room. The combat encounter begins in an attempt to cure Little Jimmy.
+4. If the player is defeated, the game resets and the player retains only 2 randomly selected cards from their deck.
+5. If the player wins, Little Jimmy increases their level of difficulty randomly for the next combat.
+6. The player is transported to their home to rest.
 
 
 **Second Day**
